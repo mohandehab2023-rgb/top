@@ -1410,13 +1410,14 @@ body.offline-mode #connection-status {
 
     .view-section table tbody td {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-        padding: 8px 0;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px 0;
         border: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        text-align: right;
+        text-align: left;
         min-height: 36px;
         white-space: normal;
         font-size: 13.5px;
@@ -1426,22 +1427,29 @@ body.offline-mode #connection-status {
     /* عنوان العمود جنب القيمة */
     .view-section table tbody td[data-label]::before {
         content: attr(data-label);
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 700;
         color: var(--text-muted, #94a3b8);
         flex-shrink: 0;
-        width: 100%;
-        margin-bottom: 1px;
+        width: auto;
+        margin-bottom: 0;
     }
 
     /* أول خلية = عنوان الكارت */
     .view-section table tbody td:first-child {
         font-size: 1rem;
         font-weight: 800;
-        padding-top: 2px;
+        padding-top: 6px;
         padding-bottom: 6px;
         border-bottom: 1px dashed rgba(255,255,255,0.1);
         color: var(--primary);
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: right;
+    }
+    .view-section table tbody td:first-child::before {
+        width: 100%;
+        margin-bottom: 2px;
     }
 
     /* صف "لا توجد بيانات" يفضل زي ما هو */
@@ -1677,24 +1685,25 @@ body.offline-mode #connection-status {
     
     /* ── Filter Tabs: مربعات في نفس السطر ── */
     .filter-tabs {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 8px !important;
+        display: flex !important;
         flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 8px !important;
         overflow-x: visible !important;
         padding-bottom: 8px;
-        justify-content: stretch !important;
     }
     /* استثناء فلتر "ينتهي قريباً" ليأخذ العرض كاملاً لو لزم الأمر */
     .filter-tabs > div {
-        grid-column: 1 / -1;
+        flex: 1 1 100% !important;
+        justify-content: center !important;
+        margin-left: 0 !important;
+        margin-top: 4px;
     }
     .filter-tabs .tab-btn {
-        flex-shrink: 1;
-        white-space: normal;
-        font-size: 11.5px !important;
+        flex: 1 1 calc(33.333% - 8px) !important;
+        white-space: nowrap !important;
+        font-size: 11px !important;
         padding: 8px 4px !important;
-        width: 100%;
         text-align: center;
         display: flex;
         align-items: center;
