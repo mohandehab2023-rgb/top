@@ -1686,31 +1686,20 @@ body.offline-mode #connection-status {
         gap: 2px !important;
     }
     
-    /* ── Filter Tabs: مربعات في نفس السطر ── */
+    /* ── Filter Tabs: شريط فلاتر أنيق ومدمج لا يخفي أي أزرار ── */
     .filter-tabs {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 8px !important;
+        display: flex !important;
         flex-wrap: wrap !important;
-        overflow-x: visible !important;
-        padding-bottom: 8px;
-        justify-content: stretch !important;
+        align-items: center !important;
+        gap: 6px !important;
+        margin-bottom: 12px !important;
+        overflow: visible !important;
     }
-    /* استثناء فلتر "ينتهي قريباً" ليأخذ العرض كاملاً لو لزم الأمر */
     .filter-tabs > div {
-        grid-column: 1 / -1;
-    }
-    .filter-tabs .tab-btn {
-        flex-shrink: 1;
-        white-space: normal;
-        font-size: 11.5px !important;
-        padding: 8px 4px !important;
-        width: 100%;
-        text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: auto;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        margin-right: auto !important;
     }
     .nav-list .nav-link[data-m-primary] > span,
     .nav-list .nav-link[data-m-primary] {
@@ -1825,24 +1814,29 @@ body.offline-mode #connection-status {
     }
     .dash-card-title { font-size: 0.8rem !important; }
     
-    /* 2) Member Tabs (Very small & professional) */
+    /* 2) Member Tabs (All visible, compact pills) */
     .filter-tabs {
         display: flex !important;
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
         gap: 6px !important;
-        padding-bottom: 6px !important;
-        margin-bottom: 12px !important;
-        scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px !important;
+        margin-bottom: 10px !important;
+        overflow: visible !important;
     }
-    .filter-tabs::-webkit-scrollbar { display: none; }
     .tab-btn {
-        padding: 4px 12px !important;
-        font-size: 0.75rem !important;
+        padding: 4px 10px !important;
+        font-size: 0.76rem !important;
+        font-weight: 700 !important;
         white-space: nowrap !important;
-        border-radius: 12px !important;
+        border-radius: 14px !important;
         flex-shrink: 0 !important;
+        min-height: 28px !important;
+        height: auto !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 4px !important;
     }
 
     /* 3) Member Cards (Relatively Smaller) */
