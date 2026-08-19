@@ -1124,16 +1124,25 @@ function renderMembers(searchQuery = '') {
         </button>`;
         actions += `</div>`;
 
+        const dueClass = due > 0 ? '' : 'hide-on-mobile';
+
         rowsHTML += `
           <tr>
-            <td><b>${escapeHTML(m.zkid)}</b></td><td><b>${escapeHTML(m.name)}</b></td><td>${genderTxt}</td><td>${escapeHTML(m.phone)}</td>
-            <td>${escapeHTML(m.address || '-')}</td><td>${
+            <td><b>${escapeHTML(m.zkid)}</b></td>
+            <td><b>${escapeHTML(m.name)}</b></td>
+            <td class="hide-on-mobile">${genderTxt}</td>
+            <td>${escapeHTML(m.phone)}</td>
+            <td class="hide-on-mobile">${escapeHTML(m.address || '-')}</td>
+            <td class="hide-on-mobile">${
               (m.pkg && m.pkg.includes('الباقة المتميزة')) 
               ? ('<div style="display:flex; flex-direction:column; align-items:center; gap:4px;"><span>الباقة المتميزة</span><span class="badge" style="background-color:rgba(16,185,129,0.15); color:#10b981; font-size:0.75rem; font-weight:bold;">متبقي: ' + (m.sessions_balance || 0) + ' حصة</span></div>') 
               : escapeHTML((m.pkg || '').replace(/[\?\uFFFD]/g, '').trim())
-            }</td><td>${Number(m.paid || 0).toLocaleString()} ج.م</td>
-            <td>${dueCell}</td>
-            <td>${m.exp}</td><td>${badge}</td><td>${actions}</td>
+            }</td>
+            <td class="hide-on-mobile">${Number(m.paid || 0).toLocaleString()} ج.م</td>
+            <td class="${dueClass}">${dueCell}</td>
+            <td>${m.exp}</td>
+            <td>${badge}</td>
+            <td>${actions}</td>
           </tr>
         `;
     });

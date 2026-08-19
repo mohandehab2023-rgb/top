@@ -1732,6 +1732,10 @@ body.offline-mode #connection-status {
         flex-shrink: 0;
         width: 20px; height: 20px;
     }
+    
+    .hide-on-mobile {
+        display: none !important;
+    }
 
     /* ── الهيدر العلوي: تصغير حجم الخط والعناصر عشان تناسب الشاشة ── */
     .topbar {
