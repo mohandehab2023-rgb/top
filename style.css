@@ -1838,32 +1838,36 @@ body.offline-mode #connection-status {
     }
 
     /* 3) Member Cards (Relatively Smaller) */
-    .member-card {
-        padding: 12px !important;
-        gap: 8px !important;
+    .styled-table tbody tr {
+        padding: 6px 8px !important;
+        margin-bottom: 6px !important;
+        border-radius: 6px !important;
     }
-    .member-card-avatar {
-        width: 36px !important; height: 36px !important; font-size: 1rem !important;
+    .styled-table tbody td {
+        padding: 4px 0 !important;
+        min-height: 24px !important;
+        font-size: 11px !important;
     }
-    .member-card-title { font-size: 0.95rem !important; }
 
     /* 4) Store Products Grid (Tiny single row) */
     #store-products-grid {
         display: flex !important;
         flex-wrap: nowrap !important;
         overflow-x: auto !important;
-        gap: 10px !important;
+        gap: 8px !important;
         padding-bottom: 12px !important;
         scrollbar-width: none;
         -webkit-overflow-scrolling: touch;
     }
     #store-products-grid::-webkit-scrollbar { display: none; }
-    .product-card {
-        flex: 0 0 130px !important;
-        min-width: 130px !important;
+    .store-product-card {
+        flex: 0 0 120px !important;
+        min-width: 120px !important;
+        height: auto !important;
+        padding: 0 !important;
     }
-    .product-img-wrapper { height: 110px !important; }
-    .product-card-body { padding: 8px 10px !important; }
-    .product-card-title { font-size: 0.85rem !important; }
-    .product-card-price { font-size: 1rem !important; }
+    .store-product-card .product-img-wrap { height: 90px !important; }
+    .store-product-card .product-details { padding: 6px !important; }
+    .store-product-card h4 { font-size: 0.8rem !important; margin: 0 0 4px !important; }
+    .store-product-card .product-price { font-size: 0.9rem !important; }
 }
