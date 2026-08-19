@@ -1833,6 +1833,59 @@ body.offline-mode #connection-status {
         min-width: 140px;
         font-size: 0.85rem !important;
     }
+
+    /* --- Mobile POS Redesign --- */
+    #store-header h2 { font-size: 1.15rem !important; }
+    #store-header .store-subtitle { display: none !important; }
+    .store-action-buttons {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+        margin-top: 4px;
+    }
+    .store-action-buttons button {
+        flex: 1;
+        font-size: 0.85rem !important;
+        padding: 8px 4px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: center;
+    }
+    #store-kpi-grid {
+        display: flex !important;
+        overflow-x: auto !important;
+        flex-wrap: nowrap !important;
+        gap: 12px;
+        padding-bottom: 8px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+    #store-kpi-grid::-webkit-scrollbar { display: none; }
+    
+    .store-kpi-card {
+        flex: 0 0 130px; /* Fixed width for horizontal cards */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 16px 10px !important;
+        border-radius: 14px !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+    .store-kpi-card .stat-value {
+        font-size: 1.3rem !important;
+        font-weight: 800;
+        margin-bottom: 6px;
+        order: 1; /* Number on top */
+    }
+    .store-kpi-card .stat-label {
+        font-size: 0.72rem !important;
+        color: var(--text-muted);
+        order: 2; /* Label below */
+        line-height: 1.3;
+    }
 }
 
 /* ==========================================================================
