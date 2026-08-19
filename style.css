@@ -1418,16 +1418,17 @@ body.offline-mode #connection-status {
 
     .view-section table tbody td {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-        padding: 8px 0;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 4px 0;
         border: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        text-align: right;
-        min-height: 36px;
-        white-space: normal;
-        font-size: 13.5px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        text-align: left;
+        min-height: 24px;
+        white-space: nowrap;
+        font-size: 12px;
     }
     .view-section table tbody td:last-child { border-bottom: none; }
 
@@ -1438,18 +1439,20 @@ body.offline-mode #connection-status {
         font-weight: 700;
         color: var(--text-muted, #94a3b8);
         flex-shrink: 0;
-        width: 100%;
-        margin-bottom: 1px;
+        width: auto;
+        margin-bottom: 0;
     }
 
     /* أول خلية = عنوان الكارت */
     .view-section table tbody td:first-child {
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: 800;
         padding-top: 2px;
-        padding-bottom: 6px;
+        padding-bottom: 4px;
         border-bottom: 1px dashed rgba(255,255,255,0.1);
         color: var(--primary);
+        flex-direction: row;
+        justify-content: space-between;
     }
 
     /* صف "لا توجد بيانات" يفضل زي ما هو */
@@ -1833,8 +1836,9 @@ body.offline-mode #connection-status {
     .tab-btn {
         padding: 4px 12px !important;
         font-size: 0.75rem !important;
-        white-space: nowrap;
+        white-space: nowrap !important;
         border-radius: 12px !important;
+        flex-shrink: 0 !important;
     }
 
     /* 3) Member Cards (Relatively Smaller) */
