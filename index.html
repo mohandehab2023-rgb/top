@@ -253,6 +253,9 @@
                         </path>
                     </svg>
                 </div>
+                <button onclick="handleLogout()" class="btn" style="padding: 6px 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); font-size: 0.8rem; margin-right: 6px;" title="تسجيل خروج">
+                    <svg fill="none" stroke="currentColor" viewbox="0 0 24 24" width="16" height="16"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </button>
             </div>
         </header>
         <div class="content-body">
@@ -263,15 +266,15 @@
                         <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 8px;"> لوحة القيادة والإحصائيات</h2>
                         <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">إحصائيات النظام وملخص الاشتراكات والأداء المالي والنشاط اليومي</p>
                     </div>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn btn-outline" onclick="openSessionModal()" style="padding: 6px 14px; font-size: 0.85rem;">
+                    <div style="display:flex; gap:8px; flex-wrap: wrap;">
+                        <button class="btn btn-outline" onclick="openSessionModal()" style="padding: 8px 12px; font-size: 0.85rem; flex: 1; justify-content: center;">
                             تسجيل حصة (بدون عضوية)
                         </button>
-                        <button class="btn" onclick="openRegisterModal()" style="padding: 6px 14px; font-size: 0.85rem;">
+                        <button class="btn" onclick="openRegisterModal()" style="padding: 8px 12px; font-size: 0.85rem; flex: 1; justify-content: center;">
                             <svg fill="none" stroke="currentColor" viewbox="0 0 24 24" width="16" height="16">
                                 <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
-                            <span>+ تسجيل مشترك جديد</span>
+                            <span>+ مشترك جديد</span>
                         </button>
                     </div>
                 </div>
@@ -283,15 +286,12 @@
                     </div>
                     <div>
                         <h4 style="margin: 0 0 6px 0; font-size: 0.95rem; color: #fff; display: flex; align-items: center; gap: 6px;">ملخص نشاط اليوم <span style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:50%; box-shadow:0 0 8px #10b981; animation: pulse 2s infinite;"></span></h4>
-                        <p style="margin: 0; font-size: 0.85rem; color: #cbd5e1; line-height: 1.6; display: flex; flex-wrap: wrap; gap: 8px;">
-                            <span>جدد: <strong id="today-new-members-text" style="color:#38bdf8; font-size: 1rem;">0</strong></span>
-                            <span style="color: rgba(255,255,255,0.2);">|</span>
-                            <span>تجديد: <strong id="today-renewals-text" style="color:#10b981; font-size: 1rem;">0</strong></span>
-                            <span style="color: rgba(255,255,255,0.2);">|</span>
-                            <span>حضور: <strong id="today-attendance-text" style="color:#a855f7; font-size: 1rem;">0</strong></span>
-                            <span style="color: rgba(255,255,255,0.2);">|</span>
-                            <span>مبيعات: <strong id="today-store-text" style="color:#f59e0b; font-size: 1rem;">0</strong> ج.م</span>
-                        </p>
+                        <div style="margin: 0; font-size: 0.85rem; color: #cbd5e1; line-height: 1.6; display: flex; flex-wrap: wrap; gap: 8px;">
+                            <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;">جدد: <strong id="today-new-members-text" style="color:#38bdf8; font-size: 0.9rem;">0</strong></span>
+                            <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;">تجديد: <strong id="today-renewals-text" style="color:#10b981; font-size: 0.9rem;">0</strong></span>
+                            <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;">حضور: <strong id="today-attendance-text" style="color:#a855f7; font-size: 0.9rem;">0</strong></span>
+                            <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;">مبيعات: <strong id="today-store-text" style="color:#f59e0b; font-size: 0.9rem;">0</strong> ج.م</span>
+                        </div>
                     </div>
                 </div>
                 <style>
@@ -352,7 +352,7 @@
                         </div>
                     </div>
 
-                    <div class="stat-card admin-only" style="padding: 12px 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
+                    <div class="stat-card admin-only full-width-mobile" style="padding: 12px 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
                         <div>
                             <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">إجمالي تحصيل اليوم</div>
                             <div class="stat-value" id="total-revenue" style="font-size: 1.3rem; font-weight: 800; color: #38bdf8;">0 ج.م</div>

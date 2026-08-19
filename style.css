@@ -1146,8 +1146,11 @@ body.offline-mode #connection-status {
     /* 5. Stats Grid → single column */
     .stats-grid,
     .dashboard-stats {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: repeat(2, 1fr) !important;
         gap: 10px !important;
+    }
+    .full-width-mobile {
+        grid-column: 1 / -1;
     }
 
     /* 6. Dashboard Grid → single column */
