@@ -4026,7 +4026,7 @@ function filterTrainerAttendance() {
 
 function calculateWorkingHours(checkIn, checkOut) {
     if (!checkIn) return { text: '-', mins: 0 };
-    if (!checkOut) return { text: 'جارٍ العمل ⏱', mins: 0 };
+    if (!checkOut) return { text: 'جارٍ العمل ', mins: 0 };
     const [h1, m1] = checkIn.split(':').map(Number);
     const [h2, m2] = checkOut.split(':').map(Number);
     if (isNaN(h1) || isNaN(m1) || isNaN(h2) || isNaN(m2)) return { text: '-', mins: 0 };
@@ -4514,7 +4514,7 @@ function renderStoreProducts() {
     if (filtered.length === 0) {
         grid.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: var(--text-muted); background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-subtle);">
-                <div style="font-size: 2.2rem; margin-bottom: 8px;">📦</div>
+                <div style="font-size: 2.2rem; margin-bottom: 8px;"></div>
                 <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-main);">لم يتم العثور على منتجات</div>
                 <p style="margin: 4px 0 0; font-size: 0.85rem;">جرب تغيير التصنيف أو البحث بكلمات أخرى، أو أضف منتجات جديدة للمتجر.</p>
             </div>
@@ -4788,7 +4788,7 @@ async function submitStoreSale() {
     try {
         const res = await window.electronAPI.createStoreSale(saleData);
         if (res && res.success) {
-            showToast(`تم إتمام عملية البيع وتوريد ${totalAmount} ج.م إلى الخزينة بنجاح! 🧾`, 'success');
+            showToast(`تم إتمام عملية البيع وتوريد ${totalAmount} ج.م إلى الخزينة بنجاح! `, 'success');
             
             if (waConfig && waConfig.notifyStore) {
                 let targetPhone = '';
@@ -4798,7 +4798,7 @@ async function submitStoreSale() {
                 }
                 const itemsList = saleData.items.map(i => `${i.productName} (${i.quantity}x)`).join(', ');
                 const dateStr = new Date().toLocaleDateString('ar-EG');
-                let receiptMsg = (waConfig.tplStore || "إيصال مشتريات من متجر TOP FITNESS 🛍️:\nعزيزي {NAME}، شكراً لتعاملك معنا!\nالأصناف: {ITEMS}\nالإجمالي: {TOTAL} ج.م\nتاريخ العملية: {DATE}")
+                let receiptMsg = (waConfig.tplStore || "إيصال مشتريات من متجر TOP FITNESS ️:\nعزيزي {NAME}، شكراً لتعاملك معنا!\nالأصناف: {ITEMS}\nالإجمالي: {TOTAL} ج.م\nتاريخ العملية: {DATE}")
                     .replace(/{NAME}/g, buyerName)
                     .replace(/{ITEMS}/g, itemsList)
                     .replace(/{TOTAL}/g, totalAmount)
@@ -4827,7 +4827,7 @@ async function submitStoreSale() {
     } catch (err) {
         showToast('حدث خطأ أثناء تسجيل الفاتورة: ' + err.message, 'error');
     } finally {
-        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = '<span>🛒 تأكيد البيع وتوريد الخزينة</span>'; }
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = '<span> تأكيد البيع وتوريد الخزينة</span>'; }
     }
 }
 
@@ -5047,11 +5047,11 @@ let waConfig = {
     notifyStore: true,
     notifyAbsence: true,
     absenceDaysThreshold: 2,
-    tplAttendance: "أهلاً بك يا {NAME} في TOP FITNESS! 💪\nتم تسجيل حضورك بنجاح اليوم الساعة {TIME}.\nمتبقي في باقتك {DAYS_LEFT} يوماً. تمرين موفق ووحش! 🔥",
-    tplGuardian: "إشعار صالة TOP FITNESS 📢:\nتم تسجيل حضور ابنكم ({NAME}) اليوم الساعة {TIME}.\nنتمنى له تمريناً ممتعاً وآمناً. 🛡️",
-    tplAbsence: "وحشتنا في TOP FITNESS يا {NAME}! 🏋️🔥\nلاحظنا غيابك منذ {ABSENCE_DAYS} أيام.. صحتك ولياقتك تهمنا، مستنينك النهاردة تكمل فورمتك وتمرينك بقوة!",
-    tplStore: "إيصال مشتريات من متجر TOP FITNESS 🛍️:\nعزيزي {NAME}، شكراً لتعاملك معنا!\nالأصناف: {ITEMS}\nالإجمالي: {TOTAL} ج.م\nتاريخ العملية: {DATE}",
-    tplRenewal: "أهلاً {NAME}، تم تجديد اشتراكك بنجاح في TOP FITNESS! 🌟\nالباقة: {PACKAGE}\nالمبلغ المدفوع: {PAID} ج.م\nتاريخ الانتهاء الجديد: {EXP_DATE}"
+    tplAttendance: "أهلاً بك يا {NAME} في TOP FITNESS! \nتم تسجيل حضورك بنجاح اليوم الساعة {TIME}.\nمتبقي في باقتك {DAYS_LEFT} يوماً. تمرين موفق ووحش! ",
+    tplGuardian: "إشعار صالة TOP FITNESS :\nتم تسجيل حضور ابنكم ({NAME}) اليوم الساعة {TIME}.\nنتمنى له تمريناً ممتعاً وآمناً. ️",
+    tplAbsence: "وحشتنا في TOP FITNESS يا {NAME}! ️\nلاحظنا غيابك منذ {ABSENCE_DAYS} أيام.. صحتك ولياقتك تهمنا، مستنينك النهاردة تكمل فورمتك وتمرينك بقوة!",
+    tplStore: "إيصال مشتريات من متجر TOP FITNESS ️:\nعزيزي {NAME}، شكراً لتعاملك معنا!\nالأصناف: {ITEMS}\nالإجمالي: {TOTAL} ج.م\nتاريخ العملية: {DATE}",
+    tplRenewal: "أهلاً {NAME}، تم تجديد اشتراكك بنجاح في TOP FITNESS! \nالباقة: {PACKAGE}\nالمبلغ المدفوع: {PAID} ج.م\nتاريخ الانتهاء الجديد: {EXP_DATE}"
 };
 
 let waQueue = [];
@@ -5167,7 +5167,7 @@ async function saveWhatsAppSettings(event) {
     if (window.electronAPI && window.electronAPI.saveConfig) {
         await window.electronAPI.saveConfig({ whatsapp: waConfig });
     }
-    showToast('تم حفظ إعدادات وقوالب واتساب بنجاح 📲', 'success');
+    showToast('تم حفظ إعدادات وقوالب واتساب بنجاح ', 'success');
     closeModal('whatsAppSettingsModal');
 }
 
@@ -5185,7 +5185,7 @@ function triggerAttendanceWhatsApp(member) {
 
     // 1. Send to Member if enabled
     if (waConfig.notifyAttendance && member.phone) {
-        let msg = (waConfig.tplAttendance || "أهلاً بك يا {NAME} في TOP FITNESS! 💪")
+        let msg = (waConfig.tplAttendance || "أهلاً بك يا {NAME} في TOP FITNESS! ")
             .replace(/{NAME}/g, member.name)
             .replace(/{TIME}/g, timeStr)
             .replace(/{DAYS_LEFT}/g, daysLeft);
@@ -5341,7 +5341,7 @@ async function saveMemberPlanForm(event) {
 
     const res = await window.electronAPI.saveMemberPlan(planData);
     if (res && res.success) {
-        showToast('تم حفظ الخطة التدريبية بنجاح 📋', 'success');
+        showToast('تم حفظ الخطة التدريبية بنجاح ', 'success');
         closeModal('memberPlanModal');
         loadMemberPlans();
     } else {
@@ -5369,20 +5369,20 @@ function sendPlanWhatsApp(planId) {
     const phone = member ? member.phone : '';
     if (!phone) return showToast('المشترك ليس لديه رقم هاتف مسجل', 'warning');
 
-    let msg = `🏋️ *TOP FITNESS - الخطة التدريبية والغذائية* 🥗\n\n`;
-    msg += `أهلاً بك يا بطل *${plan.member_name}*! 💪\n`;
+    let msg = `️ *TOP FITNESS - الخطة التدريبية والغذائية* \n\n`;
+    msg += `أهلاً بك يا بطل *${plan.member_name}*! \n`;
     msg += `إليك خطتك المخصصة بعنوان: *${plan.title}*\n\n`;
     
     if (plan.workout_content) {
-        msg += `📋 *جدول التمارين وتقسيم الأيام:*\n${plan.workout_content}\n\n`;
+        msg += ` *جدول التمارين وتقسيم الأيام:*\n${plan.workout_content}\n\n`;
     }
     if (plan.diet_content) {
-        msg += `🥗 *النظام والجدول الغذائي:*\n${plan.diet_content}\n\n`;
+        msg += ` *النظام والجدول الغذائي:*\n${plan.diet_content}\n\n`;
     }
     if (plan.notes) {
-        msg += `💡 *إرشادات وتوصيات الكابتن:*\n${plan.notes}\n\n`;
+        msg += ` *إرشادات وتوصيات الكابتن:*\n${plan.notes}\n\n`;
     }
-    msg += `🔥 بالتوفيق في التمرين وتحقيق أفضل فورمة مع أسرة *TOP FITNESS*! 🚀`;
+    msg += ` بالتوفيق في التمرين وتحقيق أفضل فورمة مع أسرة *TOP FITNESS*! `;
 
     waManualSend(phone, plan.member_name, 'plan', msg);
 }
@@ -5403,7 +5403,7 @@ function renderMemberPlans() {
     if (filtered.length === 0) {
         grid.innerHTML = `
             <div style="grid-column: 1 / -1; text-align:center; padding: 40px 20px; background:var(--bg-card); border-radius:12px; border:1px solid var(--border-subtle); color:var(--text-muted);">
-                <div style="font-size: 2.2rem; margin-bottom: 8px;">📋</div>
+                <div style="font-size: 2.2rem; margin-bottom: 8px;"></div>
                 <div style="font-weight:700; color:var(--text-main); font-size:1.1rem;">لا توجد خطط مسجلة حالياً</div>
                 <p style="margin:4px 0 14px; font-size:0.85rem;">أنشئ خطة تدريب وغذاء مخصصة للاعبين بضغطة زر وأرسلها عبر واتساب.</p>
                 <button class="btn btn-sm" onclick="openMemberPlanModal()" style="background:var(--primary); color:#0f172a; font-weight:700;">+ إنشاء أول خطة</button>
@@ -5420,7 +5420,7 @@ function renderMemberPlans() {
                     <small style="font-size:0.72rem; color:var(--text-dim);">${p.created_at ? p.created_at.slice(0, 10) : ''}</small>
                 </div>
                 <div style="font-weight:800; font-size:1.05rem; color:var(--text-main); margin-bottom:4px;">${escapeHtml(p.title)}</div>
-                <div style="font-size:0.85rem; color:var(--primary); margin-bottom:12px;">👤 المشترك: <b>${escapeHtml(p.member_name)}</b></div>
+                <div style="font-size:0.85rem; color:var(--primary); margin-bottom:12px;"> المشترك: <b>${escapeHtml(p.member_name)}</b></div>
                 
                 <div style="background:rgba(0,0,0,0.25); border-radius:8px; padding:10px; border:1px solid var(--border-subtle); font-size:0.8rem; color:var(--text-muted); margin-bottom:14px; max-height:100px; overflow-y:auto; line-height:1.5; white-space:pre-line;">
                     ${escapeHtml(p.workout_content || p.diet_content || 'لا توجد تفاصيل إضافية')}
@@ -5429,10 +5429,10 @@ function renderMemberPlans() {
 
             <div style="display:flex; gap:6px; border-top:1px solid var(--border-subtle); padding-top:10px;">
                 <button type="button" class="btn btn-sm" onclick="sendPlanWhatsApp('${p.id}')" style="flex:1; justify-content:center; background:#10b981; color:#fff; border:none; font-weight:700; gap:4px;">
-                    <span>📲 إرسال واتساب</span>
+                    <span> إرسال واتساب</span>
                 </button>
-                <button type="button" class="btn btn-sm btn-outline" onclick="openEditPlanModal('${p.id}')" title="تعديل">✏️</button>
-                <button type="button" class="btn btn-sm btn-outline" onclick="deleteMemberPlan('${p.id}')" title="حذف" style="color:var(--danger); border-color:rgba(239,68,68,0.3);">🗑️</button>
+                <button type="button" class="btn btn-sm btn-outline" onclick="openEditPlanModal('${p.id}')" title="تعديل">️</button>
+                <button type="button" class="btn btn-sm btn-outline" onclick="deleteMemberPlan('${p.id}')" title="حذف" style="color:var(--danger); border-color:rgba(239,68,68,0.3);">️</button>
             </div>
         </div>
     `).join('');
@@ -5477,7 +5477,7 @@ function renderAbsentMembers(searchQuery = '') {
     });
 
     if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">🎉 رائع! لا يوجد مشتركون غائبون حالياً متجاوزين للمدة المحددة.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);"> رائع! لا يوجد مشتركون غائبون حالياً متجاوزين للمدة المحددة.</td></tr>';
         return;
     }
 
@@ -5494,7 +5494,7 @@ function renderAbsentMembers(searchQuery = '') {
                 <td><span style="font-size:0.82rem; font-weight:800; color:#ef4444; background:rgba(239,68,68,0.15); padding:2px 8px; border-radius:10px;">${days} أيام غياب</span></td>
                 <td>
                     <button type="button" class="btn btn-sm" onclick="sendSingleAbsenceReminder('${m.id}')" style="background:#10b981; color:#fff; border:none; padding:4px 10px; font-weight:700; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px;">
-                        <span>📲 إرسال تحفيز</span>
+                        <span> إرسال تحفيز</span>
                     </button>
                 </td>
             </tr>
@@ -5507,7 +5507,7 @@ function sendSingleAbsenceReminder(memberId) {
     if (!member || !member.phone) return showToast('المشترك ليس لديه رقم هاتف مسجل', 'warning');
 
     const days = member.days_since_last || 2;
-    let msg = (waConfig.tplAbsence || "وحشتنا في TOP FITNESS يا {NAME}! 🏋️🔥\nلاحظنا غيابك منذ {ABSENCE_DAYS} أيام.. صحتك ولياقتك تهمنا، مستنينك النهاردة تكمل فورمتك وتمرينك بقوة!")
+    let msg = (waConfig.tplAbsence || "وحشتنا في TOP FITNESS يا {NAME}! ️\nلاحظنا غيابك منذ {ABSENCE_DAYS} أيام.. صحتك ولياقتك تهمنا، مستنينك النهاردة تكمل فورمتك وتمرينك بقوة!")
         .replace(/{NAME}/g, member.name)
         .replace(/{ABSENCE_DAYS}/g, days);
 
@@ -5519,7 +5519,7 @@ async function sendBulkAbsenceReminders() {
         return showToast('لا يوجد مشتركون غائبون لإرسال الرسائل إليهم', 'info');
     }
 
-    if (!confirm(`سيتم إرسال رسائل تشجيعية آمنة إلى (${absentMembersList.length}) مشتركين غائبين.\n\n🛡️ نظام الأمان مفعل: فواصل زمنية متغيرة 4-7 ثوانٍ لمنع الحظر. هل تريد المتابعة؟`)) {
+    if (!confirm(`سيتم إرسال رسائل تشجيعية آمنة إلى (${absentMembersList.length}) مشتركين غائبين.\n\n️ نظام الأمان مفعل: فواصل زمنية متغيرة 4-7 ثوانٍ لمنع الحظر. هل تريد المتابعة؟`)) {
         return;
     }
 
@@ -5541,7 +5541,7 @@ function stopBulkWhatsAppQueue() {
 async function processNextInBulkQueue(currentIndex, totalCount) {
     if (stopWaQueueFlag || currentIndex >= totalCount) {
         const statusEl = document.getElementById('bulk-queue-status');
-        if (statusEl) statusEl.textContent = '🎉 اكتملت عملية الإرسال بنجاح!';
+        if (statusEl) statusEl.textContent = ' اكتملت عملية الإرسال بنجاح!';
         setTimeout(() => closeModal('whatsappBulkModal'), 2000);
         showToast(`تم إتمام إرسال رسائل التحفيز بنجاح!`, 'success');
         return;
@@ -5559,7 +5559,7 @@ async function processNextInBulkQueue(currentIndex, totalCount) {
 
     if (currentMember.phone) {
         const days = currentMember.days_since_last || 2;
-        let msg = (waConfig.tplAbsence || "وحشتنا في TOP FITNESS يا {NAME}! 🏋️🔥")
+        let msg = (waConfig.tplAbsence || "وحشتنا في TOP FITNESS يا {NAME}! ️")
             .replace(/{NAME}/g, currentMember.name)
             .replace(/{ABSENCE_DAYS}/g, days);
         
@@ -5578,7 +5578,7 @@ async function processNextInBulkQueue(currentIndex, totalCount) {
             return;
         }
         remain--;
-        if (countdownEl) countdownEl.textContent = `⏳ فاصل أمان قبل الرسالة القادمة: ${remain} ثوانٍ...`;
+        if (countdownEl) countdownEl.textContent = ` فاصل أمان قبل الرسالة القادمة: ${remain} ثوانٍ...`;
         if (remain <= 0) {
             clearInterval(timer);
             processNextInBulkQueue(currentIndex + 1, totalCount);
@@ -5641,13 +5641,13 @@ async function pollWaStatus() {
         const reconnectBtn = document.getElementById('wa-reconnect-btn');
         
         if (res.status === 'connecting') {
-            statusEl.textContent = '⏳ جاري تجهيز اتصال الواتساب وإنشاء QR...';
+            statusEl.textContent = ' جاري تجهيز اتصال الواتساب وإنشاء QR...';
             statusEl.style.color = '#38bdf8';
             qrContainer.style.display = 'none';
             if (logoutBtn) logoutBtn.style.display = 'none';
             if (reconnectBtn) reconnectBtn.style.display = 'inline-block';
         } else if (res.status === 'qrcode') {
-            statusEl.textContent = '📲 يرجى مسح الـ QR Code من تطبيق واتساب بهاتفك الآن';
+            statusEl.textContent = ' يرجى مسح الـ QR Code من تطبيق واتساب بهاتفك الآن';
             statusEl.style.color = '#eab308';
             if (res.qr) {
                 qrImg.src = res.qr;
@@ -5656,13 +5656,13 @@ async function pollWaStatus() {
             if (logoutBtn) logoutBtn.style.display = 'none';
             if (reconnectBtn) reconnectBtn.style.display = 'inline-block';
         } else if (res.status === 'connected') {
-            statusEl.textContent = '✅ متصل بنجاح وجاهز للإرسال التلقائي الصامت!';
+            statusEl.textContent = ' متصل بنجاح وجاهز للإرسال التلقائي الصامت!';
             statusEl.style.color = '#10b981';
             qrContainer.style.display = 'none';
             if (logoutBtn) logoutBtn.style.display = 'inline-block';
             if (reconnectBtn) reconnectBtn.style.display = 'none';
         } else {
-            statusEl.textContent = '❌ غير متصل - اضغط على (بدء الربط) لتوليد الـ QR Code';
+            statusEl.textContent = ' غير متصل - اضغط على (بدء الربط) لتوليد الـ QR Code';
             statusEl.style.color = '#ef4444';
             qrContainer.style.display = 'none';
             if (logoutBtn) logoutBtn.style.display = 'none';
@@ -5676,7 +5676,7 @@ async function pollWaStatus() {
 async function handleWaReconnect() {
     const statusEl = document.getElementById('wa-connection-status');
     if (statusEl) {
-        statusEl.textContent = '⏳ جاري إنشاء QR Code جديد...';
+        statusEl.textContent = ' جاري إنشاء QR Code جديد...';
         statusEl.style.color = '#38bdf8';
     }
     if (window.electronAPI && window.electronAPI.reconnectWhatsApp) {

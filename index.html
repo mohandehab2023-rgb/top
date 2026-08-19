@@ -44,7 +44,7 @@
     
     <!-- Connection Status Banner -->
     <div id="connection-status" style="position:fixed; bottom:0; left:0; width:100%; background:#e74c3c; color:white; text-align:center; padding:5px; font-size:0.9rem; z-index:10000; display:none; transition: all 0.3s ease;">
-        ⚠️ تم فقدان الاتصال بالخادم المركزي. جاري المحاولة لإعادة الاتصال...
+        ️ تم فقدان الاتصال بالخادم المركزي. جاري المحاولة لإعادة الاتصال...
     </div>
 
     <!-- Login Overlay -->
@@ -563,7 +563,7 @@
             <section class="view-section" id="store">
                 <div class="section-header" id="store-header" style="margin-bottom: 16px;">
                     <div class="section-title">
-                        <h2 style="display: flex; align-items: center; gap: 8px;">🛒 متجر الأدوات والمستلزمات الرياضية</h2>
+                        <h2 style="display: flex; align-items: center; gap: 8px;"> متجر الأدوات والمستلزمات الرياضية</h2>
                         <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);" class="store-subtitle">نقطة بيع سريعة (POS) وإدارة مخزون الأدوات للإكسسوارات الرياضية</p>
                     </div>
                     <div class="store-action-buttons">
@@ -608,7 +608,7 @@
                         <button class="store-filter-btn" onclick="filterStoreCategory('مكملات ومشروبات', this)">مكملات ومشروبات</button>
                     </div>
                     <div style="display: flex; gap: 10px; align-items: center; min-width: 260px;">
-                        <input type="text" class="form-control" id="store-search" oninput="searchStoreProducts()" placeholder="🔍 ابحث بالاسم أو الباركود..." style="padding: 8px 14px; font-size: 0.9rem; width: 100%;">
+                        <input type="text" class="form-control" id="store-search" oninput="searchStoreProducts()" placeholder=" ابحث بالاسم أو الباركود..." style="padding: 8px 14px; font-size: 0.9rem; width: 100%;">
                     </div>
                 </div>
 
@@ -668,7 +668,7 @@
                                 <span id="store-cart-total-price" style="color: var(--primary); font-size: 1.3rem;">0 ج.م</span>
                             </div>
                             <button type="button" class="btn" id="btn-submit-store-sale" onclick="submitStoreSale()" style="width: 100%; justify-content: center; height: 46px; font-size: 1rem; font-weight: 800; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; border: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);">
-                                <span>🛒 تأكيد البيع وتوريد الخزينة</span>
+                                <span> تأكيد البيع وتوريد الخزينة</span>
                             </button>
                         </div>
                     </div>
@@ -679,7 +679,7 @@
             <section class="view-section" id="plans">
                 <div class="section-header" style="margin-bottom: 16px;">
                     <div class="section-title">
-                        <h2 style="display: flex; align-items: center; gap: 8px;">📋 الخطط التدريبية والجداول الغذائية</h2>
+                        <h2 style="display: flex; align-items: center; gap: 8px;"> الخطط التدريبية والجداول الغذائية</h2>
                         <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">إنشاء وتخصيص جداول التمارين والدايت للمشتركين وإرسالها مباشرة عبر واتساب</p>
                     </div>
                     <div style="display: flex; gap: 10px;">
@@ -717,7 +717,7 @@
                         <button class="store-filter-btn" onclick="filterPlansType('فتنس', this)">لياقة وفتنس عام</button>
                     </div>
                     <div style="display: flex; gap: 10px; align-items: center; min-width: 260px;">
-                        <input type="text" class="form-control" id="search-plans" oninput="searchMemberPlans()" placeholder="🔍 ابحث باسم المشترك أو اسم الخطة..." style="padding: 8px 14px; font-size: 0.9rem; width: 100%;">
+                        <input type="text" class="form-control" id="search-plans" oninput="searchMemberPlans()" placeholder=" ابحث باسم المشترك أو اسم الخطة..." style="padding: 8px 14px; font-size: 0.9rem; width: 100%;">
                     </div>
                 </div>
 
@@ -730,7 +730,7 @@
             <section class="view-section" id="absence-bot">
                 <div class="section-header" style="margin-bottom: 16px;">
                     <div class="section-title">
-                        <h2 style="display: flex; align-items: center; gap: 8px;">🤖 روبوت متابعة وتحفيز المشتركين الغائبين</h2>
+                        <h2 style="display: flex; align-items: center; gap: 8px;"> روبوت متابعة وتحفيز المشتركين الغائبين</h2>
                         <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">رصد تلقائي للمشتركين الذين لم يحضروا منذ 48 ساعة أو أكثر مع إرسال رسائل تشجيعية آمنة عبر واتساب</p>
                     </div>
                     <div style="display: flex; gap: 10px;">
@@ -769,8 +769,8 @@
 
                 <div class="panel" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <input type="text" class="form-control" id="search-absent" placeholder="🔍 ابحث باسم المشترك أو رقم الهاتف..." onkeyup="filterAbsentTable(this.value)" style="max-width:360px;">
-                        <span style="font-size:0.8rem; color:var(--text-muted);">🛡️ الفواصل الزمنية الآمنة بين الرسائل: 4–7 ثوانٍ لتفادي الحظر</span>
+                        <input type="text" class="form-control" id="search-absent" placeholder=" ابحث باسم المشترك أو رقم الهاتف..." onkeyup="filterAbsentTable(this.value)" style="max-width:360px;">
+                        <span style="font-size:0.8rem; color:var(--text-muted);">️ الفواصل الزمنية الآمنة بين الرسائل: 4–7 ثوانٍ لتفادي الحظر</span>
                     </div>
                     <table class="data-table">
                         <thead>
@@ -2840,7 +2840,7 @@
                         <div style="display: flex; gap: 10px; align-items: center;">
                             <input type="text" class="form-control" id="sp-image" placeholder="رابط الصورة أو اتركها فارغة" style="flex: 1;">
                             <input type="file" id="sp-image-file" accept="image/*" style="display:none;" onchange="handleProductImageUpload(this)">
-                            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('sp-image-file').click()" style="white-space:nowrap;">📁 اختر من جهازك</button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('sp-image-file').click()" style="white-space:nowrap;"> اختر من جهازك</button>
                         </div>
                         <div id="sp-image-preview-wrap" style="margin-top: 8px; display: none;">
                             <img id="sp-image-preview" src="" style="width: 60px; height: 60px; object-fit: contain; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle);">
@@ -2956,7 +2956,7 @@
 
                     <!-- Preset Auto-fill Helper Buttons -->
                     <div style="margin-bottom: 12px; display: flex; gap: 6px; align-items: center; background: rgba(56, 189, 248, 0.08); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2);">
-                        <span style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">⚡ نماذج سريعة جاهزة:</span>
+                        <span style="font-size: 0.8rem; color: var(--primary); font-weight: 700;"> نماذج سريعة جاهزة:</span>
                         <button type="button" class="btn btn-sm btn-outline" onclick="applyPlanTemplatePreset('تضخيم')" style="font-size: 0.75rem; padding: 2px 8px;">تضخيم 4 أيام</button>
                         <button type="button" class="btn btn-sm btn-outline" onclick="applyPlanTemplatePreset('تنشيف')" style="font-size: 0.75rem; padding: 2px 8px;">تنشيف ودايت</button>
                         <button type="button" class="btn btn-sm btn-outline" onclick="applyPlanTemplatePreset('فتنس')" style="font-size: 0.75rem; padding: 2px 8px;">فتنس شامل</button>
@@ -2964,19 +2964,19 @@
 
                     <!-- Workout Content -->
                     <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 0.85rem; color: var(--text-muted);">🏋️ جدول التمارين وتقسيم الأيام</label>
+                        <label style="font-size: 0.85rem; color: var(--text-muted);">️ جدول التمارين وتقسيم الأيام</label>
                         <textarea class="form-control" id="plan-workout-content" rows="4" placeholder="السبت: صدر وترايسبس&#10;الأحد: ظهر وبايسبس&#10;الثلاثاء: أكتاف وترابيس&#10;الأربعاء: أرجل وبطن..."></textarea>
                     </div>
 
                     <!-- Diet Content -->
                     <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 0.85rem; color: var(--text-muted);">🥗 النظام والجدول الغذائي (الدايت والوجبات)</label>
+                        <label style="font-size: 0.85rem; color: var(--text-muted);"> النظام والجدول الغذائي (الدايت والوجبات)</label>
                         <textarea class="form-control" id="plan-diet-content" rows="4" placeholder="وجبة 1: 4 بيضات + 80 جم شوفان مع حليب ولوز&#10;وجبة 2: 200 جم صدور دجاج + أرز بسمتي + طبق سلطة&#10;وجبة 3: شيك بروتين + موزة بعد التمرين&#10;وجبة 4: 150 جم لحم مشوي + بطاطا مشوية..."></textarea>
                     </div>
 
                     <!-- Notes & Recommendations -->
                     <div class="form-group">
-                        <label style="font-size: 0.85rem; color: var(--text-muted);">💡 نصائح وإرشادات الكابتن للمشترك</label>
+                        <label style="font-size: 0.85rem; color: var(--text-muted);"> نصائح وإرشادات الكابتن للمشترك</label>
                         <input type="text" class="form-control" id="plan-notes" placeholder="شرب 3 لتر ماء، النوم 8 ساعات، الالتزام بالإحماء...">
                     </div>
                 </div>
@@ -2992,11 +2992,11 @@
     <div class="modal-overlay" style="display: none;" id="whatsappBulkModal">
         <div class="modal-dialog" style="max-width: 480px;">
             <div class="modal-header">
-                <h3>📲 طابور إرسال رسائل واتساب الآمن</h3>
+                <h3> طابور إرسال رسائل واتساب الآمن</h3>
                 <button type="button" class="modal-close" onclick="closeModal('whatsappBulkModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
             <div class="modal-body" style="text-align: center; padding: 20px 10px;">
-                <div style="font-size: 2.2rem; margin-bottom: 10px;">🛡️</div>
+                <div style="font-size: 2.2rem; margin-bottom: 10px;">️</div>
                 <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-main); margin-bottom: 6px;" id="bulk-queue-status">جاري معالجة طابور الإرسال...</div>
                 <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">نظام أمان مكافحة الحظر: فواصل زمنية عشوائية (4 إلى 7 ثوانٍ) بين كل رسالة</div>
                 
@@ -3019,7 +3019,7 @@
                 </div>
             </div>
             <div class="modal-footer" style="justify-content: center;">
-                <button type="button" class="btn btn-outline" onclick="stopBulkWhatsAppQueue()" style="color: var(--danger); border-color: rgba(239,68,68,0.4);">⏹️ إيقاف الطابور</button>
+                <button type="button" class="btn btn-outline" onclick="stopBulkWhatsAppQueue()" style="color: var(--danger); border-color: rgba(239,68,68,0.4);">️ إيقاف الطابور</button>
             </div>
         </div>
     </div>
@@ -3028,7 +3028,7 @@
     <div class="modal-overlay" style="display: none;" id="whatsAppSettingsModal">
         <div class="modal-dialog" style="max-width: 640px;">
             <div class="modal-header">
-                <h3>⚙️ إعدادات منظومة واتساب والإشعارات الفورية</h3>
+                <h3>️ إعدادات منظومة واتساب والإشعارات الفورية</h3>
                 <button type="button" class="modal-close" onclick="closeModal('whatsAppSettingsModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
             <form onsubmit="saveWhatsAppSettings(event)">
@@ -3036,21 +3036,21 @@
                     <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 20px;">
                         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
                             <div>
-                                <h4 style="margin: 0 0 6px; color: #10b981; font-weight:800; font-size:1.05rem;">📱 ربط حساب واتساب (سيرفر Baileys المخفي)</h4>
+                                <h4 style="margin: 0 0 6px; color: #10b981; font-weight:800; font-size:1.05rem;"> ربط حساب واتساب (سيرفر Baileys المخفي)</h4>
                                 <div id="wa-connection-status" style="font-size: 0.9rem; color: var(--text-muted); font-weight:700;">جاري الاتصال بالسيرفر...</div>
                             </div>
                             <div style="display:flex; gap:6px;">
-                                <button type="button" class="btn btn-sm" id="wa-reconnect-btn" onclick="handleWaReconnect()" style="background: var(--primary); color: #0f172a; font-weight: 700; font-size: 0.8rem;">🔄 بدء الربط / تحديث QR</button>
+                                <button type="button" class="btn btn-sm" id="wa-reconnect-btn" onclick="handleWaReconnect()" style="background: var(--primary); color: #0f172a; font-weight: 700; font-size: 0.8rem;"> بدء الربط / تحديث QR</button>
                                 <button type="button" class="btn btn-sm" id="wa-logout-btn" onclick="handleWaLogout()" style="background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); font-weight:700; font-size:0.8rem; display:none;">تسجيل الخروج</button>
                             </div>
                         </div>
                         <div id="wa-qr-container" style="background: #fff; padding: 12px; border-radius: 10px; display: none; flex-direction:column; align-items: center; justify-content: center; margin: 12px auto; max-width: 240px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
                             <img id="wa-qr-img" src="" alt="WhatsApp QR Code" style="width: 200px; height: 200px; display: block;">
-                            <div style="color: #0f172a; font-size: 0.8rem; font-weight: 700; margin-top: 8px; text-align: center;">امسح الكود من واتساب هاتفك الآن 📲</div>
+                            <div style="color: #0f172a; font-size: 0.8rem; font-weight: 700; margin-top: 8px; text-align: center;">امسح الكود من واتساب هاتفك الآن </div>
                         </div>
                     </div>
 
-                    <div style="font-weight: 800; font-size: 0.95rem; color: var(--primary); margin-bottom: 10px;">🔔 مفاتيح تفعيل الإشعارات الفورية:</div>
+                    <div style="font-weight: 800; font-size: 0.95rem; color: var(--primary); margin-bottom: 10px;"> مفاتيح تفعيل الإشعارات الفورية:</div>
                     
                     <div style="display: flex; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 10px; border: 1px solid var(--border-subtle); margin-bottom: 16px;">
                         <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
@@ -3071,7 +3071,7 @@
                         </label>
                     </div>
 
-                    <div style="font-weight: 800; font-size: 0.95rem; color: var(--primary); margin-bottom: 10px;">📝 قوالب الرسائل التلقائية:</div>
+                    <div style="font-weight: 800; font-size: 0.95rem; color: var(--primary); margin-bottom: 10px;"> قوالب الرسائل التلقائية:</div>
                     
                     <div class="form-group" style="margin-bottom: 12px;">
                         <label style="font-size: 0.82rem; color: var(--text-muted);">قالب رسالة حضور البصمة للمشترك ({NAME}، {TIME}، {DAYS_LEFT})</label>
@@ -3089,7 +3089,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline" onclick="openWhatsAppLogsModal()">📋 سجل الرسائل</button>
+                    <button type="button" class="btn btn-outline" onclick="openWhatsAppLogsModal()"> سجل الرسائل</button>
                     <button type="button" class="btn btn-outline" onclick="closeModal('whatsAppSettingsModal')">إلغاء</button>
                     <button type="submit" class="btn" style="background: var(--primary); color: #0f172a; font-weight: 700;">حفظ الإعدادات</button>
                 </div>
@@ -3100,7 +3100,7 @@
     <div class="modal-overlay" style="display: none;" id="whatsAppLogsModal">
         <div class="modal" style="max-width: 900px;">
             <div class="modal-header">
-                <h3 class="modal-title">📋 سجل رسائل الواتساب (آخر 100 رسالة)</h3>
+                <h3 class="modal-title"> سجل رسائل الواتساب (آخر 100 رسالة)</h3>
                 <button type="button" class="modal-close" onclick="closeModal('whatsAppLogsModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
             <div class="modal-body">
@@ -3115,7 +3115,7 @@
                         <option value="store_receipt">إيصال متجر</option>
                         <option value="plan">خطة تدريب</option>
                     </select>
-                    <button type="button" class="btn btn-sm btn-outline" onclick="loadWhatsAppLogs()" style="font-size: 0.8rem;">🔄 تحديث</button>
+                    <button type="button" class="btn btn-sm btn-outline" onclick="loadWhatsAppLogs()" style="font-size: 0.8rem;"> تحديث</button>
                     <div id="wa-logs-summary" style="font-size: 0.82rem; color: var(--text-muted); margin-inline-start: auto;"></div>
                 </div>
                 <div style="overflow-x: auto; max-height: 460px; overflow-y: auto;">
