@@ -12,6 +12,11 @@
     <title>
         نظام إدارة الصالة الرياضية - TOP FITNESS
     </title>
+    <!-- Resource Hints for Performance Optimization -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://mrcnuyavvwixxeyvovof.supabase.co">
+
     <link href="style.css" rel="stylesheet" />
     <!-- الخط الخارجي يُحمّل بشكل غير معطِّل: لو الإنترنت مقطوع أو بطيء يعمل البرنامج فورًا بخط بديل -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" media="print" onload="this.media='all'" rel="stylesheet" />
@@ -253,7 +258,7 @@
                         </path>
                     </svg>
                 </div>
-                <button onclick="handleLogout()" class="btn" style="padding: 6px 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); font-size: 0.8rem; margin-right: 6px;" title="تسجيل خروج">
+                <button onclick="handleLogout()" class="btn" style="padding: 6px 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); font-size: 0.8rem; margin-right: 6px;" title="تسجيل خروج" aria-label="تسجيل خروج">
                     <svg fill="none" stroke="currentColor" viewbox="0 0 24 24" width="16" height="16"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                 </button>
             </div>

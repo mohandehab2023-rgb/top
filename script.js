@@ -1,6 +1,11 @@
 // --- Global Error Handler ---
 window.addEventListener('error', function(e) {
-    (()=>{})('Uncaught Error: ' + e.message + ' at ' + e.filename + ':' + e.lineno);
+    console.error('Uncaught Error: ' + e.message + ' at ' + e.filename + ':' + e.lineno);
+    try {
+        if (typeof showToast === 'function') {
+            showToast('حدث خطأ غير متوقع في الواجهة. يرجى تحديث الصفحة إذا استمرت المشكلة.', 'error');
+        }
+    } catch(err) {}
 });
 // أي عملية قاعدة بيانات بتفشل من غير ما حد يمسكها كانت بتختفي في الـ console
 // والموظف يفضل شايف إن كل حاجة تمام. دلوقتي بتظهر له رسالة.
