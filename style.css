@@ -1190,13 +1190,23 @@ body.offline-mode #connection-status {
         gap: 10px !important;
     }
 
-    /* 10. Action Buttons → stack */
-    .action-buttons,
+    /* 10. Action Buttons → side-by-side */
     .btn-group {
         flex-direction: column !important;
         gap: 6px !important;
     }
-    .action-buttons button,
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+    }
+    .action-buttons button {
+        flex: 1;
+        width: auto !important;
+        font-size: 0.85rem !important;
+        white-space: nowrap;
+        padding: 8px 4px;
+    }
     .btn-group button {
         width: 100% !important;
     }
@@ -1299,6 +1309,51 @@ body.offline-mode #connection-status {
 
     /* --- 3) قراءة مريحة: مفيش نص تحت 12px --- */
     body { font-size: 15px; }
+
+    .product-card-tool-btn {
+        min-width: 44px;
+        min-height: 44px;
+        width: auto;
+        height: auto;
+        flex: 1 !important;
+    }
+    
+    .product-card-actions {
+        flex-wrap: wrap !important;
+    }
+    
+    .btn-add-cart {
+        min-width: 100% !important;
+        order: 2;
+        margin-top: 4px;
+        white-space: nowrap !important;
+    }
+
+    #store-category-filters {
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+    }
+    #store-category-filters::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+    }
+    .store-filter-btn {
+        white-space: nowrap !important;
+        flex: 0 0 auto !important;
+    }
+
+    /* تكبير وتوسيط بيانات الإحصائيات في المتجر على الموبايل */
+    #store-kpi-inventory-value, #store-kpi-low-stock, #store-kpi-total-items, #store-kpi-today-sales {
+        font-size: 1.15rem !important;
+    }
+
+    /* حجم خط مصغر للأيقونات التوضيحية في بطاقة المنتج الموبايل */
+    .nav-badge {
+        font-size: 12px;
+    }
+
     small, .text-xs, .badge, .chip, .stat-label, .hint, .muted {
         font-size: 12px !important;
     }
@@ -1603,17 +1658,20 @@ body.offline-mode #connection-status {
         min-height: 48px;
     }
 
-    /* ── 5) الشبكات كلها عمود واحد ──────────────────────────────────── */
+    /* 📊 5) شبكات العرض على الجوال 📊 */
     .analytics-charts-grid,
     .analytics-grid,
     .form-grid,
     .form-row {
         grid-template-columns: 1fr !important;
     }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
     .form-row { gap: 12px !important; }
 
     /* شبكات الإحصائيات (مربعين بجوار بعضهما كما طلب المستخدم) */
-    .stats-grid,
     .kpi-grid {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 10px !important;
