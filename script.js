@@ -3406,6 +3406,10 @@ async function openMemberProfile(id) {
     document.getElementById('hist-trainer').innerText = m.trainer || '-';
     document.getElementById('hist-private-trainer').innerText = m.privateTrainer || 'لا يوجد';
     document.getElementById('hist-exp').innerText = m.exp || '-';
+    document.getElementById('hist-gender').innerText = genderText(m.gender) || '-';
+    document.getElementById('hist-address').innerText = m.address || '-';
+    document.getElementById('hist-pkg').innerText = m.pkg || '-';
+    document.getElementById('hist-paid').innerText = Number(m.paid || 0).toLocaleString() + ' ج.م';
 
     // Update Status Badge in Modal Header
     const badgeEl = document.getElementById('hist-status-badge');

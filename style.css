@@ -1,24 +1,24 @@
 :root {
-  --bg-app: #050B14;
-  --bg-sidebar: #0A1128;
-  --bg-topbar: rgba(10, 17, 40, 0.85); /* Glassmorphism */
-  --bg-card: #0F172A;
-  --border-subtle: rgba(0, 229, 255, 0.15);
-  --border-hover: rgba(0, 229, 255, 0.5);
-  --primary: #00E5FF;
-  --primary-hover: #00B8D9;
-  --secondary: #1D2D50;
-  --success: #00E5FF;
-  --danger: #1D2D50; /* Restricted to navy/cyan palette */
-  --warning: #3B5377;
-  --info: #00E5FF;
-  --text-main: #FFFFFF;
-  --text-muted: #8AB4F8;
-  --text-dim: #3B5377;
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
+  --bg-app: #080c14;
+  --bg-sidebar: #0f172a;
+  --bg-topbar: #0f172a;
+  --bg-card: #151d30;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(56, 189, 248, 0.3);
+  --primary: #38bdf8;
+  --primary-hover: #0284c7;
+  --secondary: #64748b;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -162,10 +162,9 @@
       color: var(--text-main);
       font-weight: 700;
       font-size: 0.92rem;
-      padding: 0 1.5rem;
-      min-height: 48px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border-subtle);
+      padding: 0.65rem 1.3rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -628,8 +627,8 @@
 .modal-actions, .modal-footer { padding-top: 1rem; margin-top: 1.5rem; border-top: 1px solid var(--border-subtle); background: transparent; display: flex; justify-content: flex-end; gap: 12px; }
 
 /* Interactive States & Forms */
-.form-control { width: 100%; padding: 0 16px; min-height: 48px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.95rem; transition: all 0.3s ease; box-sizing: border-box; }
-.form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.15); background: rgba(15, 23, 42, 0.9); }
+.form-control { width: 100%; padding: 12px 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.95rem; transition: all 0.3s ease; }
+.form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); background: rgba(15, 23, 42, 0.9); }
 .form-control::placeholder { color: var(--text-dim); }
 
 /* Sleek Icon Buttons */
@@ -1038,22 +1037,19 @@ body.offline-mode #connection-status {
     /* 2. Sidebar → Bottom Navigation Bar */
     .sidebar {
         position: fixed !important;
-        bottom: 16px !important;
-        left: 16px !important;
-        right: 16px !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
         top: auto !important;
-        width: calc(100% - 32px) !important;
+        width: 100% !important;
         height: auto !important;
-        max-height: 64px !important;
+        max-height: 72px !important;
         flex-direction: row !important;
-        background: rgba(10, 17, 40, 0.85) !important;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(0, 229, 255, 0.25) !important;
-        border-radius: 20px !important;
+        border-top: 1px solid var(--border-subtle);
+        border-left: none !important;
         z-index: 9999;
-        padding: 4px 8px !important;
-        box-shadow: 0 8px 32px rgba(0, 229, 255, 0.15);
+        padding: 4px 0;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
         overflow: visible;
     }
 
@@ -1120,13 +1116,9 @@ body.offline-mode #connection-status {
 
     /* 3. Main Content → make room for bottom nav */
     .main-content {
-        padding-bottom: 90px !important; /* Space for floating nav */
+        padding-bottom: 80px !important;
         height: 100vh;
         overflow-y: auto !important;
-    }
-    
-    .brand-section, .sidebar-footer {
-        display: none !important;
     }
 
     /* 4. Topbar → compact */
@@ -1418,17 +1410,16 @@ body.offline-mode #connection-status {
 
     .view-section table tbody td {
         display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        padding: 4px 0;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 8px 0;
         border: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        text-align: left;
-        min-height: 24px;
-        white-space: nowrap;
-        font-size: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        text-align: right;
+        min-height: 36px;
+        white-space: normal;
+        font-size: 13.5px;
     }
     .view-section table tbody td:last-child { border-bottom: none; }
 
@@ -1439,20 +1430,18 @@ body.offline-mode #connection-status {
         font-weight: 700;
         color: var(--text-muted, #94a3b8);
         flex-shrink: 0;
-        width: auto;
-        margin-bottom: 0;
+        width: 100%;
+        margin-bottom: 1px;
     }
 
     /* أول خلية = عنوان الكارت */
     .view-section table tbody td:first-child {
-        font-size: 0.95rem;
+        font-size: 1rem;
         font-weight: 800;
         padding-top: 2px;
-        padding-bottom: 4px;
+        padding-bottom: 6px;
         border-bottom: 1px dashed rgba(255,255,255,0.1);
         color: var(--primary);
-        flex-direction: row;
-        justify-content: space-between;
     }
 
     /* صف "لا توجد بيانات" يفضل زي ما هو */
@@ -1732,10 +1721,6 @@ body.offline-mode #connection-status {
         flex-shrink: 0;
         width: 20px; height: 20px;
     }
-    
-    .hide-on-mobile {
-        display: none !important;
-    }
 
     /* ── الهيدر العلوي: تصغير حجم الخط والعناصر عشان تناسب الشاشة ── */
     .topbar {
@@ -1806,76 +1791,23 @@ body.offline-mode #connection-status {
         font-size: 11px !important;
     }
 
-    /* --- User Requested Mobile Sizing Overrides --- */
-    
-    /* 1) Main Dashboard KPI cards (50% smaller) */
-    .dashboard-top-cards {
-        gap: 8px !important;
-        grid-template-columns: repeat(2, 1fr) !important;
+    /* Member Card Actions Size */
+    .styled-table tbody td:last-child {
+        justify-content: flex-end !important;
+        padding-top: 6px !important;
+        gap: 6px !important;
     }
-    .dash-card {
-        padding: 10px 12px !important;
+    .styled-table tbody td .icon-btn-sleek {
+        min-width: 28px !important;
+        min-height: 28px !important;
+        width: 28px !important;
+        height: 28px !important;
+        padding: 4px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
         border-radius: 8px !important;
     }
-    .dash-card-icon {
-        width: 28px !important; height: 28px !important; font-size: 1rem !important;
+    .styled-table tbody td .icon-btn-sleek svg {
+        width: 14px !important;
+        height: 14px !important;
     }
-    .dash-card-value {
-        font-size: 1.25rem !important; margin-bottom: 4px !important;
-    }
-    .dash-card-title { font-size: 0.8rem !important; }
-    
-    /* 2) Member Tabs (Very small & professional) */
-    .filter-tabs {
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
-        gap: 6px !important;
-        padding-bottom: 6px !important;
-        margin-bottom: 12px !important;
-        scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
-    }
-    .filter-tabs::-webkit-scrollbar { display: none; }
-    .tab-btn {
-        padding: 4px 12px !important;
-        font-size: 0.75rem !important;
-        white-space: nowrap !important;
-        border-radius: 12px !important;
-        flex-shrink: 0 !important;
-    }
-
-    /* 3) Member Cards (Relatively Smaller) */
-    .styled-table tbody tr {
-        padding: 6px 8px !important;
-        margin-bottom: 6px !important;
-        border-radius: 6px !important;
-    }
-    .styled-table tbody td {
-        padding: 4px 0 !important;
-        min-height: 24px !important;
-        font-size: 11px !important;
-    }
-
-    /* 4) Store Products Grid (Tiny single row) */
-    #store-products-grid {
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
-        gap: 8px !important;
-        padding-bottom: 12px !important;
-        scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
-    }
-    #store-products-grid::-webkit-scrollbar { display: none; }
-    .store-product-card {
-        flex: 0 0 120px !important;
-        min-width: 120px !important;
-        height: auto !important;
-        padding: 0 !important;
-    }
-    .store-product-card .product-img-wrap { height: 90px !important; }
-    .store-product-card .product-details { padding: 6px !important; }
-    .store-product-card h4 { font-size: 0.8rem !important; margin: 0 0 4px !important; }
-    .store-product-card .product-price { font-size: 0.9rem !important; }
 }
