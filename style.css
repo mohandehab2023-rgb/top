@@ -1798,4 +1798,72 @@ body.offline-mode #connection-status {
     .nav-list .nav-link[data-m-primary] > span {
         font-size: 11px !important;
     }
+
+    /* --- User Requested Mobile Sizing Overrides --- */
+    
+    /* 1) Main Dashboard KPI cards (50% smaller) */
+    .dashboard-top-cards {
+        gap: 8px !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .dash-card {
+        padding: 10px 12px !important;
+        border-radius: 8px !important;
+    }
+    .dash-card-icon {
+        width: 28px !important; height: 28px !important; font-size: 1rem !important;
+    }
+    .dash-card-value {
+        font-size: 1.25rem !important; margin-bottom: 4px !important;
+    }
+    .dash-card-title { font-size: 0.8rem !important; }
+    
+    /* 2) Member Tabs (Very small & professional) */
+    .filter-tabs {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        gap: 6px !important;
+        padding-bottom: 6px !important;
+        margin-bottom: 12px !important;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+    .filter-tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+        padding: 4px 12px !important;
+        font-size: 0.75rem !important;
+        white-space: nowrap;
+        border-radius: 12px !important;
+    }
+
+    /* 3) Member Cards (Relatively Smaller) */
+    .member-card {
+        padding: 12px !important;
+        gap: 8px !important;
+    }
+    .member-card-avatar {
+        width: 36px !important; height: 36px !important; font-size: 1rem !important;
+    }
+    .member-card-title { font-size: 0.95rem !important; }
+
+    /* 4) Store Products Grid (Tiny single row) */
+    #store-products-grid {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        gap: 10px !important;
+        padding-bottom: 12px !important;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+    #store-products-grid::-webkit-scrollbar { display: none; }
+    .product-card {
+        flex: 0 0 130px !important;
+        min-width: 130px !important;
+    }
+    .product-img-wrapper { height: 110px !important; }
+    .product-card-body { padding: 8px 10px !important; }
+    .product-card-title { font-size: 0.85rem !important; }
+    .product-card-price { font-size: 1rem !important; }
 }

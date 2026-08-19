@@ -631,27 +631,6 @@
                             <button type="button" class="btn btn-sm btn-outline" onclick="clearStoreCart()" style="font-size: 0.75rem; padding: 4px 8px; color: var(--danger); border-color: rgba(239, 68, 68, 0.3);">تفريغ السلة</button>
                         </div>
 
-                        <!-- Buyer Selection -->
-                        <div class="store-cart-buyer-box">
-                            <div style="margin-bottom: 8px;">
-                                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">نوع المشتري</label>
-                                <div style="display: flex; gap: 8px;">
-                                    <button type="button" class="btn btn-sm store-buyer-toggle active" id="buyer-type-walkin" onclick="setStoreBuyerType('walkin')">عميل زائر</button>
-                                    <button type="button" class="btn btn-sm store-buyer-toggle" id="buyer-type-member" onclick="setStoreBuyerType('member')">مشترك مسجل</button>
-                                </div>
-                            </div>
-                            <div id="buyer-member-select-wrap" style="display: none; margin-bottom: 8px;">
-                                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">اختر المشترك</label>
-                                <select class="form-control" id="store-cart-member-select" onchange="onStoreMemberSelected()" style="font-size: 0.85rem; padding: 6px 10px;">
-                                    <option value="">-- اختر المشترك من القائمة --</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">اسم العميل</label>
-                                <input type="text" class="form-control" id="store-cart-buyer-name" placeholder="اسم العميل الزائر..." style="font-size: 0.85rem; padding: 6px 10px;">
-                            </div>
-                        </div>
-
                         <!-- Cart Items List -->
                         <div class="store-cart-items-container" id="store-cart-items">
                             <div class="store-cart-empty">
@@ -667,7 +646,7 @@
                                 <span style="color: var(--text-muted);">إجمالي الفاتورة:</span>
                                 <span id="store-cart-total-price" style="color: var(--primary); font-size: 1.3rem;">0 ج.م</span>
                             </div>
-                            <button type="button" class="btn" id="btn-submit-store-sale" onclick="submitStoreSale()" style="width: 100%; justify-content: center; height: 46px; font-size: 1rem; font-weight: 800; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; border: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);">
+                            <button type="button" class="btn" onclick="openStoreCheckoutModal()" style="width: 100%; justify-content: center; height: 46px; font-size: 1rem; font-weight: 800; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; border: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);">
                                 <span> تأكيد البيع وتوريد الخزينة</span>
                             </button>
                         </div>
@@ -2857,6 +2836,43 @@
                     <button type="submit" class="btn" style="background: var(--primary); color: #0f172a; font-weight: 700;">حفظ المنتج</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Store Checkout Modal -->
+    <div class="modal-overlay" id="storeCheckoutModal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3>تأكيد بيع المتجر</h3>
+                <button type="button" class="close-modal" onclick="closeModal('storeCheckoutModal')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="store-cart-buyer-box">
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 8px;">نوع المشتري</label>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" class="btn store-buyer-toggle active" id="buyer-type-walkin" onclick="setStoreBuyerType('walkin')" style="flex: 1;">عميل زائر</button>
+                            <button type="button" class="btn store-buyer-toggle" id="buyer-type-member" onclick="setStoreBuyerType('member')" style="flex: 1;">مشترك مسجل</button>
+                        </div>
+                    </div>
+                    <div id="buyer-member-select-wrap" style="display: none; margin-bottom: 12px;">
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 8px;">اختر المشترك</label>
+                        <select class="form-control" id="store-cart-member-select" onchange="onStoreMemberSelected()">
+                            <option value="">-- اختر المشترك من القائمة --</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 8px;">اسم العميل</label>
+                        <input type="text" class="form-control" id="store-cart-buyer-name" placeholder="اسم العميل الزائر...">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" onclick="closeModal('storeCheckoutModal')">إلغاء</button>
+                <button type="button" class="btn" id="btn-submit-store-sale" onclick="submitStoreSale()" style="background: linear-gradient(135deg, var(--success) 0%, #059669 100%);">تأكيد وتوريد الخزينة</button>
+            </div>
         </div>
     </div>
 
