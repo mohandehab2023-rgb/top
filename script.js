@@ -3360,70 +3360,83 @@ async function openMemberProfile(id) {
 
     document.getElementById('hist-title').innerText = 'كارت المشترك: ' + m.name;
     
-    // --- PREMIUM PACKAGE INJECTION ---
-    const existing = document.getElementById('hist-injected-balance');
-    if (existing) existing.remove();
-    if (m && m.pkg && m.pkg.includes('الباقة المتميزة')) {
-        const balance = m.sessions_balance !== undefined ? m.sessions_balance : 0;
-        const grid = document.querySelector('.member-card-grid');
-        if (grid) {
-            const box = document.createElement('div');
-            box.className = 'member-card-info-box';
-            box.id = 'hist-injected-balance';
-            box.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
-            box.style.borderColor = '#10b981';
-            box.innerHTML = '<span class="label" style="color:#10b981; font-weight:bold;">رصيد الحصص المتبقية</span>' + 
-                            '<span class="val" style="color:#10b981; font-weight:900; font-size:1.15rem;">' + balance + ' حصة</span>';
-            // Insert it at the end of the grid (after the default boxes)
-            grid.appendChild(box);
-        }
-    }
-    // --- END PREMIUM PACKAGE INJECTION ---
-    // الحالة المالية في كارت المشترك
-    const existingFin = document.getElementById('hist-injected-finance');
-    if (existingFin) existingFin.remove();
-    const finGrid = document.querySelector('.member-card-grid');
-    if (finGrid) {
-        const due = remainingOf(m);
-        const box = document.createElement('div');
-        box.className = 'member-card-info-box';
-        box.id = 'hist-injected-finance';
-        if (due > 0) {
-            box.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
-            box.style.borderColor = 'rgba(239, 68, 68, 0.45)';
-        }
-        box.innerHTML = '<span class="label">الحالة المالية</span>' +
-            '<span class="val ' + (due > 0 ? 'text-danger' : 'text-success') + '">' +
-            (due > 0 ? ('متبقي ' + due.toLocaleString() + ' ج.م') : 'مسدَّد بالكامل') +
-            '</span>' +
-            '<span style="font-size:0.72rem; color:var(--text-dim);">سعر ' +
-            Number(m.price || 0).toLocaleString() + ' — مدفوع ' + Number(m.paid || 0).toLocaleString() + '</span>';
-        finGrid.appendChild(box);
-    }
-
-    document.getElementById('hist-phone').innerText = m.phone || '-';
-    document.getElementById('hist-zkid').innerText = m.zkid || '-';
-    document.getElementById('hist-trainer').innerText = m.trainer || '-';
-    document.getElementById('hist-private-trainer').innerText = m.privateTrainer || 'لا يوجد';
-    document.getElementById('hist-exp').innerText = m.exp || '-';
-    document.getElementById('hist-gender').innerText = genderText(m.gender) || '-';
-    document.getElementById('hist-address').innerText = m.address || '-';
-    document.getElementById('hist-pkg').innerText = m.pkg || '-';
-    document.getElementById('hist-paid').innerText = Number(m.paid || 0).toLocaleString() + ' ج.م';
-
-    // Update Status Badge in Modal Header
+    // Status Badge
     const badgeEl = document.getElementById('hist-status-badge');
     if (badgeEl) {
-        if (effectiveStatus(m) === 'active') {
+        const st = effectiveStatus(m);
+        if (st === 'active') {
             badgeEl.className = 'badge badge-success';
             badgeEl.innerText = 'ساري';
-        } else if (m.status === 'expired') {
+        } else if (m.status === 'expired' || st === 'expired') {
             badgeEl.className = 'badge badge-danger';
             badgeEl.innerText = 'منتهي';
         } else {
-            badgeEl.className = 'badge badge-danger';
-            badgeEl.innerText = 'مجمد ';
+            badgeEl.className = 'badge badge-neutral';
+            badgeEl.innerText = 'مجمد';
         }
+    }
+
+    // Populate all info boxes
+    if (document.getElementById('hist-zkid')) document.getElementById('hist-zkid').innerText = m.zkid || '-';
+    if (document.getElementById('hist-phone')) document.getElementById('hist-phone').innerText = m.phone || '-';
+    if (document.getElementById('hist-gender')) document.getElementById('hist-gender').innerText = genderText(m.gender) || '-';
+    if (document.getElementById('hist-address')) document.getElementById('hist-address').innerText = m.address || 'غير محدد';
+    if (document.getElementById('hist-pkg')) document.getElementById('hist-pkg').innerText = (m.pkg || '-').replace(/[\?\uFFFD]/g, '').trim();
+    if (document.getElementById('hist-exp')) document.getElementById('hist-exp').innerText = m.exp || '-';
+    if (document.getElementById('hist-trainer')) document.getElementById('hist-trainer').innerText = m.trainer || 'بدون مدرب';
+    if (document.getElementById('hist-private-trainer')) document.getElementById('hist-private-trainer').innerText = m.privateTrainer || 'لا يوجد';
+
+    // Optional guardian phone
+    const guardianBox = document.getElementById('hist-guardian-box');
+    if (guardianBox) {
+        if (m.guardian_phone && m.guardian_phone.trim()) {
+            guardianBox.style.display = 'flex';
+            document.getElementById('hist-guardian').innerText = m.guardian_phone;
+        } else {
+            guardianBox.style.display = 'none';
+        }
+    }
+
+    // Optional notes
+    const notesBox = document.getElementById('hist-notes-box');
+    if (notesBox) {
+        if (m.notes && m.notes.trim()) {
+            notesBox.style.display = 'flex';
+            document.getElementById('hist-notes').innerText = m.notes;
+        } else {
+            notesBox.style.display = 'none';
+        }
+    }
+
+    // Sessions balance
+    const balanceBox = document.getElementById('hist-balance-box');
+    if (balanceBox) {
+        if (m && m.pkg && m.pkg.includes('الباقة المتميزة')) {
+            balanceBox.style.display = 'flex';
+            const balance = m.sessions_balance !== undefined ? m.sessions_balance : 0;
+            document.getElementById('hist-balance').innerText = balance + ' حصة';
+        } else {
+            balanceBox.style.display = 'none';
+        }
+    }
+
+    // Financial Info Box
+    const finBox = document.getElementById('hist-finance-box');
+    if (finBox) {
+        const due = remainingOf(m);
+        const dueTxt = due > 0 ? `متبقي: ${due.toLocaleString()} ج.م` : 'مسدَّد بالكامل';
+        const dueColor = due > 0 ? '#ef4444' : '#10b981';
+        finBox.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                <span class="label" style="font-weight:700;">الحالة المالية للاشتراك</span>
+                <span class="badge" style="background:${due > 0 ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)'}; color:${dueColor}; font-weight:800; font-size:0.82rem; border:1px solid ${due > 0 ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}; padding:2px 8px; border-radius:8px;">${dueTxt}</span>
+            </div>
+            <div style="display:flex; gap:14px; margin-top:4px; font-size:0.85rem; color:var(--text-main); flex-wrap:wrap;">
+                <span>السعر: <b>${Number(m.price || 0).toLocaleString()} ج.م</b></span>
+                <span>المدفوع: <b style="color:#10b981;">${Number(m.paid || 0).toLocaleString()} ج.م</b></span>
+                ${due > 0 ? `<span style="color:#ef4444;">المتبقي: <b>${due.toLocaleString()} ج.م</b></span>` : ''}
+            </div>
+        `;
     }
 
     // Populate Member Card Actions Bar
@@ -3431,31 +3444,42 @@ async function openMemberProfile(id) {
     if (actionsBar) {
         let freezeBtnHTML = '';
         if (m.status === 'frozen') {
-            freezeBtnHTML = `<button class="btn-card-action btn-action-unfreeze" onclick="toggleFreezeMember('${m.id}', true)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5l-10 14M5 5l10 14M2 12h20"/></svg>فك التجميد</button>`;
+            freezeBtnHTML = `<button class="btn-card-action btn-action-unfreeze" onclick="toggleFreezeMember('${m.id}', true)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5l-10 14M5 5l10 14M2 12h20"/></svg>فك التجميد</button>`;
         } else if (m.status === 'active') {
-            freezeBtnHTML = `<button class="btn-card-action btn-action-freeze" onclick="toggleFreezeMember('${m.id}', true)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>تجميد الاشتراك</button>`;
+            freezeBtnHTML = `<button class="btn-card-action btn-action-freeze" onclick="toggleFreezeMember('${m.id}', true)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>تجميد الاشتراك</button>`;
         } else {
-            freezeBtnHTML = `<button class="btn-card-action" disabled><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>الاشتراك منتهي</button>`;
+            freezeBtnHTML = `<button class="btn-card-action" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>الاشتراك منتهي</button>`;
         }
 
         let actionsHTML = '';
+        // 1. تجديد الاشتراك (دائماً في المقدمة)
+        actionsHTML += `<button class="btn-card-action" style="color:#10b981; border-color:rgba(16,185,129,0.35); background:rgba(16,185,129,0.06);" onclick="closeModal('memberHistoryModal'); openRenewModal('${m.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l-5.46-5.46"/></svg>تجديد الاشتراك</button>`;
+
+        // 2. تسديد مديونية (إن وُجدت)
         const memberDue = remainingOf(m);
         if (memberDue > 0) {
-            actionsHTML += `<button class="btn-card-action btn-action-delete" onclick="closeModal('memberHistoryModal'); openPaymentModal('${escapeJsArg(m.id)}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>تسديد ${memberDue.toLocaleString()} ج.م</button>`;
+            actionsHTML += `<button class="btn-card-action btn-action-delete" style="color:#ef4444; border-color:rgba(239,68,68,0.35); background:rgba(239,68,68,0.06);" onclick="closeModal('memberHistoryModal'); openPaymentModal('${escapeJsArg(m.id)}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>تسديد ${memberDue.toLocaleString()} ج.م</button>`;
         }
+
+        // 3. التجميد / فك التجميد
         actionsHTML += freezeBtnHTML;
-        actionsHTML += `<button class="btn-card-action btn-action-whatsapp" onclick="sendWhatsAppFromList('${m.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>مراسلة واتساب</button>`;
-        actionsHTML += `<button class="btn-card-action btn-action-invite" onclick="closeModal('memberHistoryModal'); openAddInvitationModal('${m.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><path d="M13 5v14"/></svg>إرسال دعوة صديق</button>`;
 
-        // مدرب البريفت مستقل عن مدرب الاشتراك، فيُدار من هنا
-        const priveLabel = m.privateTrainer ? 'تعديل مدرب البريفت' : 'إضافة مدرب بريفت';
-        actionsHTML += `<button class="btn-card-action btn-action-ptrainer" onclick="openPrivateTrainerModal('${m.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 14 0v2"/><circle cx="19" cy="8" r="3"/><path d="M21 21v-2a5 5 0 0 0-7.5-4.2"/></svg>${priveLabel}</button>`;
+        // 4. واتساب
+        actionsHTML += `<button class="btn-card-action btn-action-whatsapp" onclick="sendWhatsAppFromList('${m.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>مراسلة واتساب</button>`;
 
-        actionsHTML += `<button class="btn-card-action" style="color:var(--primary); border-color:var(--primary);" onclick="closeModal('memberHistoryModal'); openCustomDurationModal('${m.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg>تعديل مدة الاشتراك</button>`;
+        // 5. دعوة صديق
+        actionsHTML += `<button class="btn-card-action btn-action-invite" onclick="closeModal('memberHistoryModal'); openAddInvitationModal('${m.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><path d="M13 5v14"/></svg>إرسال دعوة</button>`;
+
+        // 6. مدرب بريفت
+        const priveLabel = m.privateTrainer ? 'تعديل البريفت' : 'إضافة بريفت';
+        actionsHTML += `<button class="btn-card-action btn-action-ptrainer" onclick="openPrivateTrainerModal('${m.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 14 0v2"/><circle cx="19" cy="8" r="3"/><path d="M21 21v-2a5 5 0 0 0-7.5-4.2"/></svg>${priveLabel}</button>`;
+
+        // 7. تعديل المدة
+        actionsHTML += `<button class="btn-card-action" style="color:var(--primary); border-color:rgba(0,229,255,0.35);" onclick="closeModal('memberHistoryModal'); openCustomDurationModal('${m.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg>تعديل المدة</button>`;
 
         if (currentUser && currentUser.role === 'admin') {
-            actionsHTML += `<button class="btn-card-action btn-action-edit" onclick="closeModal('memberHistoryModal'); openEditMember('${m.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>تعديل البيانات</button>`;
-            actionsHTML += `<button class="btn-card-action btn-action-delete" onclick="closeModal('memberHistoryModal'); deleteMember('${m.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>حذف المشترك</button>`;
+            actionsHTML += `<button class="btn-card-action btn-action-edit" onclick="closeModal('memberHistoryModal'); openEditMember('${m.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>تعديل البيانات</button>`;
+            actionsHTML += `<button class="btn-card-action btn-action-delete" onclick="closeModal('memberHistoryModal'); deleteMember('${m.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>حذف المشترك</button>`;
         }
 
         actionsBar.innerHTML = `<div class="hist-actions-grid">${actionsHTML}</div>`;

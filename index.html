@@ -1597,76 +1597,51 @@
             </div>
             <div class="member-card-grid">
                 <div class="member-card-info-box">
-                    <span class="label">
-                         رقم الهاتف
-                    </span>
-                    <span class="val" id="hist-phone">
-                        -
-                    </span>
+                    <span class="label">رقم البصمة</span>
+                    <span class="val" id="hist-zkid" style="color:var(--primary); font-weight:800;">-</span>
                 </div>
                 <div class="member-card-info-box">
-                    <span class="label">
-                         رقم البصمة
-                    </span>
-                    <span class="val" id="hist-zkid">
-                        -
-                    </span>
+                    <span class="label">رقم الهاتف</span>
+                    <span class="val" id="hist-phone">-</span>
                 </div>
                 <div class="member-card-info-box">
-                    <span class="label">
-                         تاريخ الانتهاء
-                    </span>
-                    <span class="val" id="hist-exp" style="color:var(--primary);">
-                        -
-                    </span>
+                    <span class="label">النوع</span>
+                    <span class="val" id="hist-gender">-</span>
                 </div>
                 <div class="member-card-info-box">
-                    <span class="label">
-                         مشترك عن طريق مدرب
-                    </span>
-                    <span class="val" id="hist-trainer">
-                        -
-                    </span>
+                    <span class="label">العنوان</span>
+                    <span class="val" id="hist-address">-</span>
                 </div>
                 <div class="member-card-info-box">
-                    <span class="label">
-                         مدرب بريفت
-                    </span>
-                    <span class="val" id="hist-private-trainer">
-                        -
-                    </span>
+                    <span class="label">الباقة الحالية</span>
+                    <span class="val" id="hist-pkg" style="color:var(--primary); font-weight:700;">-</span>
                 </div>
                 <div class="member-card-info-box">
-                    <span class="label">
-                         النوع
-                    </span>
-                    <span class="val" id="hist-gender">
-                        -
-                    </span>
+                    <span class="label">تاريخ الانتهاء</span>
+                    <span class="val" id="hist-exp" style="color:var(--text-main); font-weight:700;">-</span>
                 </div>
                 <div class="member-card-info-box">
-                    <span class="label">
-                         العنوان
-                    </span>
-                    <span class="val" id="hist-address">
-                        -
-                    </span>
+                    <span class="label">المدرب</span>
+                    <span class="val" id="hist-trainer">-</span>
                 </div>
                 <div class="member-card-info-box">
-                    <span class="label">
-                         الباقة
-                    </span>
-                    <span class="val" id="hist-pkg">
-                        -
-                    </span>
+                    <span class="label">مدرب بريفت</span>
+                    <span class="val" id="hist-private-trainer">-</span>
                 </div>
-                <div class="member-card-info-box">
-                    <span class="label">
-                         المدفوع
-                    </span>
-                    <span class="val" id="hist-paid">
-                        -
-                    </span>
+                <div class="member-card-info-box" id="hist-guardian-box" style="display:none;">
+                    <span class="label">هاتف ولي الأمر</span>
+                    <span class="val" id="hist-guardian">-</span>
+                </div>
+                <div class="member-card-info-box" id="hist-balance-box" style="display:none; background:rgba(16, 185, 129, 0.1); border-color:#10b981;">
+                    <span class="label" style="color:#10b981; font-weight:bold;">رصيد الحصص المتبقية</span>
+                    <span class="val" id="hist-balance" style="color:#10b981; font-weight:900;">-</span>
+                </div>
+                <div class="member-card-info-box" id="hist-finance-box" style="grid-column: 1 / -1; background:rgba(255,255,255,0.02);">
+                    <!-- Dynamic Finance Info -->
+                </div>
+                <div class="member-card-info-box" id="hist-notes-box" style="display:none; grid-column: 1 / -1;">
+                    <span class="label">ملاحظات</span>
+                    <span class="val" id="hist-notes" style="font-size:0.85rem; font-weight:500; color:var(--text-muted);">-</span>
                 </div>
             </div>
             <!-- ACTION BUTTONS BAR INSIDE MEMBER CARD -->
