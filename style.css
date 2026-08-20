@@ -1630,6 +1630,7 @@ body.offline-mode #connection-status {
         padding-bottom: 90px !important; /* Space for floating nav */
         height: 100vh;
         overflow-y: auto !important;
+        overflow-x: hidden !important;
     }
     
     .brand-section, .sidebar-footer {
