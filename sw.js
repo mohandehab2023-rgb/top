@@ -10,7 +10,6 @@ const STATIC_ASSETS = [
     './mobile.js',
     './config.js',
     './supabase-bridge.js',
-    './mock-electron.js',
     './chart.min.js',
     './assets/icon.png'
 ];
