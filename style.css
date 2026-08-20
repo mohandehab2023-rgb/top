@@ -19,6 +19,11 @@
   --radius-md: 4px;
   --radius-lg: 8px;
   --radius-xl: 12px;
+  /* درجات لون التمييز: الطبقات الجديدة بتستعملها بدل ما تكتب rgba(0,229,255,..)
+     بالإيد، فنفس المكوّنات بتشتغل لو الثيم اتغيّر (نسخة الديسكتوب لونها أزرق) */
+  --accent-wash: rgba(0, 229, 255, 0.06);
+  --accent-tint: rgba(0, 229, 255, 0.12);
+  --accent-line: rgba(0, 229, 255, 0.25);
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -198,7 +203,9 @@
       transform: translateY(-1px);
       box-shadow: none !important;
     }
-    .btn-sm { padding: 0.45rem 0.9rem; font-size: 0.82rem; border-radius: 6px; }
+    /* .btn عنده min-height: 48px، و .btn-sm ماكانش بيلغيه — عشان كده كل
+       النوافذ كانت بتكتب height: 32px/36px بالإيد جنب كل زر صغير */
+    .btn-sm { padding: 0 0.9rem; min-height: 36px; font-size: 0.82rem; border-radius: 6px; }
     .btn-success {
       background: transparent;
       color: var(--text-main);
@@ -306,11 +313,9 @@
     tr:hover td { background-color: rgba(255,255,255,0.02); }
     
     .badge { padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; display: inline-block; color: var(--text-main) !important; }
-    .badge-success { background-color: rgba(255, 255, 255, 0.08); color: var(--text-main) !important; border: 1px solid rgba(255, 255, 255, 0.15); }
-    .badge-warning { background-color: rgba(255, 255, 255, 0.08); color: var(--text-main) !important; border: 1px solid rgba(255, 255, 255, 0.15); }
-    .badge-danger { background-color: rgba(255, 255, 255, 0.08); color: var(--text-main) !important; border: 1px solid rgba(255, 255, 255, 0.15); }
-    .badge-neutral { background-color: rgba(255, 255, 255, 0.08); color: var(--text-main) !important; border: 1px solid rgba(255, 255, 255, 0.15); }
-    .badge-info { background-color: rgba(255, 255, 255, 0.08); color: var(--text-main) !important; border: 1px solid rgba(255, 255, 255, 0.15); }
+    /* ألوان الشارات متعرّفة مرّة واحدة بس تحت في بلوك .badge-* الملوّن.
+       كان في هنا نسخة تانية بيضاء بالكامل، وكانت ميتة لأن البلوك التحتاني
+       بـ !important، فالملف كان بيقول حاجة والمتصفح بيعرض حاجة تانية. */
 
     .filter-tabs { display: flex; gap: 8px; margin-bottom: 1.25rem; }
     .tab-btn { padding: 0.55rem 1rem; border-radius: 6px; background: var(--bg-card); border: 1px solid var(--border-subtle); color: var(--text-muted); font-size: 0.9rem; font-weight: 500; cursor: pointer; }
@@ -525,8 +530,16 @@
       body { background: white !important; color: black !important; display: block; overflow: auto; }
       /* .action-cell هو الكلاس المستخدم فعلاً في معظم أعمدة الإجراءات،
          وبدونه كانت أزرار الحذف والتعديل تُطبع داخل التقارير */
+      /* أزرار شريط الأدوات كانت جوّه .section-header فكانت بتتخفي معاه،
+         وبعد ما اتنقلت للوحة بقت محتاجة تتخفي بالاسم. حقول التاريخ بتفضل
+         ظاهرة لأنها الحاجة الوحيدة اللي بتوضّح فترة التقرير المطبوع */
       .sidebar, .topbar, .section-header button, .action-buttons, .action-cell,
-      .filter-tabs, .modal-overlay, #toast-container, .modal-close { display: none !important; }
+      .filter-tabs, .modal-overlay, #toast-container, .modal-close,
+      .toolbar .btn, .toolbar-actions, .today-banner, .store-floating-cart-bar,
+      .store-kpi-strip, .chart-tag { display: none !important; }
+      .toolbar-field > label { color: black !important; }
+      .toolbar-field input, .toolbar-field select {
+        border: 1px solid #ccc !important; background: white !important; color: black !important; }
       .main-content { margin: 0; padding: 0; display: block; overflow: visible; }
       .view-section { display: none !important; padding: 0; }
       .view-section.active { display: block !important; }
@@ -535,7 +548,8 @@
       th, td { border: 1px solid #ccc; padding: 8px; color: black !important; }
       th { background-color: #eee !important; }
       .stat-card { border: 1px solid #ccc; box-shadow: none; background: white; color: black; }
-      .stat-card h3 { color: black !important; }
+      .stat-card h3, .stat-card .stat-label, .stat-card .stat-sub { color: black !important; }
+      .stat-card .stat-chip { display: none !important; }
       .stat-value { color: black !important; }
       .stat-value.red { color: red !important; }
       .stat-value.green { color: green !important; }
@@ -702,6 +716,499 @@ body, h1, h2, h3, h4, h5, h6, p, span, label, td, th, a, div, input, select, tex
 .badge-danger { background-color: rgba(239, 68, 68, 0.25) !important; color: #ffffff !important; border: 1px solid rgba(239, 68, 68, 0.4) !important; }
 .badge-primary { background-color: rgba(56, 189, 248, 0.25) !important; color: #ffffff !important; border: 1px solid rgba(56, 189, 248, 0.4) !important; }
 .badge-neutral { background-color: rgba(255, 255, 255, 0.12) !important; color: #ffffff !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; }
+.badge-info { background-color: var(--accent-line) !important; color: #ffffff !important; border: 1px solid rgba(0, 229, 255, 0.4) !important; }
+
+
+/* ==========================================================================
+   نظام تخطيط الأقسام الموحّد — UNIFIED SECTION LAYOUT SYSTEM
+   --------------------------------------------------------------------------
+   المشكلة اللي الكلاسات دي بتحلّها:
+   كل قسم في البرنامج كان بيتنسّق بـ style="" جوّه الـ HTML — مقاسات وخطوط
+   وتدرجات لونية مكتوبة بالإيد في كل قسم على حدة. النتيجة إن كل قسم طلع
+   بشكل مختلف: أزرار بأحجام مختلفة، كروت بمسافات مختلفة، وشبكات بأعمدة
+   ثابتة repeat(4, 1fr) بتتكسر على الشاشات الصغيرة.
+   قسم المشتركين وحده كان بيستعمل كلاسات نضيفة، وعشان كده كان هو الوحيد
+   المظبوط. الكلاسات اللي تحت هي نفس نمط قسم المشتركين متحوّل لمكوّنات
+   تعيد كل الأقسام استعمالها بدل التنسيق المتكرر.
+
+   ملاحظة ترتيب: البلوك ده متحطّ بعد إعادة تعريف .stat-card و .chart-card
+   وقبل أول @media، عشان يغلب التعريفات المكررة فوق ويفضل الموبايل قادر
+   يغلبه من تحت.
+   ========================================================================== */
+
+/* --- 1) ترويسة القسم: عنوان + وصف + أزرار ------------------------------- */
+.section-header { flex-wrap: wrap; gap: 16px; }
+.section-title { min-width: 0; }
+.section-title h2 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 1.4rem; font-weight: 700; }
+.section-title p { margin: 4px 0 0; font-size: 0.9rem; color: var(--text-muted); }
+/* .members-top-actions هو الاسم القديم لنفس المكوّن — سايبينه شغّال
+   عشان قواعد الموبايل الحالية بتناديه بالاسم ده */
+.section-actions,
+.members-top-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+/* --- 2) شريط الأدوات: فلاتر وبحث وتواريخ -------------------------------- */
+/* بديل لكل الـ div المكررة اللي كانت display:flex بـ style، وكمان بيلغي
+   حيلة margin-top:20px اللي كانت بتظبط الأزرار جنب الحقول */
+.toolbar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-bottom: 1.25rem; }
+.toolbar.toolbar-split { justify-content: space-between; }
+.panel > .toolbar:first-child { margin-bottom: 1rem; }
+.toolbar-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.toolbar-field > label { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); }
+.toolbar-field input,
+.toolbar-field select,
+.toolbar-field .form-control { margin-bottom: 0; width: 100%; }
+.toolbar-field.w-sm { width: 165px; }
+.toolbar-field.w-md { width: 210px; }
+.toolbar-field.w-lg { width: 250px; }
+.toolbar-search { flex: 1 1 260px; max-width: 380px; }
+.toolbar-search .form-control { margin-bottom: 0; }
+/* ملاحظة جانبية تروح لآخر الشريط */
+.toolbar-note { margin-inline-start: auto; font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; }
+/* مجموعة أزرار تلفّ سوا بدل ما يتكسر زر لوحده في سطر جديد */
+.toolbar-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* --- 3) بطاقات الإحصائيات ------------------------------------------------ */
+/* الشبكة auto-fit عشان الكروت تفضل بنفس المقاس في كل الأقسام وتلفّ لوحدها
+   بدل الأعمدة الثابتة اللي كانت مكتوبة inline في كل قسم */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 1.25rem; }
+.stat-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle); cursor: default; }
+/* المؤشر يبقى يد بس لو الكارت فعلاً بيودّي لمكان */
+.stat-card.is-clickable { cursor: pointer; }
+.stat-card-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.stat-card .stat-label { margin-top: 0; font-size: 0.82rem; font-weight: 500; color: var(--text-muted); line-height: 1.5; }
+.stat-card .stat-value { font-size: 1.45rem; font-weight: 800; line-height: 1.25; }
+/* بعض الكروت كانت بتستعمل h3 بدل stat-label، فكانت تخرج بحجم عنوان
+   وتتصفّ جنب الرقم بدل ما تكون فوقه. ده أمان لو فضل h3 في أي مكان */
+.stat-card > h3,
+.stat-card-body > h3 { margin: 0; font-size: 0.82rem; font-weight: 500; color: var(--text-muted); }
+.stat-card .stat-sub { margin-top: 4px; }
+.stat-chip { align-self: flex-start; margin-top: 6px; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; color: var(--primary); background: var(--accent-tint); border: 1px solid var(--accent-line); }
+.stat-icon-box { flex-shrink: 0; width: 38px; height: 38px; border-radius: 8px; }
+/* حقل اختيار جوّه كارت إحصائية (معيار مدة الغياب) */
+.stat-card select { min-height: 34px; padding: 0 10px; font-size: 0.85rem; font-weight: 700; }
+/* نسخة مضغوطة للنوافذ: نفس المكوّن بمقاسات أصغر */
+.stats-grid-compact { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 1rem; }
+.stats-grid-compact .stat-card { padding: 10px 12px; }
+.stats-grid-compact .stat-value { font-size: 1.1rem; }
+.stats-grid-compact .stat-label { font-size: 0.78rem; }
+
+/* --- 4) شبكة كروت الكيانات: الباقات والخطط ------------------------------ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+.card-grid.card-grid-wide { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+.entity-card { display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: var(--radius-xl); background: var(--bg-card); border: 1px solid var(--border-subtle); transition: transform 0.2s ease, border-color 0.2s ease; }
+.entity-card:hover { transform: translateY(-2px); border-color: var(--border-hover); }
+.entity-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.entity-card-title { font-size: 1.05rem; font-weight: 800; color: var(--text-main); line-height: 1.4; }
+.entity-card-meta { font-size: 0.85rem; color: var(--text-muted); }
+.entity-card-price { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
+.entity-card-tag { padding: 3px 9px; border-radius: 10px; font-size: 0.72rem; font-weight: 800; white-space: nowrap; color: var(--primary); background: var(--accent-tint); border: 1px solid var(--accent-line); }
+.entity-card-date { font-size: 0.72rem; color: var(--text-dim); }
+.entity-card-note { max-height: 110px; overflow-y: auto; padding: 10px; border-radius: 8px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-subtle); font-size: 0.8rem; line-height: 1.6; color: var(--text-muted); white-space: pre-line; }
+.entity-card-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-subtle); }
+.entity-card-actions .btn { flex: 1; justify-content: center; }
+.entity-card-actions .btn.btn-icon-only { flex: 0 0 auto; min-width: 44px; padding: 0 10px; }
+
+/* --- 5) حالة لا توجد بيانات --------------------------------------------- */
+.empty-state { grid-column: 1 / -1; padding: 40px 20px; text-align: center; color: var(--text-muted); background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-xl); }
+.empty-state-icon { font-size: 2.2rem; margin-bottom: 8px; }
+.empty-state-title { font-size: 1.05rem; font-weight: 700; color: var(--text-main); }
+.empty-state p { margin: 4px 0 14px; font-size: 0.85rem; }
+
+/* --- 6) اللوحات والجداول ------------------------------------------------- */
+.panel-narrow { max-width: 520px; }
+/* عنوان جوّه لوحة — كان أحياناً بيتعمل بـ modal-header وهو مكوّن نافذة */
+.panel > h3:first-child { margin: 0 0 1rem; padding-bottom: 0.75rem; font-size: 1rem; font-weight: 700; border-bottom: 1px solid var(--border-subtle); }
+.panel-header h3 { margin: 0; font-size: 1rem; font-weight: 700; }
+.panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; align-items: start; }
+.table-compact { font-size: 0.86rem; }
+.table-compact th, .table-compact td { padding: 0.7rem 0.8rem; }
+
+/* --- 7) لوحة القيادة: شريط اليوم وصفوف الرسوم --------------------------- */
+.today-banner { display: flex; align-items: center; gap: 14px; padding: 14px 18px; margin-bottom: 16px; border-radius: var(--radius-xl); background: var(--accent-wash); border: 1px solid var(--border-subtle); border-right: 3px solid var(--primary); }
+.today-banner-icon { flex-shrink: 0; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; color: var(--primary); background: var(--accent-tint); }
+.today-banner h4 { display: flex; align-items: center; gap: 6px; margin: 0 0 6px; font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 8px var(--primary); animation: pulse-dot 2s infinite; }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.today-banner-stats { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.85rem; line-height: 1.6; color: var(--text-muted); }
+.today-banner-stats span { padding: 2px 8px; border-radius: 4px; background: rgba(0, 0, 0, 0.25); }
+.today-banner-stats strong { font-size: 0.9rem; color: var(--primary); }
+
+.chart-grid { display: grid; gap: 14px; margin-bottom: 14px; }
+.chart-grid.split-2-1 { grid-template-columns: 2fr 1fr; }
+.chart-grid.split-1-1 { grid-template-columns: 1fr 1fr; }
+/* المشرف غير الأدمن بيشوف رسمتين بس، فبيتحطوا جنب بعض في صف واحد.
+   ده كان متعمل من script.js بـ element.style، فبقى كلاس عشان الـ CSS
+   يفضل هو صاحب القرار في التخطيط */
+#supervisor-charts-wrap.is-supervisor { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+#supervisor-charts-wrap.is-supervisor .chart-grid { grid-template-columns: 1fr; margin-bottom: 0; }
+
+/* ==========================================================================
+   الهيكل العام — APP SHELL (التوست، الشريط الجانبي، شاشة الدخول)
+   العناصر دي كانت متنسّقة inline في الـ HTML. الـ display بس فاضل inline
+   لأن الجافاسكريبت بيتحكّم فيه.
+   ========================================================================== */
+
+#toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+                   z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+
+#connection-status { position: fixed; bottom: 0; left: 0; width: 100%; z-index: 10000;
+                     padding: 6px; text-align: center; font-size: 0.9rem;
+                     background: #e74c3c; color: #fff; transition: all 0.3s ease; }
+
+.login-submit { margin-top: 1rem; }
+
+.nav-badge-success { background: var(--success); }
+.nav-badge-warning { background: var(--warning); }
+
+.nav-bottom { display: flex; flex-direction: column; gap: 4px;
+              margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle); }
+.nav-section-title.is-first { padding-top: 0; }
+.nav-link-danger { color: var(--danger-text); }
+.nav-link-danger:hover { color: var(--danger-text); background: rgba(239, 68, 68, 0.1); }
+
+/* مؤشّر تحميل داخل زر — الكلاس .loader كان مستعمل في الجافاسكريبت بلا تعريف */
+.loader { display: inline-block; width: 18px; height: 18px; border-radius: 50%;
+          border: 2px solid rgba(255, 255, 255, 0.25); border-top-color: var(--primary);
+          animation: loader-spin 0.7s linear infinite; vertical-align: middle; }
+.spinner-inline { width: 16px; height: 16px; border-width: 2px; margin-left: 6px; }
+@keyframes loader-spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 1100px) {
+    .chart-grid.split-2-1,
+    .chart-grid.split-1-1,
+    #supervisor-charts-wrap.is-supervisor { grid-template-columns: 1fr; }
+}
+.chart-card { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle); }
+.chart-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.chart-head h3 { margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
+.chart-tag { padding: 2px 8px; border-radius: 12px; font-size: 0.72rem; font-weight: 700; white-space: nowrap; color: var(--primary); background: var(--accent-tint); border: 1px solid var(--accent-line); }
+.chart-body { position: relative; height: 180px; }
+.chart-body.chart-body-sm { height: 160px; }
+
+/* --- 8) ألوان دلالية مقروءة --------------------------------------------- */
+/* --danger و --warning اتظبطوا على درجتين كحلي #1D2D50 و #3B5377 وهما
+   مستعملين كلون نص فوق خلفيات كحلية، فكان الرقم بيختفي تقريباً — وده
+   السبب إن الأقسام كانت بتكتب #ef4444 و #f59e0b inline كحل مؤقت.
+   التوكنات نفسها سايبينها زي ما هي لأنها مستعملة كحدود وخلفيات، وضايفين
+   توكنين للنص بس، بنفس الدرجات اللي الكود كله أصلاً بيستعملها في
+   rgba(239,68,68,..) و rgba(245,158,11,..) */
+:root {
+    --danger-text: #F87171;
+    --warning-text: #FBBF24;
+}
+.text-danger  { color: var(--danger-text)  !important; }
+.text-warning { color: var(--warning-text) !important; }
+.zkid-hint.bad  { color: var(--danger-text)  !important; }
+.zkid-hint.warn { color: var(--warning-text) !important; }
+.alert-warning { color: var(--warning-text); }
+.private-training-badge-label { color: var(--warning-text); }
+.pay-calc-total.is-debt .pay-calc-value { color: var(--danger-text) !important; }
+.dash-card.danger .dash-card-icon { color: var(--danger-text); }
+.dash-card.warning .dash-card-icon { color: var(--warning-text); }
+.btn-card-action.btn-action-delete:hover { color: var(--danger-text); }
+.btn-card-action.btn-action-ptrainer:hover { color: var(--warning-text); }
+
+/* --- 9) ضبط الأقسام على الموبايل ---------------------------------------- */
+@media (max-width: 768px) {
+    .toolbar { gap: 10px; }
+    .toolbar-field,
+    .toolbar-field.w-sm,
+    .toolbar-field.w-md,
+    .toolbar-field.w-lg { width: 100%; flex: 1 1 100%; }
+    .toolbar-search { max-width: none; flex: 1 1 100%; }
+    .toolbar > .btn,
+    .toolbar-actions .btn { flex: 1 1 auto; }
+    .toolbar-actions { width: 100%; gap: 10px; }
+    .toolbar-note { margin-inline-start: 0; flex: 1 1 100%; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+    .stat-card { padding: 10px 12px; border-radius: 8px; }
+    .stat-card .stat-value { font-size: 1.15rem; }
+    .stat-card .stat-label { font-size: 0.76rem; }
+    .stat-card .stat-icon-box { display: none; }
+    .stats-grid > .stat-card.full-width-mobile { grid-column: 1 / -1; }
+    .card-grid,
+    .card-grid.card-grid-wide { grid-template-columns: 1fr; }
+    .panel-grid { grid-template-columns: 1fr; gap: 14px; }
+    .today-banner { padding: 12px 14px; gap: 10px; }
+    .today-banner-icon { width: 34px; height: 34px; }
+    .chart-body { height: 160px; }
+}
+
+
+/* ==========================================================================
+   مكوّنات مساعدة للنظام الموحّد — HELPERS FOR THE SECTION LAYOUT SYSTEM
+   --------------------------------------------------------------------------
+   الحاجات اللي تحت كانت مكتوبة inline في الـ HTML أو متعرّفة جوّه @media
+   الموبايل بس، فكانت بتختفي خالص على الديسكتوب.
+   ========================================================================== */
+
+/* --- محاذاة نص داخل جدول (كانت style="text-align:...") ------------------ */
+.ta-left { text-align: left; }
+.ta-center { text-align: center; }
+
+/* --- زر بعرض الحاوية + زر التأكيد الأساسي -------------------------------- */
+.btn-block { width: 100%; justify-content: center; }
+
+/* شريط السلة العائم للموبايل: كان متعرّف جوّه @media بس، فعلى الديسكتوب
+   كان div عادي ظاهر تحت الصفحة. الأساس دلوقتي مخفي، والموبايل بيظهّره
+   عن طريق كلاس has-items اللي بيحطه script.js بدل inline display */
+.store-floating-cart-bar { display: none; }
+/* الإجراء الأساسي في القسم: نفس الطابع المطفي بس بحدّ ولون التمييز، بدل
+   التدرجات اللونية اللي كانت مكتوبة inline وكانت بتخرج بره لغة التصميم */
+.btn-accent { border-color: var(--primary); color: var(--primary); }
+.btn-accent:hover { background: var(--accent-tint); border-color: var(--primary); color: var(--primary); }
+.btn-accent svg { color: inherit; }
+
+/* --- وصف داخل لوحة (كان <p style="color:...; font-size:...">) ------------ */
+.panel-desc { margin: 0 0 1rem; font-size: 0.85rem; line-height: 1.7; color: var(--text-muted); }
+
+/* --- المتجر: مكوّنات كانت متعرّفة على الموبايل بس ------------------------ */
+.store-kpi-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.store-kpi-strip::-webkit-scrollbar { display: none; }
+.store-kpi-pill { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 20px; background: rgba(15, 23, 42, 0.65); border: 1px solid var(--border-subtle); }
+.store-kpi-pill .pill-label { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); }
+.store-kpi-pill .pill-val { font-size: 0.85rem; font-weight: 800; }
+
+.store-cart-header .entity-card-title { display: flex; align-items: center; gap: 8px; font-size: 1rem; }
+.store-cart-empty svg { color: var(--text-dim); margin-bottom: 8px; }
+.store-cart-empty span { display: block; margin-top: 4px; font-size: 0.78rem; color: var(--text-dim); }
+.store-cart-total-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 1.05rem; font-weight: 800; color: var(--text-muted); }
+.store-cart-total-row span:last-child { font-size: 1.25rem; color: var(--primary); }
+#store-top-cart-count { padding: 2px 8px; font-size: 0.72rem; }
+.floating-cart-text { display: flex; flex-direction: column; line-height: 1.25; }
+.floating-cart-count-line { font-size: 0.75rem; color: var(--text-muted); }
+.floating-cart-count-line b { color: #fff; }
+#floating-cart-total { font-size: 0.95rem; font-weight: 800; color: var(--primary); }
+
+/* --- أزرار ترويسة القسم على الموبايل ------------------------------------ */
+/* القاعدة الأصلية كانت بتنادي .members-top-actions بس، والأقسام التانية
+   بقت بتستعمل .section-actions فلازم تاخد نفس المعاملة */
+@media (max-width: 768px) {
+    .section-actions {
+        display: flex !important;
+        gap: 8px !important;
+        align-items: center !important;
+        width: 100% !important;
+        margin-top: 4px !important;
+    }
+    .section-actions .btn-compact {
+        flex: 1 !important;
+        height: 36px !important;
+        min-height: 36px !important;
+        padding: 0 10px !important;
+        font-size: 0.8rem !important;
+        font-weight: 700 !important;
+        border-radius: 8px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+    }
+    .section-actions .btn-compact svg { width: 14px; height: 14px; flex-shrink: 0; }
+    /* نصّ أطول من الزر كان بيخرج بره حدوده بسبب white-space: nowrap */
+    .section-actions .btn-compact,
+    .members-top-actions .btn-compact { overflow: hidden !important; text-overflow: ellipsis !important; min-width: 0 !important; }
+    /* زر السلة أيقونة وعدّاد بس، فمالوش داعي ياخد عرض زر كامل ويلفّ لسطر لوحده */
+    #store-top-cart-btn { flex: 0 0 auto !important; padding: 0 12px !important; }
+}
+
+
+/* ==========================================================================
+   مكوّنات النوافذ المنبثقة — MODAL COMPONENT SYSTEM
+   --------------------------------------------------------------------------
+   الـ 30 نافذة كانت متنسّقة بـ style="" جوّه الـ HTML زي الأقسام بالظبط:
+   12 عرض مختلف للنافذة (400 و 440 و 460 و 480 و 500 و 540 و 620 و 640 و 740
+   و 780 و 900 و 950)، ونفس النص المساعد متكتب بـ 6 صيغ مختلفة، وصناديق
+   ومفاتيح متكررة كل واحد بتنسيقه.
+   الكلاسات اللي تحت بتوحّد ده كله على سلّم واحد.
+
+   ملحوظة: style="display:none" على العناصر اللي الجافاسكريبت بيفتحها ويقفلها
+   سايبينها زي ما هي — دي حالة ابتدائية مش تنسيق.
+   ========================================================================== */
+
+/* --- 1) أحجام النوافذ: سلّم واحد بدل 12 عرض عشوائي -------------------- */
+.modal-dialog.modal-sm  { max-width: 460px; }
+.modal-dialog.modal-md  { max-width: 540px; }
+.modal-dialog.modal-lg  { max-width: 640px; }
+.modal-dialog.modal-xl  { max-width: 780px; }
+.modal-dialog.modal-2xl { max-width: 960px; width: 95%; }
+.modal-dialog.modal-center { text-align: center; }
+
+/* جسم النافذة لما يكون المحتوى طويل */
+.modal-body.scroll-sm { max-height: 260px; overflow-y: auto; }
+.modal-body.scroll-md { max-height: 55vh; overflow-y: auto; }
+.scroll-box { max-height: 260px; overflow-y: auto; }
+.scroll-box-lg { max-height: 460px; overflow-y: auto; }
+.scroll-box-x { overflow-x: auto; }
+
+/* --- 2) نصوص مساعدة ---------------------------------------------------- */
+/* كانت متكتبة بـ font-size: 0.8/0.82/0.85/0.88rem + color: var(--text-muted)
+   في أكتر من 30 مكان بصيغ مختلفة */
+.hint { font-size: 0.85rem; line-height: 1.7; color: var(--text-muted); }
+.hint-block { display: block; margin-bottom: 6px; }
+.hint-sm { font-size: 0.78rem; line-height: 1.6; color: var(--text-dim); margin-top: 4px; }
+.hint-center { text-align: center; }
+.strong-text { font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-bottom: 6px; }
+.big-number { font-size: 1.15rem; font-weight: 800; color: var(--primary); }
+
+/* عنوان مجموعة جوّه نافذة */
+.group-title { margin: 0 0 10px; font-size: 0.95rem; font-weight: 800; color: var(--primary); }
+.group-title:not(:first-child) { margin-top: 18px; }
+
+/* --- 3) صناديق المحتوى -------------------------------------------------- */
+.info-box { padding: 12px 14px; margin-bottom: 1.25rem; border-radius: 8px;
+            background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-subtle); }
+.info-box-dark { background: rgba(0, 0, 0, 0.25); border-radius: 10px; }
+.info-box-tight { margin-bottom: 1rem; }
+
+/* صندوق بارز (حالة اتصال واتساب، تنبيهات مهمة) */
+.callout { padding: 16px 18px; margin-bottom: 20px; border-radius: 12px;
+           background: var(--accent-wash); border: 1px solid var(--border-subtle); }
+.callout-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.callout h4 { margin: 0 0 6px; font-size: 1.05rem; font-weight: 800; color: var(--primary); }
+.callout-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* رسالة خطأ داخل نافذة — كانت مكتوبة inline بلون أحمر ثابت */
+.alert-danger { padding: 10px 12px; margin-bottom: 12px; border-radius: 8px; font-size: 0.85rem;
+                color: var(--danger-text); background: rgba(239, 68, 68, 0.12);
+                border: 1px solid rgba(239, 68, 68, 0.4); }
+.alert-success { padding: 10px 12px; margin-bottom: 12px; border-radius: 8px; font-size: 0.85rem;
+                 color: var(--success); background: var(--accent-tint);
+                 border: 1px solid var(--accent-line); }
+
+/* --- 4) قائمة مفاتيح تشغيل/إيقاف ---------------------------------------- */
+.toggle-list { display: flex; flex-direction: column; gap: 10px; padding: 12px; margin-bottom: 20px;
+               border-radius: 10px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-subtle); }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+              cursor: pointer; font-size: 0.88rem; line-height: 1.6; color: var(--text-main); }
+.toggle-row input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--primary); cursor: pointer; }
+
+/* --- 5) صفوف تخطيط متكررة ----------------------------------------------- */
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.row-between-top { align-items: flex-start; }
+.row-center { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.row-gap { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.row-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.grow { flex: 1; }
+
+/* --- 6) شريط تقدّم ------------------------------------------------------- */
+.progress-track { width: 100%; height: 8px; border-radius: 4px; overflow: hidden; background: rgba(255, 255, 255, 0.1); }
+.progress-fill { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s ease; }
+
+/* --- 7) كود QR لربط واتساب ---------------------------------------------- */
+/* display بيتحكم فيه الجافاسكريبت، فمش متعرّف هنا */
+.qr-box { flex-direction: column; align-items: center; justify-content: center;
+          padding: 12px; border-radius: 10px; background: #fff; }
+.qr-box img { display: block; width: 200px; height: 200px; }
+.qr-box-caption { margin-top: 8px; font-size: 0.8rem; font-weight: 700; text-align: center; color: #0f172a; }
+
+/* --- 8) صورة مصغّرة للمنتج ---------------------------------------------- */
+.thumb { width: 60px; height: 60px; object-fit: contain; border-radius: 8px;
+         background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-subtle); }
+.thumb-lg { width: 96px; height: 96px; }
+
+/* --- 9) حالة فارغة صغيرة داخل نافذة أو جدول ----------------------------- */
+.empty-inline { padding: 20px 10px; text-align: center; font-size: 0.85rem; color: var(--text-muted); }
+
+/* --- 11) شبكة حقول جوّه نافذة ------------------------------------------- */
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px; }
+.form-grid-2 > .form-group, .form-grid-3 > .form-group,
+.form-grid-2 > .form-field, .form-grid-3 > .form-field { margin-bottom: 0; }
+.span-full { grid-column: 1 / -1; }
+@media (max-width: 640px) {
+    .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+}
+
+/* --- 12) مساعدات صغيرة كانت متكتبة inline ------------------------------- */
+.text-main { color: var(--text-main) !important; }
+.nowrap { white-space: nowrap; }
+.is-dim { opacity: 0.7; }
+.badge-sm { padding: 2px 8px; font-size: 0.75rem; }
+/* زر نصّي بلا خلفية (إزالة صورة، مسح سطر) */
+.btn-link-danger { padding: 0; background: none; border: none; cursor: pointer;
+                   font-size: 0.72rem; color: var(--danger-text); }
+.btn-link-danger:hover { text-decoration: underline; }
+
+/* --- 13) مسافات وحقول ---------------------------------------------------- */
+.stack-sm { margin-bottom: 10px; }
+.stack-md { margin-bottom: 16px; }
+.input-lg { font-size: 1.1rem; font-weight: 800; }
+.select-sm { max-width: 220px; min-height: 36px; padding: 0 10px; font-size: 0.85rem; }
+.is-tinted { background: rgba(255, 255, 255, 0.02); }
+
+/* --- 14) نافذة إتمام البيع ---------------------------------------------- */
+.checkout-items { max-height: 160px; overflow-y: auto; margin-bottom: 12px; padding: 6px 8px;
+                  border-radius: 8px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-subtle); }
+.checkout-total-row { display: flex; align-items: center; justify-content: space-between; gap: 10px;
+                      margin-bottom: 12px; padding: 8px 12px; border-radius: 8px;
+                      background: var(--accent-tint); border: 1px solid var(--accent-line); }
+
+/* --- 15) تنبيه سطري + عدّاد تنازلي --------------------------------------- */
+.callout.callout-inline { display: flex; align-items: center; gap: 6px;
+                          margin-bottom: 12px; padding: 8px 12px; border-radius: 8px; }
+.countdown-line { min-height: 20px; }
+
+/* شريط الأدوات جوّه نافذة أضيق شوية */
+.modal-body > .toolbar { margin-bottom: 12px; }
+
+/* --- 10) تباعد الحقول جوّه النوافذ --------------------------------------- */
+/* .form-group كان margin-bottom: 1.2rem وكل نافذة بتنقصه لـ 12px بـ style */
+.modal-body .form-group,
+.modal-body .form-field { margin-bottom: 1rem; }
+/* label جوّه form-group أصلاً 0.85rem/muted، فكل style="font-size:0.8x; color:var(--text-muted)"
+   اللي كان متحطّ عليه كان تكرار بلا فايدة */
+
+
+/* ==========================================================================
+   مساعدات النصوص والتخطيط — TEXT & LAYOUT HELPERS
+   --------------------------------------------------------------------------
+   الجافاسكريبت كان بيبني صفوف الجداول وكروت المشتركين وهو حاطط التنسيق
+   inline جوّه الـ template strings (122 موضع). القيم هنا هي نفس القيم
+   القديمة بالظبط — الشكل ما اتغيّرش، التنسيق بس خرج من الجافاسكريبت للـ CSS.
+   ========================================================================== */
+
+/* --- مقاسات وأوزان النص --- */
+.fs-sm { font-size: 0.85rem; }
+.fs-xs { font-size: 0.8rem; }
+.fw-normal { font-weight: 400; }
+.fw-bold { font-weight: 700; }
+.fw-black { font-weight: 800; }
+.text-dim { color: var(--text-dim) !important; }
+
+/* أرقام الهواتف وأرقام البصمة: تتقرا من الشمال جوّه صفحة عربية */
+.ltr-num { direction: ltr; text-align: right; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+/* نص طويل يتقصّ بالنقط بدل ما يكسّر الصف */
+.truncate { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.truncate-240 { max-width: 240px; }
+.truncate-280 { max-width: 280px; }
+
+/* --- صفوف تخطيط بيستعملها الجافاسكريبت --- */
+.wrap { flex-wrap: wrap; }
+.col-center { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.list-row { padding: 6px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.list-row:last-child { border-bottom: none; }
+.meta-row { gap: 14px; margin-top: 4px; color: var(--text-main); }
+
+/* حالة فارغة صغيرة أدق من الأساسية */
+.empty-inline-sm { padding: 16px 10px; font-size: 0.8rem; color: var(--text-dim); }
+
+/* زر واتساب بلونه المعروف — كان مكتوب inline في مكانين */
+.btn-whatsapp { color: #25D366; border-color: rgba(37, 211, 102, 0.5); }
+.btn-whatsapp:hover { color: #25D366; border-color: #25D366; background: rgba(37, 211, 102, 0.1); }
+
+/* أزرار كارت المشترك: الحالة النشطة كانت متلوّنة inline، دلوقتي نفس
+   ألوان الـ hover المعرّفة أصلاً لكل نوع زر */
+.btn-card-action.is-active.btn-action-delete { color: var(--danger-text); border-color: rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.06); }
+.btn-card-action.is-active.btn-action-edit { color: var(--primary); border-color: var(--accent-line); }
+.btn-card-action.btn-action-unfreeze { color: var(--success); border-color: var(--accent-line); background: var(--accent-wash); }
+
+/* --- محاذاة داخل الجداول (كانت style="text-align:...") --- */
+td.ta-center, th.ta-center { text-align: center; }
 
 /* ==========================================================================
    TOP FITNESS STORE & POS MODULE STYLES
@@ -1049,7 +1556,7 @@ body.offline-mode #connection-status {
         background: rgba(10, 17, 40, 0.85) !important;
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(0, 229, 255, 0.25) !important;
+        border: 1px solid var(--accent-line) !important;
         border-radius: 20px !important;
         z-index: 9999;
         padding: 4px 8px !important;
@@ -1867,19 +2374,10 @@ body.offline-mode #connection-status {
         box-shadow: 0 0 8px rgba(0, 229, 255, 0.3) !important;
     }
 
-    /* 3) Member Cards (Relatively Smaller & Clean) */
-    .styled-table tbody tr {
-        padding: 8px 12px !important;
-        margin-bottom: 8px !important;
-        border-radius: 10px !important;
-        background: rgba(15, 23, 42, 0.55) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    }
-    .styled-table tbody td {
-        padding: 3px 0 !important;
-        min-height: 22px !important;
-        font-size: 12px !important;
-    }
+    /* 3) Member Cards (Relatively Smaller & Clean)
+       الكلاس .styled-table مش موجود في أي HTML ولا بيتضاف من أي جافاسكريبت،
+       فالقواعد اللي كانت هنا كانت ميتة. تحويل الجدول لكروت على الموبايل
+       بيحصل فعلياً من قواعد .view-section table tbody اللي تحت. */
 
     /* 4) Store & POS Layout (Ultra-Sleek 2-Column Mobile Grid) */
     .store-kpi-strip {
@@ -1993,8 +2491,10 @@ body.offline-mode #connection-status {
     .store-cart-panel {
         display: none !important;
     }
+    .store-floating-cart-bar.has-items {
+        display: flex !important;
+    }
     .store-floating-cart-bar {
-        display: none;
         position: fixed !important;
         bottom: 68px !important;
         left: 12px !important;
@@ -2003,7 +2503,7 @@ body.offline-mode #connection-status {
         backdrop-filter: blur(14px) !important;
         -webkit-backdrop-filter: blur(14px) !important;
         border: 1px solid rgba(0, 229, 255, 0.4) !important;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75), 0 0 16px rgba(0, 229, 255, 0.25) !important;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75), 0 0 16px var(--accent-line) !important;
         border-radius: 14px !important;
         padding: 8px 14px !important;
         z-index: 9999 !important;

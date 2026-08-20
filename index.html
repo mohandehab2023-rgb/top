@@ -39,11 +39,11 @@
 </head>
 
 <body>
-    <div id="toast-container" style="position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; flex-direction:column; gap:10px;">
+    <div id="toast-container">
     </div>
     
     <!-- Connection Status Banner -->
-    <div id="connection-status" style="position:fixed; bottom:0; left:0; width:100%; background:#e74c3c; color:white; text-align:center; padding:5px; font-size:0.9rem; z-index:10000; display:none; transition: all 0.3s ease;">
+    <div id="connection-status" style="display:none;">
         ️ تم فقدان الاتصال بالخادم المركزي. جاري المحاولة لإعادة الاتصال...
     </div>
 
@@ -57,11 +57,11 @@
             <p>
                 برجاء تسجيل الدخول للوصول إلى نظام الإدارة
             </p>
-            <div class="alert-warning hidden" id="login-error" style="font-size:0.85rem;">
+            <div class="alert-warning hidden fs-sm" id="login-error">
                 اسم المستخدم أو كلمة المرور غير صحيحة
             </div>
             <form onsubmit="event.preventDefault(); attemptLogin();">
-                <div class="form-field" style="text-align:right;">
+                <div class="form-field">
                     <label>
                         الحساب
                     </label>
@@ -69,13 +69,13 @@
                         <option value="admin">مدير النظام (admin)</option>
                     </select>
                 </div>
-                <div class="form-field" style="text-align:right;">
+                <div class="form-field">
                     <label>
                         كلمة المرور
                     </label>
                     <input id="login-pass" placeholder="أدخل كلمة المرور..." type="password" oninput="document.getElementById('login-error').classList.add('hidden')" />
                 </div>
-                <button type="submit" class="btn" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                <button type="submit" class="btn btn-block login-submit">
                     تسجيل الدخول
                 </button>
             </form>
@@ -122,7 +122,7 @@
                 <span>
                     المتجر والمبيعات
                 </span>
-                <span class="nav-badge" id="store-cart-badge" style="display:none; background:#10b981;">0</span>
+                <span class="nav-badge nav-badge-success" id="store-cart-badge" style="display:none;">0</span>
             </a>
             <a class="nav-link" id="nav-plans" onclick="switchSection('plans', this)">
                 <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg></span>
@@ -135,7 +135,7 @@
                 <span>
                     روبوت الغياب
                 </span>
-                <span class="nav-badge" id="absence-badge" style="display:none; background:#f59e0b;">0</span>
+                <span class="nav-badge nav-badge-warning" id="absence-badge" style="display:none;">0</span>
             </a>
             <a class="nav-link" id="nav-reports" onclick="switchSection('daily-reports', this)">
                 <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
@@ -198,8 +198,8 @@
                     سلة المهملات
                 </span>
             </a>
-            <div style="margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle); display:flex; flex-direction:column; gap:4px;">
-                <div class="nav-section-title" style="padding-top:0;">
+            <div class="nav-bottom">
+                <div class="nav-section-title is-first">
                     إدارة وحسابات النظام
                 </div>
                 <a class="nav-link" onclick="switchSection('settings', this)">
@@ -220,7 +220,7 @@
                         تغيير كلمة المرور
                     </span>
                 </a>
-                <a class="nav-link" onclick="logout()" style="color:var(--danger)">
+                <a class="nav-link nav-link-danger" onclick="logout()">
                     <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
                     <span>
                         تسجيل الخروج
@@ -258,113 +258,111 @@
                         </path>
                     </svg>
                 </div>
-                <button onclick="handleLogout()" class="btn" style="padding: 6px 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); font-size: 0.8rem; margin-right: 6px;" title="تسجيل خروج" aria-label="تسجيل خروج">
+                <button onclick="handleLogout()" class="btn btn-sm btn-danger">
                     <svg fill="none" stroke="currentColor" viewbox="0 0 24 24" width="16" height="16"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                 </button>
             </div>
         </header>
         <div class="content-body">
             <!-- DASHBOARD -->
+            <!-- DASHBOARD -->
             <section class="view-section active" id="dashboard">
-                <div class="section-header" style="margin-bottom: 16px;">
+                <div class="section-header">
                     <div class="section-title">
-                        <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 8px;"> لوحة القيادة والإحصائيات</h2>
-                        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">إحصائيات النظام وملخص الاشتراكات والأداء المالي والنشاط اليومي</p>
+                        <h2>لوحة القيادة والإحصائيات</h2>
+                        <p>إحصائيات النظام وملخص الاشتراكات والأداء المالي والنشاط اليومي</p>
                     </div>
-                    <div style="display:flex; gap:8px; flex-wrap: wrap;">
-                        <button class="btn btn-outline" onclick="openSessionModal()" style="padding: 8px 12px; font-size: 0.85rem; flex: 1; justify-content: center;">
-                            تسجيل حصة (بدون عضوية)
+                    <div class="section-actions">
+                        <button class="btn btn-outline btn-compact" onclick="openSessionModal()" title="تسجيل حصة بدون عضوية">
+                            تسجيل حصة
                         </button>
-                        <button class="btn" onclick="openRegisterModal()" style="padding: 8px 12px; font-size: 0.85rem; flex: 1; justify-content: center;">
-                            <svg fill="none" stroke="currentColor" viewbox="0 0 24 24" width="16" height="16">
+                        <button class="btn btn-compact" onclick="openRegisterModal()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
                                 <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
-                            <span>+ مشترك جديد</span>
+                            <span>مشترك جديد</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- شريط ملخص اليوم الذكي -->
-                <div class="card today-banner admin-only" style="padding: 14px 18px; border-radius: 12px; background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(15, 23, 42, 0.4) 100%); border: 1px solid rgba(56, 189, 248, 0.2); border-right: 4px solid #38bdf8; display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
-                    <div style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <div class="today-banner admin-only">
+                    <div class="today-banner-icon">
                         <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
                     </div>
                     <div>
-                        <h4 style="margin: 0 0 6px 0; font-size: 0.95rem; color: #fff; display: flex; align-items: center; gap: 6px;">ملخص نشاط اليوم <span style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:50%; box-shadow:0 0 8px #10b981; animation: pulse 2s infinite;"></span></h4>
-                        <div style="margin: 0; font-size: 0.85rem; color: #cbd5e1; line-height: 1.6; display: flex; flex-wrap: wrap; gap: 8px;">
-                            <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;">جدد: <strong id="today-new-members-text" style="color:#38bdf8; font-size: 0.9rem;">0</strong></span>
-                            <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;">تجديد: <strong id="today-renewals-text" style="color:#10b981; font-size: 0.9rem;">0</strong></span>
-                            <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;">حضور: <strong id="today-attendance-text" style="color:#a855f7; font-size: 0.9rem;">0</strong></span>
-                            <span style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;">مبيعات: <strong id="today-store-text" style="color:#f59e0b; font-size: 0.9rem;">0</strong> ج.م</span>
+                        <h4>ملخص نشاط اليوم <span class="live-dot"></span></h4>
+                        <div class="today-banner-stats">
+                            <span>جدد: <strong id="today-new-members-text">0</strong></span>
+                            <span>تجديد: <strong id="today-renewals-text">0</strong></span>
+                            <span>حضور: <strong id="today-attendance-text">0</strong></span>
+                            <span>مبيعات: <strong id="today-store-text">0</strong> ج.م</span>
                         </div>
                     </div>
                 </div>
-                <style>
-                    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-                </style>
 
-                <!-- 1. Stats KPI Cards Grid (Unified Professional Auto-Fit Theme) -->
-                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px;">
-                    <div class="stat-card" onclick="switchSection('members', document.querySelectorAll('.nav-link')[1]); filterStatus('active');" style="cursor:pointer; padding: 12px 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div>
-                            <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">الاشتراكات السارية</div>
-                            <div class="stat-value" id="count-active" style="font-size: 1.4rem; font-weight: 800; color: #38bdf8;">0</div>
-                            <span style="font-size: 0.7rem; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 2px 6px; border-radius: 10px;">نشط</span>
+                <!-- بطاقات المؤشرات -->
+                <div class="stats-grid">
+                    <div class="stat-card is-clickable" onclick="switchSection('members', document.querySelectorAll('.nav-link')[1]); filterStatus('active');">
+                        <div class="stat-card-body">
+                            <div class="stat-label">الاشتراكات السارية</div>
+                            <div class="stat-value" id="count-active">0</div>
+                            <span class="stat-chip">نشط</span>
                         </div>
-                        <div class="stat-icon-box" style="width: 36px; height: 36px; border-radius: 8px; background:rgba(56, 189, 248, 0.12); color:#38bdf8;">
-                            <svg fill="none" height="18" stroke="currentColor" viewbox="0 0 24 24" width="18">
+                        <div class="stat-icon-box">
+                            <svg fill="none" height="18" stroke="currentColor" viewBox="0 0 24 24" width="18">
                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
                         </div>
                     </div>
 
-                    <div class="stat-card" onclick="switchSection('members', document.querySelectorAll('.nav-link')[1]); filterStatus('expiring');" style="cursor:pointer; padding: 12px 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div>
-                            <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">تنتهي قريباً</div>
-                            <div class="stat-value" id="count-expiring" style="font-size: 1.4rem; font-weight: 800; color: #38bdf8;">0</div>
-                            <span style="font-size: 0.7rem; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 2px 6px; border-radius: 10px;">تنبيه</span>
+                    <div class="stat-card is-clickable" onclick="switchSection('members', document.querySelectorAll('.nav-link')[1]); filterStatus('expiring');">
+                        <div class="stat-card-body">
+                            <div class="stat-label">تنتهي قريباً</div>
+                            <div class="stat-value" id="count-expiring">0</div>
+                            <span class="stat-chip">تنبيه</span>
                         </div>
-                        <div class="stat-icon-box" style="width: 36px; height: 36px; border-radius: 8px; background:rgba(56, 189, 248, 0.12); color:#38bdf8;">
-                            <svg fill="none" height="18" stroke="currentColor" viewbox="0 0 24 24" width="18">
+                        <div class="stat-icon-box">
+                            <svg fill="none" height="18" stroke="currentColor" viewBox="0 0 24 24" width="18">
                                 <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
                         </div>
                     </div>
 
-                    <div class="stat-card" onclick="switchSection('members', document.querySelectorAll('.nav-link')[1]); filterStatus('expired');" style="cursor:pointer; padding: 12px 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div>
-                            <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">الاشتراكات المنتهية</div>
-                            <div class="stat-value" id="count-expired" style="font-size: 1.4rem; font-weight: 800; color: #38bdf8;">0</div>
-                            <span style="font-size: 0.7rem; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 2px 6px; border-radius: 10px;">تجديد</span>
+                    <div class="stat-card is-clickable" onclick="switchSection('members', document.querySelectorAll('.nav-link')[1]); filterStatus('expired');">
+                        <div class="stat-card-body">
+                            <div class="stat-label">الاشتراكات المنتهية</div>
+                            <div class="stat-value" id="count-expired">0</div>
+                            <span class="stat-chip">تجديد</span>
                         </div>
-                        <div class="stat-icon-box" style="width: 36px; height: 36px; border-radius: 8px; background:rgba(56, 189, 248, 0.12); color:#38bdf8;">
-                            <svg fill="none" height="18" stroke="currentColor" viewbox="0 0 24 24" width="18">
+                        <div class="stat-icon-box">
+                            <svg fill="none" height="18" stroke="currentColor" viewBox="0 0 24 24" width="18">
                                 <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
                         </div>
                     </div>
 
-                    <div class="stat-card" onclick="switchSection('members', document.querySelectorAll('.nav-link')[1]); filterStatus('frozen');" style="cursor:pointer; padding: 12px 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div>
-                            <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">الاشتراكات المتوقفة</div>
-                            <div class="stat-value" id="count-frozen" style="font-size: 1.4rem; font-weight: 800; color: #38bdf8;">0</div>
-                            <span style="font-size: 0.7rem; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 2px 6px; border-radius: 10px;">مُجمد</span>
+                    <div class="stat-card is-clickable" onclick="switchSection('members', document.querySelectorAll('.nav-link')[1]); filterStatus('frozen');">
+                        <div class="stat-card-body">
+                            <div class="stat-label">الاشتراكات المتوقفة</div>
+                            <div class="stat-value" id="count-frozen">0</div>
+                            <span class="stat-chip">مُجمد</span>
                         </div>
-                        <div class="stat-icon-box" style="width: 36px; height: 36px; border-radius: 8px; background:rgba(56, 189, 248, 0.12); color:#38bdf8;">
-                            <svg fill="none" height="18" stroke="currentColor" viewbox="0 0 24 24" width="18">
+                        <div class="stat-icon-box">
+                            <svg fill="none" height="18" stroke="currentColor" viewBox="0 0 24 24" width="18">
                                 <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
                         </div>
                     </div>
 
-                    <div class="stat-card admin-only full-width-mobile" style="padding: 12px 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div>
-                            <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">إجمالي تحصيل اليوم</div>
-                            <div class="stat-value" id="total-revenue" style="font-size: 1.3rem; font-weight: 800; color: #38bdf8;">0 ج.م</div>
-                            <span style="font-size: 0.7rem; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 2px 6px; border-radius: 10px;">اليوم</span>
+                    <div class="stat-card admin-only full-width-mobile">
+                        <div class="stat-card-body">
+                            <div class="stat-label">إجمالي تحصيل اليوم</div>
+                            <div class="stat-value" id="total-revenue">0 ج.م</div>
+                            <span class="stat-chip">اليوم</span>
                         </div>
-                        <div class="stat-icon-box" style="width: 36px; height: 36px; border-radius: 8px; background:rgba(56, 189, 248, 0.12); color:#38bdf8;">
-                            <svg fill="none" height="18" stroke="currentColor" viewbox="0 0 24 24" width="18">
+                        <div class="stat-icon-box">
+                            <svg fill="none" height="18" stroke="currentColor" viewBox="0 0 24 24" width="18">
                                 <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
                         </div>
@@ -372,58 +370,49 @@
                 </div>
 
                 <div id="supervisor-charts-wrap">
-                    <!-- 2. Compact Charts & Analytics Section (Row 1) -->
-                    <div class="analytics-charts-grid" id="analytics-grid-row1" style="display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 14px;">
-                        <div class="card chart-card admin-only" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <h3 style="margin: 0; font-size: 0.95rem; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-                                     حركة الإيرادات اليومية (آخر 7 أيام)
-                                </h3>
-                                <span style="font-size: 0.75rem; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 2px 8px; border-radius: 12px;">مُحدث لحظياً</span>
+                    <div class="chart-grid split-2-1" id="analytics-grid-row1">
+                        <div class="chart-card admin-only">
+                            <div class="chart-head">
+                                <h3>حركة الإيرادات اليومية (آخر 7 أيام)</h3>
+                                <span class="chart-tag">مُحدث لحظياً</span>
                             </div>
-                            <div style="height: 180px; position: relative;">
+                            <div class="chart-body">
                                 <canvas id="revenueTrendChart"></canvas>
                             </div>
                         </div>
 
-                        <div class="card chart-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <h3 style="margin: 0; font-size: 0.95rem; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-                                     توزيع المشتركين
-                                </h3>
+                        <div class="chart-card">
+                            <div class="chart-head">
+                                <h3>توزيع المشتركين</h3>
                             </div>
-                            <div style="height: 180px; position: relative; display: flex; justify-content: center; align-items: center;">
+                            <div class="chart-body">
                                 <canvas id="memberStatusChart"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 3. Monthly Performance & Attendance Analytics (Row 2) -->
-                    <div class="analytics-charts-grid" id="analytics-grid-row2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                        <div class="card chart-card admin-only" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <h3 style="margin: 0; font-size: 0.95rem; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-                                     الأداء المالي والمدفوعات الشهري
-                                </h3>
+                    <div class="chart-grid split-1-1" id="analytics-grid-row2">
+                        <div class="chart-card admin-only">
+                            <div class="chart-head">
+                                <h3>الأداء المالي والمدفوعات الشهري</h3>
                             </div>
-                            <div style="height: 160px; position: relative;">
+                            <div class="chart-body chart-body-sm">
                                 <canvas id="monthlyPerfChart"></canvas>
                             </div>
                         </div>
 
-                        <div class="card chart-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <h3 style="margin: 0; font-size: 0.95rem; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-                                     كثافة الحضور والتسجيل اليومي
-                                </h3>
+                        <div class="chart-card">
+                            <div class="chart-head">
+                                <h3>كثافة الحضور والتسجيل اليومي</h3>
                             </div>
-                            <div style="height: 180px; position: relative;">
+                            <div class="chart-body">
                                 <canvas id="attendanceActivityChart"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+
             <!-- MEMBERS -->
             <section class="view-section" id="members">
                 <div class="section-header">
@@ -454,39 +443,17 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>
-                                    رقم البصمة
-                                </th>
-                                <th>
-                                    اسم المشترك
-                                </th>
-                                <th class="hide-on-mobile">
-                                    النوع
-                                </th>
-                                <th>
-                                    رقم الهاتف
-                                </th>
-                                <th class="hide-on-mobile">
-                                    العنوان
-                                </th>
-                                <th class="hide-on-mobile">
-                                    الباقة
-                                </th>
-                                <th class="hide-on-mobile">
-                                    المدفوع
-                                </th>
-                                <th class="hide-on-mobile">
-                                    المتبقي
-                                </th>
-                                <th>
-                                    الانتهاء
-                                </th>
-                                <th>
-                                    الحالة
-                                </th>
-                                <th>
-                                    إجراءات
-                                </th>
+                                <th>رقم البصمة</th>
+                                <th>اسم المشترك</th>
+                                <th class="hide-on-mobile">النوع</th>
+                                <th>رقم الهاتف</th>
+                                <th class="hide-on-mobile">العنوان</th>
+                                <th class="hide-on-mobile">الباقة</th>
+                                <th class="hide-on-mobile">المدفوع</th>
+                                <th class="hide-on-mobile">المتبقي</th>
+                                <th>الانتهاء</th>
+                                <th>الحالة</th>
+                                <th>إجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="members-table-body">
@@ -494,50 +461,53 @@
                     </table>
                 </div>
             </section>
+
             <!-- PACKAGES -->
             <section class="view-section" id="packages">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>
-                            باقات الأسعار
-                        </h2>
-                        <p>
-                            الخطط المتاحة للتسجيل في النظام
-                        </p>
+                        <h2>باقات الأسعار</h2>
+                        <p>الخطط المتاحة للتسجيل في النظام</p>
                     </div>
-                    <button class="btn admin-only" onclick="openAddPackageModal()">
-                        إضافة باقة جديدة
-                    </button>
+                    <div class="section-actions">
+                        <button class="btn btn-compact admin-only" onclick="openAddPackageModal()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                            <span>إضافة باقة جديدة</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="stats-grid" id="packages-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="card-grid" id="packages-grid">
                     <!-- Dynamic -->
                 </div>
             </section>
 
             <!-- Store & POS Section -->
             <section class="view-section" id="store">
-                <div class="section-header" id="store-header" style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                <div class="section-header" id="store-header">
                     <div class="section-title">
-                        <h2 style="font-size: 1.15rem; margin: 0;">متجر المنتجات</h2>
+                        <h2>متجر المنتجات</h2>
+                        <p class="hide-on-mobile">بيع المنتجات وتوريد الخزينة ومتابعة المخزون</p>
                     </div>
-                    <div class="members-top-actions" style="display: flex; gap: 6px; align-items: center;">
-                        <button class="btn btn-outline btn-compact" onclick="openStoreSalesModal()" title="سجل المبيعات" style="height: 32px; padding: 0 10px; font-size: 0.78rem;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <div class="members-top-actions">
+                        <button class="btn btn-outline btn-compact" onclick="openStoreSalesModal()" title="سجل المبيعات">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                             <span>المبيعات</span>
                         </button>
-                        <button class="btn btn-compact admin-only" onclick="openAddProductModal()" style="height: 32px; padding: 0 10px; font-size: 0.78rem; background: linear-gradient(135deg, var(--primary) 0%, #0284c7 100%);">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            <span>+ إضافة منتج</span>
+                        <button class="btn btn-compact admin-only" onclick="openAddProductModal()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <span>إضافة منتج</span>
                         </button>
-                        <button type="button" class="btn btn-compact" id="store-top-cart-btn" onclick="openStoreCheckoutModal()" title="سلة المشتريات" style="height: 32px; padding: 0 10px; font-size: 0.82rem; background: rgba(0, 229, 255, 0.15); border: 1px solid var(--primary); color: var(--primary); display: inline-flex; align-items: center; gap: 6px; border-radius: 8px;">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                            <span id="store-top-cart-count" style="font-weight: 800; background: var(--primary); color: #050b14; border-radius: 10px; padding: 1px 6px; font-size: 0.72rem;">0</span>
+                        <button type="button" class="btn btn-outline btn-compact" id="store-top-cart-btn" onclick="openStoreCheckoutModal()" title="سلة المشتريات">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                            <span class="entity-card-tag" id="store-top-cart-count">0</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Store KPI Micro Strip (Sleek Horizontal Scrollable Pills) -->
-                <div class="store-kpi-strip chips-scroll-bar" id="store-kpi-grid" style="margin-bottom: 10px; display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;">
+                <!-- مؤشرات المتجر السريعة -->
+                <div class="store-kpi-strip chips-scroll-bar" id="store-kpi-grid">
                     <div class="store-kpi-pill">
                         <span class="pill-label">مبيعات اليوم:</span>
                         <span class="pill-val text-success" id="store-kpi-today-sales">0 ج.م</span>
@@ -556,67 +526,63 @@
                     </div>
                 </div>
 
-                <!-- Store Search & Filter Chips Bar -->
-                <div style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;">
-                    <div>
-                        <input type="text" class="form-control" id="store-search" oninput="searchStoreProducts()" placeholder="🔍 ابحث بالاسم أو الباركود..." style="padding: 8px 14px; font-size: 0.85rem; width: 100%; border-radius: 10px; height: 38px;">
-                    </div>
-                    <div class="filter-tabs chips-scroll-bar" id="store-category-filters" style="margin-bottom: 0;">
-                        <button class="store-filter-btn tab-btn active" onclick="filterStoreCategory('all', this)">الكل</button>
-                        <button class="store-filter-btn tab-btn" onclick="filterStoreCategory('أدوات رياضية', this)">أدوات رياضية</button>
-                        <button class="store-filter-btn tab-btn" onclick="filterStoreCategory('مكملات', this)">مكملات</button>
-                        <button class="store-filter-btn tab-btn" onclick="filterStoreCategory('مشروبات', this)">مشروبات</button>
+                <!-- بحث وتصنيفات المتجر -->
+                <div class="toolbar">
+                    <div class="toolbar-field toolbar-search">
+                        <input type="text" class="form-control" id="store-search" oninput="searchStoreProducts()" placeholder="ابحث بالاسم أو الباركود...">
                     </div>
                 </div>
+                <div class="filter-tabs chips-scroll-bar" id="store-category-filters">
+                    <button class="store-filter-btn tab-btn active" onclick="filterStoreCategory('all', this)">الكل</button>
+                    <button class="store-filter-btn tab-btn" onclick="filterStoreCategory('أدوات رياضية', this)">أدوات رياضية</button>
+                    <button class="store-filter-btn tab-btn" onclick="filterStoreCategory('مكملات', this)">مكملات</button>
+                    <button class="store-filter-btn tab-btn" onclick="filterStoreCategory('مشروبات', this)">مشروبات</button>
+                </div>
 
-                <!-- Store POS Split Layout -->
+                <!-- تخطيط نقطة البيع -->
                 <div class="store-main-layout">
-                    <!-- Products Grid (Right) -->
                     <div class="store-products-area">
                         <div id="store-products-grid" class="store-products-grid">
                             <!-- Dynamic Products List -->
                         </div>
                     </div>
 
-                    <!-- POS Quick Cart (Left) -->
                     <div class="store-cart-panel">
                         <div class="store-cart-header">
-                            <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.1rem; color: var(--text-main);">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                                <span>سلة المبيعات الفورية</span>
+                            <div class="entity-card-title">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                                سلة المبيعات الفورية
                             </div>
-                            <button type="button" class="btn btn-sm btn-outline" onclick="clearStoreCart()" style="font-size: 0.75rem; padding: 4px 8px; color: var(--danger); border-color: rgba(239, 68, 68, 0.3);">تفريغ السلة</button>
+                            <button type="button" class="btn btn-sm btn-outline" onclick="clearStoreCart()">تفريغ السلة</button>
                         </div>
 
-                        <!-- Cart Items List -->
                         <div class="store-cart-items-container" id="store-cart-items">
                             <div class="store-cart-empty">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="1.5" style="margin-bottom: 8px;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                                 <div>السلة فارغة حالياً</div>
-                                <span style="font-size: 0.75rem; color: var(--text-dim);">اضغط على أي منتج لإضافته فوراً</span>
+                                <span>اضغط على أي منتج لإضافته فوراً</span>
                             </div>
                         </div>
 
-                        <!-- Cart Footer & Checkout -->
                         <div class="store-cart-footer">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 1.1rem; font-weight: 800;">
-                                <span style="color: var(--text-muted);">إجمالي الفاتورة:</span>
-                                <span id="store-cart-total-price" style="color: var(--primary); font-size: 1.3rem;">0 ج.م</span>
+                            <div class="store-cart-total-row">
+                                <span>إجمالي الفاتورة:</span>
+                                <span id="store-cart-total-price">0 ج.م</span>
                             </div>
-                            <button type="button" class="btn" onclick="openStoreCheckoutModal()" style="width: 100%; justify-content: center; height: 46px; font-size: 1rem; font-weight: 800; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; border: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);">
-                                <span> تأكيد البيع وتوريد الخزينة</span>
+                            <button type="button" class="btn btn-block" onclick="openStoreCheckoutModal()">
+                                <span>تأكيد البيع وتوريد الخزينة</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Floating Mobile Quick Cart Bar -->
+                <!-- سلة عائمة للموبايل -->
                 <div id="store-mobile-floating-cart" class="store-floating-cart-bar" onclick="openStoreCheckoutModal()">
                     <div class="floating-cart-info">
                         <span class="floating-cart-icon">🛒</span>
-                        <div style="display:flex; flex-direction:column; line-height:1.2;">
-                            <span style="font-size:0.75rem; color:var(--text-muted);"><b id="floating-cart-count" style="color:#fff;">0</b> منتجات بالسلة</span>
-                            <span id="floating-cart-total" style="font-size:0.95rem; font-weight:800; color:var(--primary);">0 ج.م</span>
+                        <div class="floating-cart-text">
+                            <span class="floating-cart-count-line"><b id="floating-cart-count">0</b> منتجات بالسلة</span>
+                            <span id="floating-cart-total">0 ج.م</span>
                         </div>
                     </div>
                     <button type="button" class="floating-cart-btn">
@@ -628,87 +594,100 @@
 
             <!-- Workout & Diet Plans Section -->
             <section class="view-section" id="plans">
-                <div class="section-header" style="margin-bottom: 16px;">
+                <div class="section-header">
                     <div class="section-title">
-                        <h2 style="display: flex; align-items: center; gap: 8px;"> الخطط التدريبية والجداول الغذائية</h2>
-                        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">إنشاء وتخصيص جداول التمارين والدايت للمشتركين وإرسالها مباشرة عبر واتساب</p>
+                        <h2>الخطط التدريبية والجداول الغذائية</h2>
+                        <p>إنشاء وتخصيص جداول التمارين والدايت للمشتركين وإرسالها مباشرة عبر واتساب</p>
                     </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn" onclick="openMemberPlanModal()" style="display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, var(--primary) 0%, #0284c7 100%);">
+                    <div class="section-actions">
+                        <button class="btn btn-compact" onclick="openMemberPlanModal()">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            <span>+ إنشاء خطة جديدة</span>
+                            <span>إنشاء خطة جديدة</span>
                         </button>
                     </div>
                 </div>
 
-                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px;">
-                    <div class="stat-card" style="padding: 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">إجمالي الخطط المسجلة</div>
-                        <div class="stat-value" id="kpi-plans-total" style="font-size: 1.4rem; font-weight: 800; color: #38bdf8;">0</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-label">إجمالي الخطط المسجلة</div>
+                            <div class="stat-value" id="kpi-plans-total">0</div>
+                        </div>
                     </div>
-                    <div class="stat-card" style="padding: 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">خطط التضخيم العضلي</div>
-                        <div class="stat-value" id="kpi-plans-bulk" style="font-size: 1.4rem; font-weight: 800; color: #10b981;">0</div>
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-label">خطط التضخيم العضلي</div>
+                            <div class="stat-value" id="kpi-plans-bulk">0</div>
+                        </div>
                     </div>
-                    <div class="stat-card" style="padding: 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">خطط التنشيف وحرق الدهون</div>
-                        <div class="stat-value" id="kpi-plans-cut" style="font-size: 1.4rem; font-weight: 800; color: #f59e0b;">0</div>
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-label">خطط التنشيف وحرق الدهون</div>
+                            <div class="stat-value" id="kpi-plans-cut">0</div>
+                        </div>
                     </div>
-                    <div class="stat-card" style="padding: 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">خطط اللياقة العامة والفتنس</div>
-                        <div class="stat-value" id="kpi-plans-fitness" style="font-size: 1.4rem; font-weight: 800; color: #a855f7;">0</div>
-                    </div>
-                </div>
-
-                <div class="panel" style="margin-bottom: 18px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;">
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="plans-filter-tabs">
-                        <button class="store-filter-btn active" onclick="filterPlansType('all', this)">كل الخطط</button>
-                        <button class="store-filter-btn" onclick="filterPlansType('تضخيم', this)">تضخيم وبناء عضل</button>
-                        <button class="store-filter-btn" onclick="filterPlansType('تنشيف', this)">تنشيف وتخسيس</button>
-                        <button class="store-filter-btn" onclick="filterPlansType('فتنس', this)">لياقة وفتنس عام</button>
-                    </div>
-                    <div style="display: flex; gap: 10px; align-items: center; min-width: 260px;">
-                        <input type="text" class="form-control" id="search-plans" oninput="searchMemberPlans()" placeholder=" ابحث باسم المشترك أو اسم الخطة..." style="padding: 8px 14px; font-size: 0.9rem; width: 100%;">
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-label">خطط اللياقة العامة والفتنس</div>
+                            <div class="stat-value" id="kpi-plans-fitness">0</div>
+                        </div>
                     </div>
                 </div>
 
-                <div id="plans-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;">
+                <div class="filter-tabs chips-scroll-bar" id="plans-filter-tabs">
+                    <button class="tab-btn active" onclick="filterPlansType('all', this)">كل الخطط</button>
+                    <button class="tab-btn" onclick="filterPlansType('تضخيم', this)">تضخيم وبناء عضل</button>
+                    <button class="tab-btn" onclick="filterPlansType('تنشيف', this)">تنشيف وتخسيس</button>
+                    <button class="tab-btn" onclick="filterPlansType('فتنس', this)">لياقة وفتنس عام</button>
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-field toolbar-search">
+                        <input type="text" class="form-control" id="search-plans" oninput="searchMemberPlans()" placeholder="ابحث باسم المشترك أو اسم الخطة...">
+                    </div>
+                </div>
+
+                <div id="plans-grid" class="card-grid card-grid-wide">
                     <!-- Dynamic Plans Cards -->
                 </div>
             </section>
 
             <!-- Absence & Retention Bot Section -->
             <section class="view-section" id="absence-bot">
-                <div class="section-header" style="margin-bottom: 16px;">
+                <div class="section-header">
                     <div class="section-title">
-                        <h2 style="display: flex; align-items: center; gap: 8px;"> روبوت متابعة وتحفيز المشتركين الغائبين</h2>
-                        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">رصد تلقائي للمشتركين الذين لم يحضروا منذ 48 ساعة أو أكثر مع إرسال رسائل تشجيعية آمنة عبر واتساب</p>
+                        <h2>روبوت متابعة وتحفيز المشتركين الغائبين</h2>
+                        <p>رصد تلقائي للمشتركين الذين لم يحضروا منذ 48 ساعة أو أكثر مع إرسال رسائل تشجيعية آمنة عبر واتساب</p>
                     </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-outline" onclick="loadAbsentMembers()" style="display: flex; align-items: center; gap: 6px;">
+                    <div class="section-actions">
+                        <button class="btn btn-outline btn-compact" onclick="loadAbsentMembers()">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
                             <span>تحديث الفحص</span>
                         </button>
-                        <button class="btn" onclick="sendBulkAbsenceReminders()" style="display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; border:none; font-weight:700;">
+                        <button class="btn btn-accent btn-compact" onclick="sendBulkAbsenceReminders()">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                            <span>إرسال تحفيز للجميع (طابور آمن)</span>
+                            <span>إرسال تحفيز للجميع</span>
                         </button>
                     </div>
                 </div>
 
-                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px;">
-                    <div class="stat-card" style="padding: 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">مشتركون غائبون (48 ساعة فأكثر)</div>
-                        <div class="stat-value" id="kpi-absent-count" style="font-size: 1.4rem; font-weight: 800; color: #ef4444;">0</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-label">مشتركون غائبون (48 ساعة فأكثر)</div>
+                            <div class="stat-value text-danger" id="kpi-absent-count">0</div>
+                        </div>
                     </div>
-                    <div class="stat-card" style="padding: 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">إجمالي رسائل التحفيز المرسلة</div>
-                        <div class="stat-value" id="kpi-absent-sent" style="font-size: 1.4rem; font-weight: 800; color: #10b981;">0</div>
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-label">إجمالي رسائل التحفيز المرسلة</div>
+                            <div class="stat-value text-success" id="kpi-absent-sent">0</div>
+                        </div>
                     </div>
-                    <div class="stat-card" style="padding: 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">معيار مدة الغياب</div>
-                        <div class="stat-value" style="font-size: 1.2rem; font-weight: 800; color: #f59e0b;">
-                            <select id="absence-threshold-select" onchange="loadAbsentMembers()" style="background:transparent; color:#f59e0b; border:1px solid rgba(245, 158, 11, 0.4); border-radius:6px; padding:4px 8px; font-weight:800;">
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-label">معيار مدة الغياب</div>
+                            <select id="absence-threshold-select" onchange="loadAbsentMembers()">
                                 <option value="2">غائب منذ يومين (48 ساعة)</option>
                                 <option value="3">غائب منذ 3 أيام</option>
                                 <option value="5">غائب منذ 5 أيام</option>
@@ -718,10 +697,12 @@
                     </div>
                 </div>
 
-                <div class="panel" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <input type="text" class="form-control" id="search-absent" placeholder=" ابحث باسم المشترك أو رقم الهاتف..." onkeyup="filterAbsentTable(this.value)" style="max-width:360px;">
-                        <span style="font-size:0.8rem; color:var(--text-muted);">️ الفواصل الزمنية الآمنة بين الرسائل: 4–7 ثوانٍ لتفادي الحظر</span>
+                <div class="panel">
+                    <div class="toolbar">
+                        <div class="toolbar-field toolbar-search">
+                            <input type="text" class="form-control" id="search-absent" placeholder="ابحث باسم المشترك أو رقم الهاتف..." onkeyup="filterAbsentTable(this.value)">
+                        </div>
+                        <span class="toolbar-note">الفواصل الزمنية الآمنة بين الرسائل: 4–7 ثوانٍ لتفادي الحظر</span>
                     </div>
                     <table class="data-table">
                         <thead>
@@ -741,40 +722,42 @@
                     </table>
                 </div>
             </section>
-            <!-- USERS (ADMIN ONLY) -->
+
             <!-- Invitations Section -->
             <section class="view-section" id="invitations">
-                <div class="section-header" style="margin-bottom: 16px;">
+                <div class="section-header">
                     <div class="section-title">
-                        <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 8px;"> سجل دعوات المشتركين للأصدقاء</h2>
-                        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">إدارة دعوات الأصدقاء المجانية المرسلة من المشتركين مع إمكانية إرسال وتتبع رسائل الواتساب</p>
+                        <h2>سجل دعوات المشتركين للأصدقاء</h2>
+                        <p>إدارة دعوات الأصدقاء المجانية المرسلة من المشتركين مع إمكانية إرسال وتتبع رسائل الواتساب</p>
                     </div>
                 </div>
 
-                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 16px;">
-                    <div class="stat-card" style="padding: 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div>
-                            <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">إجمالي الدعوات المرسلة</div>
-                            <div class="stat-value" id="count-invitations-total" style="font-size: 1.4rem; font-weight: 800; color: #38bdf8;">0</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-label">إجمالي الدعوات المرسلة</div>
+                            <div class="stat-value" id="count-invitations-total">0</div>
                         </div>
                     </div>
-                    <div class="stat-card" style="padding: 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div>
-                            <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">دعوات الشهر الحالي</div>
-                            <div class="stat-value" id="count-invitations-month" style="font-size: 1.4rem; font-weight: 800; color: #10b981;">0</div>
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-label">دعوات الشهر الحالي</div>
+                            <div class="stat-value text-success" id="count-invitations-month">0</div>
                         </div>
                     </div>
-                    <div class="stat-card" style="padding: 14px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle);">
-                        <div>
-                            <div class="stat-label" style="font-size: 0.8rem; color: var(--text-muted);">حد الدعوات شهرياً لكل مشترك</div>
-                            <div class="stat-value" style="font-size: 1.3rem; font-weight: 800; color: #f59e0b;">1 دعوة / شهرياً</div>
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-label">حد الدعوات شهرياً لكل مشترك</div>
+                            <div class="stat-value">1 دعوة / شهرياً</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="panel" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <input type="text" class="form-control" id="search-invitations" placeholder=" بحث باسم المشترك، اسم الصديق أو رقم الهاتف..." onkeyup="filterInvitationsTable(this.value)" style="max-width:360px;">
+                <div class="panel">
+                    <div class="toolbar">
+                        <div class="toolbar-field toolbar-search">
+                            <input type="text" class="form-control" id="search-invitations" placeholder="بحث باسم المشترك، اسم الصديق أو رقم الهاتف..." onkeyup="filterInvitationsTable(this.value)">
+                        </div>
                     </div>
                     <table class="data-table">
                         <thead>
@@ -796,38 +779,42 @@
 
             <!-- DEBTORS -->
             <section class="view-section" id="debtors">
-                <div class="section-header" style="margin-bottom: 16px;">
+                <div class="section-header">
                     <div class="section-title">
-                        <h2 style="font-size: 1.4rem;">جدول المديونيات</h2>
-                        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">المشتركون الذين لم يسددوا كامل قيمة اشتراكهم، مع إمكانية تحصيل دفعة فورياً</p>
+                        <h2>جدول المديونيات</h2>
+                        <p>المشتركون الذين لم يسددوا كامل قيمة اشتراكهم، مع إمكانية تحصيل دفعة فورياً</p>
                     </div>
-                    <button class="btn btn-outline" onclick="loadDebtors()">تحديث</button>
+                    <div class="section-actions">
+                        <button class="btn btn-outline btn-compact" onclick="loadDebtors()">تحديث</button>
+                    </div>
                 </div>
 
-                <div class="stats-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; margin-bottom:16px;">
-                    <div class="stat-card" style="padding:14px;">
-                        <div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-body">
                             <div class="stat-label">عدد المدينين</div>
-                            <div class="stat-value" id="debt-count" style="font-size:1.4rem; font-weight:800;">0</div>
+                            <div class="stat-value" id="debt-count">0</div>
                         </div>
                     </div>
-                    <div class="stat-card" style="padding:14px;">
-                        <div>
+                    <div class="stat-card">
+                        <div class="stat-card-body">
                             <div class="stat-label">إجمالي المستحق</div>
-                            <div class="stat-value text-danger" id="debt-total" style="font-size:1.4rem; font-weight:800;">0 ج.م</div>
+                            <div class="stat-value text-danger" id="debt-total">0 ج.م</div>
                         </div>
                     </div>
-                    <div class="stat-card" style="padding:14px;">
-                        <div>
+                    <div class="stat-card">
+                        <div class="stat-card-body">
                             <div class="stat-label">أكبر مديونية</div>
-                            <div class="stat-value text-warning" id="debt-max" style="font-size:1.4rem; font-weight:800;">0 ج.م</div>
+                            <div class="stat-value text-warning" id="debt-max">0 ج.م</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="panel">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <input type="text" class="form-control" id="search-debtors" placeholder="بحث بالاسم أو الهاتف أو رقم البصمة..." onkeyup="filterDebtorsTable(this.value)" style="max-width:360px;">
+                    <div class="toolbar">
+                        <div class="toolbar-field toolbar-search">
+                            <input type="text" class="form-control" id="search-debtors" placeholder="بحث بالاسم أو الهاتف أو رقم البصمة..." onkeyup="filterDebtorsTable(this.value)">
+                        </div>
                     </div>
                     <table class="data-table">
                         <thead>
@@ -846,7 +833,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="5" style="text-align:left;">إجمالي المديونيات المعروضة:</th>
+                                <th colspan="5" class="ta-left">إجمالي المديونيات المعروضة:</th>
                                 <th class="text-danger" id="debtors-foot-total">0 ج.م</th>
                                 <th colspan="2"></th>
                             </tr>
@@ -858,15 +845,30 @@
             <!-- External Revenues -->
             <section class="view-section" id="external-revenues">
                 <div class="section-header">
-                    <div class="section-title"> الإيرادات الخارجية</div>
-                    <button class="btn btn-outline" onclick="openModal('addRevenueModal')">+ إضافة إيراد</button>
+                    <div class="section-title">
+                        <h2>الإيرادات الخارجية</h2>
+                        <p>تسجيل ومتابعة الإيرادات التي لا تأتي من الاشتراكات أو المتجر</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="btn btn-compact" onclick="openModal('addRevenueModal')">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                            <span>إضافة إيراد</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="panel">
-                    <div style="display:flex; gap:10px; margin-bottom:15px; align-items:center;">
-                        <input type="date" class="form-control" id="rev-filter-start" style="width:150px;">
-                        <span>إلى</span>
-                        <input type="date" class="form-control" id="rev-filter-end" style="width:150px;">
-                        <button class="btn btn-outline" onclick="loadExternalRevenues()"> بحث</button>
+                    <div class="toolbar">
+                        <div class="toolbar-field w-sm">
+                            <label for="rev-filter-start">من تاريخ</label>
+                            <input type="date" class="form-control" id="rev-filter-start">
+                        </div>
+                        <div class="toolbar-field w-sm">
+                            <label for="rev-filter-end">إلى تاريخ</label>
+                            <input type="date" class="form-control" id="rev-filter-end">
+                        </div>
+                        <button class="btn btn-outline" onclick="loadExternalRevenues()">بحث</button>
                     </div>
                     <table class="data-table">
                         <thead>
@@ -882,52 +884,65 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="2" style="text-align:left;">إجمالي الإيرادات:</th>
-                                <th id="total-revenues-amount" colspan="3" style="color:var(--success);">0 ج.م</th>
+                                <th colspan="2" class="ta-left">إجمالي الإيرادات:</th>
+                                <th class="text-success" id="total-revenues-amount" colspan="3">0 ج.م</th>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
             </section>
 
-            <!-- Trainer / Employee Attendance -->
+            <!-- Trainer Attendance -->
             <section class="view-section admin-only" id="trainer-attendance">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2> سجلات بصمة المدربين</h2>
+                        <h2>سجلات بصمة المدربين</h2>
                         <p>متابعة مواعيد حضور وانصراف المدربين المسجلين وحساب ساعات عملهم</p>
                     </div>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn btn-outline" onclick="openManualAttendanceModal('trainer')">+ تسجيل حضور يدوي</button>
-                        <button class="btn" onclick="openAddTrainerModal()">+ إضافة مدرب جديد</button>
+                    <div class="section-actions">
+                        <button class="btn btn-outline btn-compact" onclick="openManualAttendanceModal('trainer')">تسجيل حضور يدوي</button>
+                        <button class="btn btn-compact" onclick="openAddTrainerModal()">إضافة مدرب جديد</button>
                     </div>
                 </div>
 
-                <!-- Employee Stats Cards -->
-                <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+                <div class="stats-grid">
                     <div class="stat-card">
-                        <h3>إجمالي سجلات الحضور</h3>
-                        <div class="stat-value" id="tatt-stat-total" style="color: var(--primary);">0</div>
+                        <div class="stat-card-body">
+                            <div class="stat-label">إجمالي سجلات الحضور</div>
+                            <div class="stat-value text-primary" id="tatt-stat-total">0</div>
+                        </div>
                     </div>
                     <div class="stat-card">
-                        <h3>إجمالي ساعات العمل المسجلة</h3>
-                        <div class="stat-value" id="tatt-stat-hours" style="color: var(--success);">0 ساعة</div>
+                        <div class="stat-card-body">
+                            <div class="stat-label">إجمالي ساعات العمل المسجلة</div>
+                            <div class="stat-value text-success" id="tatt-stat-hours">0 ساعة</div>
+                        </div>
                     </div>
                     <div class="stat-card">
-                        <h3>المدربون الحاضرون اليوم</h3>
-                        <div class="stat-value" id="tatt-stat-today" style="color: var(--warning);">0 مدرب</div>
+                        <div class="stat-card-body">
+                            <div class="stat-label">المدربون الحاضرون اليوم</div>
+                            <div class="stat-value text-warning" id="tatt-stat-today">0 مدرب</div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="panel">
-                    <div style="display:flex; gap:10px; margin-bottom:15px; align-items:center; flex-wrap:wrap;">
-                        <input type="date" class="form-control" id="tatt-filter-start" style="width:160px;">
-                        <span>إلى</span>
-                        <input type="date" class="form-control" id="tatt-filter-end" style="width:160px;">
-                        <select class="form-control" id="tatt-filter-trainer" style="width:200px;">
-                            <option value="all">كل المدربين</option>
-                        </select>
-                        <button class="btn btn-outline" onclick="loadTrainerAttendance()"> بحث وتحديث</button>
+                    <div class="toolbar">
+                        <div class="toolbar-field w-sm">
+                            <label for="tatt-filter-start">من تاريخ</label>
+                            <input type="date" class="form-control" id="tatt-filter-start">
+                        </div>
+                        <div class="toolbar-field w-sm">
+                            <label for="tatt-filter-end">إلى تاريخ</label>
+                            <input type="date" class="form-control" id="tatt-filter-end">
+                        </div>
+                        <div class="toolbar-field w-md">
+                            <label for="tatt-filter-trainer">المدرب</label>
+                            <select class="form-control" id="tatt-filter-trainer">
+                                <option value="all">كل المدربين</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-outline" onclick="loadTrainerAttendance()">بحث وتحديث</button>
                     </div>
                     <table class="data-table">
                         <thead>
@@ -947,39 +962,31 @@
                 </div>
             </section>
 
+            <!-- USERS (ADMIN ONLY) -->
             <section class="view-section admin-only" id="users">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>
-                            حسابات المشرفين
-                        </h2>
-                        <p>
-                            إدارة صلاحيات الدخول للنظام وتخصيص الشيفتات (شيفت بنات/ولاد)
-                        </p>
+                        <h2>حسابات المشرفين</h2>
+                        <p>إدارة صلاحيات الدخول للنظام وتخصيص الشيفتات (شيفت بنات/ولاد)</p>
                     </div>
-                    <button class="btn" onclick="openAddUserModal()">
-                        إضافة مشرف جديد
-                    </button>
+                    <div class="section-actions">
+                        <button class="btn btn-compact" onclick="openAddUserModal()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                            <span>إضافة مشرف جديد</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="panel">
-                    <table>
+                    <table class="data-table">
                         <thead>
                             <tr>
-                                <th>
-                                    اسم المستخدم
-                                </th>
-                                <th>
-                                    الاسم الكامل
-                                </th>
-                                <th>
-                                    الصلاحية
-                                </th>
-                                <th>
-                                    تخصص الشيفت
-                                </th>
-                                <th>
-                                    إجراءات
-                                </th>
+                                <th>اسم المستخدم</th>
+                                <th>الاسم الكامل</th>
+                                <th>الصلاحية</th>
+                                <th>تخصص الشيفت</th>
+                                <th>إجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="users-table-body">
@@ -992,40 +999,53 @@
             <section class="view-section admin-only" id="employee-attendance">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2> سجلات بصمة الموظفين</h2>
+                        <h2>سجلات بصمة الموظفين</h2>
                         <p>متابعة مواعيد الحضور والانصراف وإجمالي ساعات العمل لكل موظف</p>
                     </div>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn btn-outline" onclick="openManualAttendanceModal('employee')">+ تسجيل حضور يدوي</button>
-                        <button class="btn" onclick="openAddEmployeeModal()">+ إضافة موظف جديد</button>
+                    <div class="section-actions">
+                        <button class="btn btn-outline btn-compact" onclick="openManualAttendanceModal('employee')">تسجيل حضور يدوي</button>
+                        <button class="btn btn-compact" onclick="openAddEmployeeModal()">إضافة موظف جديد</button>
                     </div>
                 </div>
 
-                <!-- Employee Stats Cards -->
-                <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+                <div class="stats-grid">
                     <div class="stat-card">
-                        <h3>إجمالي سجلات الحضور</h3>
-                        <div class="stat-value" id="eatt-stat-total" style="color: var(--primary);">0</div>
+                        <div class="stat-card-body">
+                            <div class="stat-label">إجمالي سجلات الحضور</div>
+                            <div class="stat-value text-primary" id="eatt-stat-total">0</div>
+                        </div>
                     </div>
                     <div class="stat-card">
-                        <h3>إجمالي ساعات العمل المسجلة</h3>
-                        <div class="stat-value" id="eatt-stat-hours" style="color: var(--success);">0 ساعة</div>
+                        <div class="stat-card-body">
+                            <div class="stat-label">إجمالي ساعات العمل المسجلة</div>
+                            <div class="stat-value text-success" id="eatt-stat-hours">0 ساعة</div>
+                        </div>
                     </div>
                     <div class="stat-card">
-                        <h3>الموظفون الحاضرون اليوم</h3>
-                        <div class="stat-value" id="eatt-stat-today" style="color: var(--warning);">0 موظف</div>
+                        <div class="stat-card-body">
+                            <div class="stat-label">الموظفون الحاضرون اليوم</div>
+                            <div class="stat-value text-warning" id="eatt-stat-today">0 موظف</div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="panel">
-                    <div style="display:flex; gap:10px; margin-bottom:15px; align-items:center; flex-wrap:wrap;">
-                        <input type="date" class="form-control" id="eatt-filter-start" style="width:160px;">
-                        <span>إلى</span>
-                        <input type="date" class="form-control" id="eatt-filter-end" style="width:160px;">
-                        <select class="form-control" id="eatt-filter-employee" style="width:200px;">
-                            <option value="all">كل الموظفين</option>
-                        </select>
-                        <button class="btn btn-outline" onclick="loadEmployeeAttendance()"> بحث وتحديث</button>
+                    <div class="toolbar">
+                        <div class="toolbar-field w-sm">
+                            <label for="eatt-filter-start">من تاريخ</label>
+                            <input type="date" class="form-control" id="eatt-filter-start">
+                        </div>
+                        <div class="toolbar-field w-sm">
+                            <label for="eatt-filter-end">إلى تاريخ</label>
+                            <input type="date" class="form-control" id="eatt-filter-end">
+                        </div>
+                        <div class="toolbar-field w-md">
+                            <label for="eatt-filter-employee">الموظف</label>
+                            <select class="form-control" id="eatt-filter-employee">
+                                <option value="all">كل الموظفين</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-outline" onclick="loadEmployeeAttendance()">بحث وتحديث</button>
                     </div>
                     <table class="data-table">
                         <thead>
@@ -1044,23 +1064,33 @@
                     </table>
                 </div>
             </section>
+
             <!-- TRAINERS (ADMIN ONLY) -->
             <section class="view-section admin-only" id="trainers">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2> دليل المدربين</h2>
-                        <p>إدارة سجلات المدربين</p>
+                        <h2>دليل المدربين</h2>
+                        <p>إدارة سجلات المدربين وتخصصاتهم وإحالة المشتركين</p>
                     </div>
-                    <button class="btn" onclick="openAddTrainerModal()">+ إضافة مدرب جديد</button>
+                    <div class="section-actions">
+                        <button class="btn btn-compact" onclick="openAddTrainerModal()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                            <span>إضافة مدرب جديد</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="panel">
-                    <div style="display:flex; gap:10px; margin-bottom:15px; align-items:center;">
-                        <span style="font-weight:bold; font-size:0.9rem;">تصفية الكادر:</span>
-                        <select class="form-control" id="trainer-job-filter" style="width:220px;" onchange="renderTrainers()">
-                            <option value="all"> كل المدربين</option>
-                            <option value="مدرب صالة"> مدربي الصالة فقط</option>
-                            <option value="مدرب خاص"> مدرب تدريب خاص (برايفت)</option>
-                        </select>
+                    <div class="toolbar">
+                        <div class="toolbar-field w-lg">
+                            <label for="trainer-job-filter">تصفية الكادر</label>
+                            <select class="form-control" id="trainer-job-filter" onchange="renderTrainers()">
+                                <option value="all">كل المدربين</option>
+                                <option value="مدرب صالة">مدربي الصالة فقط</option>
+                                <option value="مدرب خاص">مدرب تدريب خاص (برايفت)</option>
+                            </select>
+                        </div>
                     </div>
                     <table class="data-table">
                         <thead>
@@ -1079,14 +1109,22 @@
                     </table>
                 </div>
             </section>
+
             <!-- EMPLOYEES (ADMIN ONLY) -->
             <section class="view-section admin-only" id="employees">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2> دليل الموظفين</h2>
-                        <p>إدارة سجلات الموظفين</p>
+                        <h2>دليل الموظفين</h2>
+                        <p>إدارة سجلات الموظفين ومسمياتهم الوظيفية</p>
                     </div>
-                    <button class="btn" onclick="openAddEmployeeModal()">+ إضافة موظف جديد</button>
+                    <div class="section-actions">
+                        <button class="btn btn-compact" onclick="openAddEmployeeModal()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                            <span>إضافة موظف جديد</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="panel">
                     <table class="data-table">
@@ -1105,135 +1143,109 @@
                     </table>
                 </div>
             </section>
+
             <!-- DAILY REPORTS & EXPENSES -->
             <section class="view-section" id="daily-reports">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2 id="report-sec-title">
-                            التقارير والمصروفات
-                        </h2>
-                        <p id="report-sec-desc">
-                            تتبع الإيرادات والمصروفات وصافي الربح
-                        </p>
+                        <h2 id="report-sec-title">التقارير والمصروفات</h2>
+                        <p id="report-sec-desc">تتبع الإيرادات والمصروفات وصافي الربح</p>
                     </div>
-                    <div style="display:flex; gap:10px; align-items:center;">
-                        <div>
-                            <label style="font-size:0.8rem; display:block; color:var(--text-muted); margin-bottom:2px;">
-                                من تاريخ
-                            </label>
-                            <input class="form-field" id="report-date-start" onchange="loadDailyReports()" style="margin-bottom:0;" type="date" />
+                </div>
+
+                <div class="panel">
+                    <div class="toolbar">
+                        <div class="toolbar-field w-sm">
+                            <label for="report-date-start">من تاريخ</label>
+                            <input class="form-control" id="report-date-start" onchange="loadDailyReports()" type="date" />
                         </div>
-                        <div>
-                            <label style="font-size:0.8rem; display:block; color:var(--text-muted); margin-bottom:2px;">
-                                إلى تاريخ
-                            </label>
-                            <input class="form-field" id="report-date-end" onchange="loadDailyReports()" style="margin-bottom:0;" type="date" />
+                        <div class="toolbar-field w-sm">
+                            <label for="report-date-end">إلى تاريخ</label>
+                            <input class="form-control" id="report-date-end" onchange="loadDailyReports()" type="date" />
                         </div>
-                        <div class="admin-only" style="margin-right:10px;">
-                            <label style="font-size:0.8rem; display:block; color:var(--text-muted); margin-bottom:2px;">
-                                المشرف
-                            </label>
-                            <select class="form-field" id="report-supervisor-filter" onchange="loadDailyReports()" style="margin-bottom:0;">
-                                <option value="all">
-                                    الكل
-                                </option>
+                        <div class="toolbar-field w-md admin-only">
+                            <label for="report-supervisor-filter">المشرف</label>
+                            <select class="form-control" id="report-supervisor-filter" onchange="loadDailyReports()">
+                                <option value="all">الكل</option>
                             </select>
                         </div>
                         <!-- اختصارات: تقرير اليوم / الشهر بضغطة واحدة -->
-                        <button class="btn btn-outline" id="fin-mode-day" onclick="loadFinancialReport('day')" style="margin-top:20px;">
-                            تقرير اليوم
-                        </button>
-                        <button class="btn btn-outline" id="fin-mode-month" onclick="loadFinancialReport('month')" style="margin-top:20px;">
-                            تقرير الشهر
-                        </button>
-                        <button class="btn" onclick="loadDailyReports()" style="margin-top: 20px;">
-                            عرض التقرير
-                        </button>
-                        <button class="btn btn-outline" onclick="window.print()" style="border-color:var(--success); color:var(--success); margin-top: 20px;">
-                             طباعة التقرير
-                        </button>
+                        <div class="toolbar-actions">
+                            <button class="btn btn-outline" id="fin-mode-day" onclick="loadFinancialReport('day')">تقرير اليوم</button>
+                            <button class="btn btn-outline" id="fin-mode-month" onclick="loadFinancialReport('month')">تقرير الشهر</button>
+                            <button class="btn" onclick="loadDailyReports()">عرض التقرير</button>
+                            <button class="btn btn-outline" onclick="window.print()">طباعة التقرير</button>
+                        </div>
                     </div>
                 </div>
+
                 <div class="stats-grid">
                     <div class="stat-card admin-only">
-                        <h3>
-                            إجمالي المحصَّل
-                        </h3>
-                        <div class="stat-value" id="report-total">
-                            0 ج.م
+                        <div class="stat-card-body">
+                            <div class="stat-label">إجمالي المحصَّل</div>
+                            <div class="stat-value" id="report-total">0 ج.م</div>
+                            <div class="stat-sub" id="report-collected-sub">نقد داخل الخزينة خلال الفترة</div>
                         </div>
-                        <div class="stat-sub" id="report-collected-sub">نقد داخل الخزينة خلال الفترة</div>
                     </div>
                     <!-- تفصيل مصادر الدخل: كان الصافي بيحسب الاشتراكات والمصروفات بس،
                          فمبيعات المتجر والإيرادات الخارجية ما كانتش ظاهرة -->
                     <div class="stat-card admin-only">
-                        <h3>اشتراكات وتجديدات</h3>
-                        <div class="stat-value" id="fin-subs">0 ج.م</div>
-                        <div class="stat-sub" id="fin-subs-count">—</div>
+                        <div class="stat-card-body">
+                            <div class="stat-label">اشتراكات وتجديدات</div>
+                            <div class="stat-value" id="fin-subs">0 ج.م</div>
+                            <div class="stat-sub" id="fin-subs-count">—</div>
+                        </div>
                     </div>
                     <div class="stat-card admin-only">
-                        <h3>مبيعات المتجر</h3>
-                        <div class="stat-value" id="fin-store">0 ج.م</div>
-                        <div class="stat-sub" id="fin-store-count">—</div>
+                        <div class="stat-card-body">
+                            <div class="stat-label">مبيعات المتجر</div>
+                            <div class="stat-value" id="fin-store">0 ج.م</div>
+                            <div class="stat-sub" id="fin-store-count">—</div>
+                        </div>
                     </div>
                     <div class="stat-card admin-only">
-                        <h3>إيرادات خارجية</h3>
-                        <div class="stat-value" id="fin-external">0 ج.م</div>
-                        <div class="stat-sub" id="fin-external-count">—</div>
+                        <div class="stat-card-body">
+                            <div class="stat-label">إيرادات خارجية</div>
+                            <div class="stat-value" id="fin-external">0 ج.م</div>
+                            <div class="stat-sub" id="fin-external-count">—</div>
+                        </div>
                     </div>
                     <div class="stat-card">
-                        <h3>
-                            إجمالي المصروفات
-                        </h3>
-                        <div class="stat-value text-danger" id="report-expenses">
-                            0 ج.م
+                        <div class="stat-card-body">
+                            <div class="stat-label">إجمالي المصروفات</div>
+                            <div class="stat-value text-danger" id="report-expenses">0 ج.م</div>
                         </div>
                     </div>
                     <div class="stat-card admin-only">
-                        <h3>
-                            صافي الخزينة
-                        </h3>
-                        <div class="stat-value text-success" id="report-net">
-                            0 ج.م
+                        <div class="stat-card-body">
+                            <div class="stat-label">صافي الخزينة</div>
+                            <div class="stat-value text-success" id="report-net">0 ج.م</div>
+                            <div class="stat-sub">المحصَّل ناقص المصروفات</div>
                         </div>
-                        <div class="stat-sub">المحصَّل ناقص المصروفات</div>
                     </div>
                     <!-- المديونيات رصيد لحظي لا يخص فترة، ولا يدخل صافي الخزينة
                          لأنها فلوس لم تُحصَّل بعد -->
-                    <div class="stat-card admin-only" style="cursor:pointer;" onclick="switchSection('debtors', null)">
-                        <h3>
-                            مديونيات غير محصَّلة
-                        </h3>
-                        <div class="stat-value text-danger" id="report-outstanding">
-                            0 ج.م
+                    <div class="stat-card admin-only is-clickable" onclick="switchSection('debtors', null)">
+                        <div class="stat-card-body">
+                            <div class="stat-label">مديونيات غير محصَّلة</div>
+                            <div class="stat-value text-danger" id="report-outstanding">0 ج.م</div>
+                            <div class="stat-sub" id="report-outstanding-sub">رصيد حالي — خارج الخزينة</div>
                         </div>
-                        <div class="stat-sub" id="report-outstanding-sub">رصيد حالي — خارج الخزينة</div>
                     </div>
                 </div>
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap:20px; margin-top:20px;">
+
+                <div class="panel-grid">
                     <!-- Transactions Table -->
                     <div class="panel admin-only">
-                        <h3 style="margin-bottom:15px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
-                            جدول الإيرادات
-                        </h3>
-                        <table style="font-size:0.85rem">
+                        <h3>جدول الإيرادات</h3>
+                        <table class="data-table table-compact">
                             <thead>
                                 <tr>
-                                    <th>
-                                        الوقت
-                                    </th>
-                                    <th>
-                                        المشترك
-                                    </th>
-                                    <th>
-                                        الباقة
-                                    </th>
-                                    <th>
-                                        المبلغ
-                                    </th>
-                                    <th>
-                                        المشرف
-                                    </th>
+                                    <th>الوقت</th>
+                                    <th>المشترك</th>
+                                    <th>الباقة</th>
+                                    <th>المبلغ</th>
+                                    <th>المشرف</th>
                                 </tr>
                             </thead>
                             <tbody id="reports-table-body">
@@ -1242,31 +1254,20 @@
                     </div>
                     <!-- Expenses Table -->
                     <div class="panel">
-                        <div class="modal-header">
-                <h3>جدول المصروفات
-                            </h3>
+                        <div class="panel-header">
+                            <h3>جدول المصروفات</h3>
                             <button class="btn btn-sm btn-outline action-buttons" onclick="openExpenseModal()">
                                 + إضافة مصروف
                             </button>
                         </div>
-                        <table >
+                        <table class="data-table table-compact">
                             <thead>
                                 <tr>
-                                    <th>
-                                        الوقت
-                                    </th>
-                                    <th>
-                                        البيان
-                                    </th>
-                                    <th>
-                                        المبلغ
-                                    </th>
-                                    <th>
-                                        المشرف
-                                    </th>
-                                    <th class="action-buttons">
-                                        حذف
-                                    </th>
+                                    <th>الوقت</th>
+                                    <th>البيان</th>
+                                    <th>المبلغ</th>
+                                    <th>المشرف</th>
+                                    <th class="action-buttons">حذف</th>
                                 </tr>
                             </thead>
                             <tbody id="expenses-table-body">
@@ -1274,13 +1275,14 @@
                         </table>
                     </div>
                 </div>
+
                 <!-- المديونيات القائمة داخل التقرير ليخرج مع الطباعة -->
                 <div class="panel admin-only" id="report-debtors-panel" style="display:none;">
                     <div class="panel-header">
                         <h3>المديونيات القائمة (غير محصَّلة)</h3>
                         <span class="stat-sub">رصيد لحظي لا يتأثر بفترة التقرير، وغير محسوب ضمن صافي الخزينة</span>
                     </div>
-                    <table style="font-size:0.88rem;">
+                    <table class="data-table table-compact">
                         <thead>
                             <tr>
                                 <th>المشترك</th>
@@ -1294,7 +1296,7 @@
                         <tbody id="report-debtors-body"></tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="5" style="text-align:left;">إجمالي المستحق:</th>
+                                <th colspan="5" class="ta-left">إجمالي المستحق:</th>
                                 <th class="text-danger" id="report-debtors-total">0 ج.م</th>
                             </tr>
                         </tfoot>
@@ -1306,30 +1308,16 @@
                     <div class="panel-header">
                         <h3>تقارير وأداء المشرفين (الأدمن والمشرفين)</h3>
                     </div>
-                    <table style="font-size:0.88rem;">
+                    <table class="data-table table-compact">
                         <thead>
                             <tr>
-                                <th>
-                                    المشرف / المستخدم
-                                </th>
-                                <th>
-                                    الرتبة / الشيفت
-                                </th>
-                                <th style="text-align:center;">
-                                    عدد المعاملات والتجديدات
-                                </th>
-                                <th>
-                                    إجمالي المقبوضات
-                                </th>
-                                <th>
-                                    إجمالي المصروفات
-                                </th>
-                                <th>
-                                    صافي المقبوضات
-                                </th>
-                                <th>
-                                    التفاصيل
-                                </th>
+                                <th>المشرف / المستخدم</th>
+                                <th>الرتبة / الشيفت</th>
+                                <th class="ta-center">عدد المعاملات والتجديدات</th>
+                                <th>إجمالي المقبوضات</th>
+                                <th>إجمالي المصروفات</th>
+                                <th>صافي المقبوضات</th>
+                                <th>التفاصيل</th>
                             </tr>
                         </thead>
                         <tbody id="supervisors-report-body">
@@ -1338,56 +1326,40 @@
                 </div>
             </section>
             <!-- END daily-reports -->
+
             <!-- SETTINGS (ZKTECO) -->
             <section class="view-section" id="settings">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>
-                            أجهزة البصمة (ZKTeco)
-                        </h2>
-                        <p>
-                            إعدادات الاتصال بجهاز البصمة وتنزيل السجلات
-                        </p>
+                        <h2>أجهزة البصمة (ZKTeco)</h2>
+                        <p>إعدادات الاتصال بجهاز البصمة وتنزيل السجلات</p>
                     </div>
                 </div>
-                <div class="panel" style="max-width:500px;">
-                    <h3>
-                        إعدادات الاتصال
-                    </h3>
-                    <div class="form-field" style="margin-top:15px;">
-                        <label>
-                            IP Address
-                        </label>
-                        <input dir="ltr" id="zk-ip" type="text" value="192.168.1.201" />
+                <div class="panel panel-narrow">
+                    <h3>إعدادات الاتصال</h3>
+                    <div class="form-field">
+                        <label for="zk-ip">IP Address</label>
+                        <input dir="ltr" class="form-control" id="zk-ip" type="text" value="192.168.1.201" />
                     </div>
                     <div class="form-field">
-                        <label>
-                            Port
-                        </label>
-                        <input dir="ltr" id="zk-port" type="number" value="4370" />
+                        <label for="zk-port">Port</label>
+                        <input dir="ltr" class="form-control" id="zk-port" type="number" value="4370" />
                     </div>
-                    <div class="modal-actions" style="margin-top:20px;">
-                        <button class="btn" onclick="connectZkDevice()">
-                            اتصال بالجهاز
-                        </button>
-                        <button class="btn btn-outline" onclick="disconnectZkDevice()" style="color:var(--danger); border-color:var(--danger)">
-                            قطع الاتصال
-                        </button>
+                    <div class="toolbar">
+                        <button class="btn" onclick="connectZkDevice()">اتصال بالجهاز</button>
+                        <button class="btn btn-danger" onclick="disconnectZkDevice()">قطع الاتصال</button>
                     </div>
                 </div>
-                <div class="panel admin-only" style="max-width:500px;">
-                    <h3>
-                        النسخ الاحتياطي
-                    </h3>
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin:8px 0 16px;">
-                        يأخذ البرنامج نسخة تلقائية عند كل إغلاق، ويمكنك حفظ نسخة يدوية في أي مكان تختاره.
-                    </p>
-                    <button class="btn" onclick="backupDatabase()">
-                        حفظ نسخة احتياطية الآن
-                    </button>
+                <div class="panel panel-narrow admin-only">
+                    <h3>النسخ الاحتياطي</h3>
+                    <p class="panel-desc">يأخذ البرنامج نسخة تلقائية عند كل إغلاق، ويمكنك حفظ نسخة يدوية في أي مكان تختاره.</p>
+                    <div class="toolbar">
+                        <button class="btn" onclick="backupDatabase()">حفظ نسخة احتياطية الآن</button>
+                    </div>
                 </div>
             </section>
             <!-- END settings -->
+
             <!-- ACTIVITY LOG (ADMIN ONLY) -->
             <section class="view-section admin-only" id="activity">
                 <div class="section-header">
@@ -1395,40 +1367,47 @@
                         <h2>سجل التعديلات</h2>
                         <p>كل تغيير في تواريخ الاشتراكات: من قام به ومتى ومن أي تاريخ إلى أي تاريخ</p>
                     </div>
-                    <div style="display:flex; gap:10px; align-items:flex-end;">
-                        <div>
-                            <label style="font-size:0.8rem; display:block; color:var(--text-muted); margin-bottom:2px;">من تاريخ</label>
-                            <input class="form-field" id="act-date-start" type="date" style="margin-bottom:0;" onchange="loadActivity()" />
+                </div>
+
+                <div class="panel">
+                    <div class="toolbar">
+                        <div class="toolbar-field w-sm">
+                            <label for="act-date-start">من تاريخ</label>
+                            <input class="form-control" id="act-date-start" type="date" onchange="loadActivity()" />
                         </div>
-                        <div>
-                            <label style="font-size:0.8rem; display:block; color:var(--text-muted); margin-bottom:2px;">إلى تاريخ</label>
-                            <input class="form-field" id="act-date-end" type="date" style="margin-bottom:0;" onchange="loadActivity()" />
+                        <div class="toolbar-field w-sm">
+                            <label for="act-date-end">إلى تاريخ</label>
+                            <input class="form-control" id="act-date-end" type="date" onchange="loadActivity()" />
                         </div>
-                        <div>
-                            <label style="font-size:0.8rem; display:block; color:var(--text-muted); margin-bottom:2px;">المستخدم</label>
-                            <select class="form-field" id="act-user" style="margin-bottom:0;" onchange="loadActivity()">
+                        <div class="toolbar-field w-md">
+                            <label for="act-user">المستخدم</label>
+                            <select class="form-control" id="act-user" onchange="loadActivity()">
                                 <option value="all">الكل</option>
                             </select>
                         </div>
-                        <div>
-                            <label style="font-size:0.8rem; display:block; color:var(--text-muted); margin-bottom:2px;">نوع الإجراء</label>
-                            <select class="form-field" id="act-action" style="margin-bottom:0;" onchange="loadActivity()">
+                        <div class="toolbar-field w-lg">
+                            <label for="act-action">نوع الإجراء</label>
+                            <select class="form-control" id="act-action" onchange="loadActivity()">
                                 <option value="all">الكل</option>
                                 <option value="exp_changed">تغيير تاريخ الانتهاء</option>
                                 <option value="member_created">تسجيل مشترك جديد</option>
                             </select>
                         </div>
-                        <button class="btn btn-outline" onclick="loadActivity()" style="margin-bottom:0;">عرض</button>
-                        <button class="btn btn-outline" onclick="window.print()" style="margin-bottom:0;">طباعة</button>
+                        <div class="toolbar-actions">
+                            <button class="btn btn-outline" onclick="loadActivity()">عرض</button>
+                            <button class="btn btn-outline" onclick="window.print()">طباعة</button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="panel">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <input type="text" class="form-control" id="search-activity" placeholder="بحث باسم المشترك أو المستخدم..." onkeyup="filterActivityTable(this.value)" style="max-width:360px;">
-                        <span class="stat-sub" id="activity-count">0 سجل</span>
+                    <div class="toolbar">
+                        <div class="toolbar-field toolbar-search">
+                            <input type="text" class="form-control" id="search-activity" placeholder="بحث باسم المشترك أو المستخدم..." onkeyup="filterActivityTable(this.value)">
+                        </div>
+                        <span class="toolbar-note" id="activity-count">0 سجل</span>
                     </div>
-                    <table class="data-table" style="font-size:0.86rem;">
+                    <table class="data-table table-compact">
                         <thead>
                             <tr>
                                 <th>التاريخ والوقت</th>
@@ -1450,13 +1429,15 @@
             <section class="view-section admin-only" id="trash">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2> سلة المهملات (سجلات محذوفة مؤقتاً)</h2>
+                        <h2>سلة المهملات (سجلات محذوفة مؤقتاً)</h2>
                         <p>يمكنك استرجاع البيانات المحذوفة خطأً أو مسحها نهائياً من النظام</p>
                     </div>
-                    <button class="btn btn-outline" onclick="loadTrash()"> تحديث القائمة</button>
+                    <div class="section-actions">
+                        <button class="btn btn-outline btn-compact" onclick="loadTrash()">تحديث القائمة</button>
+                    </div>
                 </div>
                 <div class="panel">
-                    <table>
+                    <table class="data-table">
                         <thead>
                             <tr>
                                 <th>نوع العنصر</th>
@@ -1467,7 +1448,7 @@
                             </tr>
                         </thead>
                         <tbody id="trash-table-body">
-                            <tr><td colspan="5" style="text-align:center;">جاري التحميل...</td></tr>
+                            <tr><td colspan="5" class="ta-center">جاري التحميل...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -1588,10 +1569,10 @@
         </div>
     </div>
     <div class="modal-overlay" style="display: none;" id="memberHistoryModal">
-        <div class="modal-dialog" style="max-width:740px;">
-            <div class="member-card-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="modal-dialog modal-xl">
+            <div class="member-card-header row-between">
                 <div class="member-card-title">
-                    <span style="font-size:1.3rem;"></span>
+                    <span class="big-number"></span>
                     <span id="hist-title">كارت المشترك</span>
                     <span class="badge" id="hist-status-badge"></span>
                 </div>
@@ -1600,7 +1581,7 @@
             <div class="member-card-grid">
                 <div class="member-card-info-box">
                     <span class="label">رقم البصمة</span>
-                    <span class="val" id="hist-zkid" style="color:var(--primary); font-weight:800;">-</span>
+                    <span class="val text-primary strong-text" id="hist-zkid">-</span>
                 </div>
                 <div class="member-card-info-box">
                     <span class="label">رقم الهاتف</span>
@@ -1616,11 +1597,11 @@
                 </div>
                 <div class="member-card-info-box">
                     <span class="label">الباقة الحالية</span>
-                    <span class="val" id="hist-pkg" style="color:var(--primary); font-weight:700;">-</span>
+                    <span class="val text-primary" id="hist-pkg">-</span>
                 </div>
                 <div class="member-card-info-box">
                     <span class="label">تاريخ الانتهاء</span>
-                    <span class="val" id="hist-exp" style="color:var(--text-main); font-weight:700;">-</span>
+                    <span class="val" id="hist-exp">-</span>
                 </div>
                 <div class="member-card-info-box">
                     <span class="label">المدرب</span>
@@ -1634,16 +1615,16 @@
                     <span class="label">هاتف ولي الأمر</span>
                     <span class="val" id="hist-guardian">-</span>
                 </div>
-                <div class="member-card-info-box" id="hist-balance-box" style="display:none; background:rgba(16, 185, 129, 0.1); border-color:#10b981;">
-                    <span class="label" style="color:#10b981; font-weight:bold;">رصيد الحصص المتبقية</span>
-                    <span class="val" id="hist-balance" style="color:#10b981; font-weight:900;">-</span>
+                <div class="member-card-info-box alert-success" id="hist-balance-box" style="display:none;">
+                    <span class="label text-success">رصيد الحصص المتبقية</span>
+                    <span class="val text-success" id="hist-balance">-</span>
                 </div>
-                <div class="member-card-info-box" id="hist-finance-box" style="grid-column: 1 / -1; background:rgba(255,255,255,0.02);">
+                <div class="member-card-info-box span-full is-tinted" id="hist-finance-box">
                     <!-- Dynamic Finance Info -->
                 </div>
-                <div class="member-card-info-box" id="hist-notes-box" style="display:none; grid-column: 1 / -1;">
+                <div class="member-card-info-box span-full" id="hist-notes-box" style="display:none;">
                     <span class="label">ملاحظات</span>
-                    <span class="val" id="hist-notes" style="font-size:0.85rem; font-weight:500; color:var(--text-muted);">-</span>
+                    <span class="val hint" id="hist-notes">-</span>
                 </div>
             </div>
             <!-- ACTION BUTTONS BAR INSIDE MEMBER CARD -->
@@ -1658,9 +1639,9 @@
                      سجل الحضور والبصمة
                 </button>
             </div>
-            <div style="max-height:260px; overflow-y:auto; padding-left:4px;">
+            <div class="scroll-box">
                 <div id="card-tab-txns">
-                    <table style="font-size:0.85rem;">
+                    <table class="table-compact">
                         <thead>
                             <tr>
                                 <th>
@@ -1682,7 +1663,7 @@
                     </table>
                 </div>
                 <div class="hidden" id="card-tab-att">
-                    <table style="font-size:0.85rem;">
+                    <table class="table-compact">
                         <thead>
                             <tr>
                                 <th>
@@ -1695,7 +1676,7 @@
                     </table>
                 </div>
             </div>
-            <div class="modal-actions" style="margin-top:1.2rem;">
+            <div class="modal-actions">
                 <button class="btn btn-outline" onclick="closeModal('memberHistoryModal')">
                     إغلاق الكارت
                 </button>
@@ -1703,17 +1684,17 @@
         </div>
     </div>
     <div class="modal-overlay" style="display: none;" id="registerModal">
-        <div class="modal-dialog" style="max-width:540px;">
+        <div class="modal-dialog modal-md">
             <div class="modal-header">
                 <h3>تسجيل مشترك جديد</h3>
                 <button type="button" class="modal-close" onclick="closeModal('registerModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
             <div class="modal-body">
             <div class="alert-warning hidden" id="duplicate-warning">
-                <div style="font-weight:700; margin-bottom:4px;">
+                <div class="strong-text">
                     تنبيه: المشترك مسجل مسبقاً في النظام
                 </div>
-                <div id="dup-info" style="font-size:0.85rem; margin-bottom:10px;">
+                <div class="hint" id="dup-info">
                 </div>
                 <button class="btn btn-sm btn-outline" onclick="switchToRenewFromDup()">
                     الانتقال لتجديد الاشتراك
@@ -1778,7 +1759,7 @@
                     </span>
                 </label>
                 <div class="trainer-option-body" id="reg-trainer-wrapper" >
-                    <label style="font-size:0.82rem; color:var(--text-muted); margin-bottom:4px; display:block;">
+                    <label class="hint hint-block">
                         اختر اسم المدرب المُحيل
                     </label>
                     <select id="reg-trainer">
@@ -1798,7 +1779,7 @@
             <div class="form-field">
                 <label>تاريخ انتهاء مخصص (اختياري)</label>
                 <input id="reg-custom-exp" type="date" />
-                <div style="font-size:0.75rem; color:var(--primary); margin-top:4px;">اتركه فارغاً ليتم حسابه تلقائياً بناءً على الباقة</div>
+                <div class="hint-sm text-primary">اتركه فارغاً ليتم حسابه تلقائياً بناءً على الباقة</div>
             </div>
             <!-- حاسبة الاشتراك: السعر والمدفوع والمتبقي -->
             <div class="pay-calc">
@@ -1818,15 +1799,15 @@
                 <div class="pay-calc-note" id="reg-pay-note"></div>
             </div>
             <!-- قسم 2: تدريب خاص (بريفت) منفصل تماماً في الأسفل -->
-            <div class="trainer-option-card" style="border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.04);">
-                <label class="trainer-option-header" style="color: var(--warning);">
+            <div class="trainer-option-card alert-warning">
+                <label class="trainer-option-header text-warning">
                     <input id="reg-has-private" onchange="document.getElementById('reg-private-wrapper').style.display = this.checked ? 'block' : 'none'" type="checkbox" />
                     <span>
                          اشتراك تدريب خاص (بريفت)
                     </span>
                 </label>
                 <div class="trainer-option-body" id="reg-private-wrapper" >
-                    <label style="font-size:0.82rem; color:var(--text-muted); margin-bottom:4px; display:block;">
+                    <label class="hint hint-block">
                         اختر مدرب البريفت
                     </label>
                     <select id="reg-private-trainer">
@@ -1848,19 +1829,19 @@
         </div>
     </div>
     <div class="modal-overlay" style="display: none;" id="renewModal">
-        <div class="modal-dialog" style="max-width:500px;">
+        <div class="modal-dialog modal-md">
             <div class="modal-header">
                 <h3><span></span> <span>تجديد اشتراك</span></h3>
                 <span class="badge" id="rn-status-badge"></span>
                 <button type="button" class="modal-close" onclick="closeModal('renewModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
             <div class="modal-body">
-                <div style="padding:12px; background:rgba(15, 23, 42, 0.6); border:1px solid var(--border-subtle); border-radius:8px; margin-bottom:1.25rem;">
-                    <div id="rn-name" style="font-weight:700; font-size:1.05rem; color:var(--text-main); margin-bottom:4px;"></div>
-                    <div style="font-size:0.82rem; color:var(--text-muted);">
-                        <span>الجنس: <b id="rn-gender" style="color:var(--text-main);"></b></span>
-                        <span style="margin: 0 8px;">|</span>
-                        <span>الانقضاء الحالي: <b id="rn-current-exp" style="color:var(--primary);"></b></span>
+                <div class="info-box">
+                    <div class="strong-text" id="rn-name"></div>
+                    <div class="hint">
+                        <span>الجنس: <b class="text-main" id="rn-gender"></b></span>
+                        <span>|</span>
+                        <span>الانقضاء الحالي: <b class="text-primary" id="rn-current-exp"></b></span>
                     </div>
                 </div>
                 <input id="rn-member-id" type="hidden" />
@@ -1868,7 +1849,7 @@
                 <div class="debt-block" id="rn-debt-banner" style="display:none;">
                     <div class="debt-block-title">لا يمكن التجديد قبل سداد المديونية</div>
                     <div id="rn-debt-text"></div>
-                    <button type="button" class="btn btn-sm" id="rn-debt-pay-btn" style="margin-top:10px;">تسديد المديونية الآن</button>
+                    <button type="button" class="btn btn-sm" id="rn-debt-pay-btn">تسديد المديونية الآن</button>
                 </div>
                 <div id="rn-form-wrap">
                 <div class="form-field">
@@ -1878,7 +1859,7 @@
                 <div class="form-field">
                     <label>تاريخ انتهاء مخصص (اختياري)</label>
                     <input id="rn-custom-exp" type="date" />
-                    <div style="font-size:0.75rem; color:var(--primary); margin-top:4px;">اتركه فارغاً ليتم حسابه تلقائياً بناءً على الباقة</div>
+                    <div class="hint-sm text-primary">اتركه فارغاً ليتم حسابه تلقائياً بناءً على الباقة</div>
                 </div>
                 <div class="pay-calc">
                     <div class="pay-calc-title">حاسبة التجديد</div>
@@ -1900,12 +1881,12 @@
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-outline" onclick="closeModal('renewModal')">إلغاء</button>
-                <button type="button" class="btn" id="rn-confirm-btn" onclick="confirmRenew()" style="background:var(--primary); color:#0f172a;"> تأكيد التجديد والتفعيل</button>
+                <button type="button" class="btn btn-accent" id="rn-confirm-btn" onclick="confirmRenew()"> تأكيد التجديد والتفعيل</button>
             </div>
         </div>
     </div>
     <div class="modal-overlay" style="display: none;" id="editMemberModal">
-        <div class="modal-dialog" style="max-width:540px;">
+        <div class="modal-dialog modal-md">
             <div class="modal-header">
                 <h3>تعديل بيانات المشترك</h3>
                 <button type="button" class="modal-close" onclick="closeModal('editMemberModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -1977,7 +1958,7 @@
                     </span>
                 </label>
                 <div class="trainer-option-body" id="edit-trainer-wrapper" >
-                    <label style="font-size:0.82rem; color:var(--text-muted); margin-bottom:4px; display:block;">
+                    <label class="hint hint-block">
                         اختر اسم المدرب المُحيل
                     </label>
                     <select id="edit-trainer">
@@ -1988,15 +1969,15 @@
                 </div>
             </div>
             <!-- قسم 2: تدريب خاص (بريفت) منفصل تماماً -->
-            <div class="trainer-option-card" style="border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.04);">
-                <label class="trainer-option-header" style="color: var(--warning);">
+            <div class="trainer-option-card alert-warning">
+                <label class="trainer-option-header text-warning">
                     <input id="edit-has-private" onchange="document.getElementById('edit-private-wrapper').style.display = this.checked ? 'block' : 'none'" type="checkbox" />
                     <span>
                          اشتراك تدريب خاص (بريفت)
                     </span>
                 </label>
                 <div class="trainer-option-body" id="edit-private-wrapper" >
-                    <label style="font-size:0.82rem; color:var(--text-muted); margin-bottom:4px; display:block;">
+                    <label class="hint hint-block">
                         اختر مدرب البريفت
                     </label>
                     <select id="edit-private-trainer">
@@ -2018,25 +1999,25 @@
         </div>
     </div>
     <div class="modal-overlay" style="display: none;" id="customDurationModal">
-        <div class="modal-dialog" style="max-width:400px;">
+        <div class="modal-dialog modal-sm">
             <div class="modal-header">
                 <h3>تعديل مدة الاشتراك</h3>
                 <button type="button" class="modal-close" onclick="closeModal('customDurationModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
             <div class="modal-body">
                 <input id="cd-member-id" type="hidden" />
-                <div style="padding:12px; background:rgba(15, 23, 42, 0.6); border:1px solid var(--border-subtle); border-radius:8px; margin-bottom:1rem;">
-                    <div id="cd-name" style="font-weight:700; font-size:1.05rem; color:var(--text-main); margin-bottom:4px;"></div>
-                    <div style="font-size:0.82rem; color:var(--text-muted);">
-                        الانتهاء الحالي: <b id="cd-current-exp" style="color:var(--primary);"></b>
+                <div class="info-box info-box-tight">
+                    <div class="strong-text" id="cd-name"></div>
+                    <div class="hint">
+                        الانتهاء الحالي: <b class="text-primary" id="cd-current-exp"></b>
                     </div>
                 </div>
                 <div class="form-field">
                     <label>إضافة أيام للرصيد الحالي</label>
                     <input id="cd-add-days" type="number" placeholder="مثال: 20" oninput="calculateCustomDateFromDays()" />
-                    <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">أدخل عدد الأيام ليتم تحديث التاريخ تلقائياً</div>
+                    <div class="hint-sm">أدخل عدد الأيام ليتم تحديث التاريخ تلقائياً</div>
                 </div>
-                <div style="text-align: center; margin: 10px 0; color: var(--text-muted); font-size: 0.85rem;">أو</div>
+                <div class="hint hint-center">أو</div>
                 <div class="form-field">
                     <label>تحديد تاريخ انتهاء جديد</label>
                     <input id="cd-new-exp" type="date" oninput="document.getElementById('cd-add-days').value = ''" />
@@ -2044,7 +2025,7 @@
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-outline" onclick="closeModal('customDurationModal')">إلغاء</button>
-                <button type="button" class="btn" onclick="saveCustomDuration()" style="background:var(--primary); color:#0f172a;">حفظ المدة الجديدة</button>
+                <button type="button" class="btn btn-accent" onclick="saveCustomDuration()">حفظ المدة الجديدة</button>
             </div>
         </div>
     </div>
@@ -2142,7 +2123,7 @@
                 <label>
                     اسم المستخدم
                 </label>
-                <input disabled="" id="eu-user-display" style="opacity:0.7;" type="text" />
+                <input class="is-dim" disabled="" id="eu-user-display" type="text" />
             </div>
             <div class="form-field">
                 <label>
@@ -2321,15 +2302,15 @@
         </div>
     </div>
     <div class="modal-overlay" style="display: none;" id="confirmModal">
-        <div class="modal-dialog" style="max-width: 440px; text-align: center;">
+        <div class="modal-dialog modal-sm modal-center">
             <div class="modal-header">
                 <h3>تأكيد الإجراء</h3>
                 <button type="button" class="modal-close" onclick="resolveConfirm(false)" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
-            <div class="modal-body" style="padding: 1.25rem 0;">
-                <p id="confirm-msg" style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); line-height: 1.6; margin: 0; text-align: center;"></p>
+            <div class="modal-body">
+                <p class="strong-text hint-center" id="confirm-msg"></p>
             </div>
-            <div class="modal-actions" style="justify-content: center; gap: 15px; margin-top: 0.5rem;">
+            <div class="modal-actions row-center">
                 <button class="btn btn-outline" onclick="resolveConfirm(false)">إلغاء</button>
                 <button class="btn btn-danger" onclick="resolveConfirm(true)">تأكيد</button>
             </div>
@@ -2337,7 +2318,7 @@
     </div>
     <!-- مدرب البريفت (تدريب خاص) — مستقل عن مدرب الاشتراك -->
     <div class="modal-overlay" style="display: none;" id="privateTrainerModal">
-        <div class="modal-dialog" style="max-width: 460px;">
+        <div class="modal-dialog modal-sm">
             <div class="modal-header">
                 <h3>
                 مدرب التدريب الخاص (بريفت)
@@ -2346,7 +2327,7 @@
             </div>
             <div class="modal-body">
             <input id="pt-member-id" type="hidden" />
-            <div class="alert-info" id="pt-member-info" style="font-size:0.85rem;">
+            <div class="alert-info table-compact" id="pt-member-info">
             </div>
             <div class="form-field">
                 <label>
@@ -2375,13 +2356,13 @@
     </div>
     <!-- تقرير مشتركي مدرب معيّن -->
     <div class="modal-overlay" style="display: none;" id="trainerReportModal">
-        <div class="modal-dialog" style="max-width: 900px;">
+        <div class="modal-dialog modal-2xl">
             <h3 id="trainer-report-title">
                 تقرير المدرب
             </h3>
-            <div class="alert-info" id="trainer-report-summary" style="font-size:0.9rem;">
+            <div class="alert-info hint" id="trainer-report-summary">
             </div>
-            <div class="panel" style="max-height: 55vh; overflow-y: auto;">
+            <div class="panel scroll-md">
                 <table>
                     <thead>
                         <tr>
@@ -2481,7 +2462,7 @@
                 <button class="btn btn-outline" onclick="closeModal('addTrainerModal')">
                     إلغاء
                 </button>
-                <button class="btn" id="trainer-save-btn" onclick="saveNewTrainer()" style="background:var(--success); color:white;">
+                <button class="btn btn-accent" id="trainer-save-btn" onclick="saveNewTrainer()">
                     حفظ المدرب
                 </button>
             </div>
@@ -2528,80 +2509,88 @@
             </div>
             <div class="modal-actions">
                 <button class="btn btn-outline" onclick="closeModal('addEmployeeModal')">إلغاء</button>
-                <button class="btn" id="employee-save-btn" onclick="saveNewEmployee()" style="background:var(--success); color:white;">حفظ الموظف</button>
+                <button class="btn btn-accent" id="employee-save-btn" onclick="saveNewEmployee()">حفظ الموظف</button>
             </div>
         </div>
     </div>
     <!-- تقرير تفصيلي لمشرف معيّن -->
     <!-- Add Revenue Modal -->
     <div class="modal-overlay" style="display: none;" id="addRevenueModal">
-        <div class="modal-dialog" style="max-width:400px;">
+        <div class="modal-dialog modal-sm">
             <div class="modal-header">
                 <h3>إضافة إيراد خارجي</h3>
                 <button type="button" class="modal-close" onclick="closeModal('addRevenueModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
             <form onsubmit="event.preventDefault(); submitRevenue();">
                 <div class="modal-body">
-                    <div class="form-group" style="margin-bottom:12px;">
-                        <label style="font-size:0.85rem; color:var(--text-muted); margin-bottom:4px; display:block;">البيان / الوصف</label>
+                    <div class="form-group">
+                        <label class="hint hint-block">البيان / الوصف</label>
                         <input type="text" id="rev-desc" class="form-control" required placeholder="أدخل وصف الإيراد...">
                     </div>
-                    <div class="form-group" style="margin-bottom:12px;">
-                        <label style="font-size:0.85rem; color:var(--text-muted); margin-bottom:4px; display:block;">المبلغ (ج.م)</label>
+                    <div class="form-group">
+                        <label class="hint hint-block">المبلغ (ج.م)</label>
                         <input type="number" id="rev-amount" class="form-control" required min="1" step="0.01" placeholder="المبلغ...">
                     </div>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn btn-outline" onclick="closeModal('addRevenueModal')">إلغاء</button>
-                    <button type="submit" class="btn" style="background:var(--success);border-color:var(--success);color:white;">حفظ الإيراد</button>
+                    <button type="submit" class="btn btn-accent">حفظ الإيراد</button>
                 </div>
             </form>
         </div>
     </div>
 
     <div class="modal-overlay" style="display: none;" id="supervisorDetailModal">
-        <div class="modal-dialog" style="max-width: 950px; width:95%;">
+        <div class="modal-dialog modal-2xl">
             <div class="modal-header">
                 <h3 id="sup-report-title"> التقرير التفصيلي للمشرف</h3>
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <span id="sup-report-dates" style="font-size:0.85rem; color:var(--text-muted);"></span>
+                <div class="row-gap">
+                    <span class="hint" id="sup-report-dates"></span>
                     <button type="button" class="modal-close" onclick="closeModal('supervisorDetailModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
                 </div>
             </div>
             <div class="modal-body">
                 <!-- Supervisor Summary Cards -->
-                <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:15px;">
+                <div class="stats-grid stats-grid-compact">
                     <div class="stat-card">
-                        <h3 style="font-size:0.8rem;">إجمالي المقبوضات</h3>
-                        <div class="stat-value" id="sup-report-rev" style="font-size:1.1rem; color:var(--primary);">0 ج.م</div>
+                        <div class="stat-card-body">
+                            <div class="stat-label">إجمالي المقبوضات</div>
+                            <div class="stat-value text-primary" id="sup-report-rev">0 ج.م</div>
+                        </div>
                     </div>
                     <div class="stat-card">
-                        <h3 style="font-size:0.8rem;">إجمالي المصروفات</h3>
-                        <div class="stat-value" id="sup-report-exp" style="font-size:1.1rem; color:var(--danger);">0 ج.م</div>
+                        <div class="stat-card-body">
+                            <div class="stat-label">إجمالي المصروفات</div>
+                            <div class="stat-value text-danger" id="sup-report-exp">0 ج.م</div>
+                        </div>
                     </div>
                     <div class="stat-card">
-                        <h3 style="font-size:0.8rem;">صافي الخزينة</h3>
-                        <div class="stat-value" id="sup-report-net" style="font-size:1.1rem; color:var(--success);">0 ج.م</div>
+                        <div class="stat-card-body">
+                            <div class="stat-label">صافي الخزينة</div>
+                            <div class="stat-value text-success" id="sup-report-net">0 ج.م</div>
+                        </div>
                     </div>
                     <div class="stat-card">
-                        <h3 style="font-size:0.8rem;">عدد التجديدات والاشتراكات</h3>
-                        <div class="stat-value" id="sup-report-count" style="font-size:1.1rem;">0</div>
+                        <div class="stat-card-body">
+                            <div class="stat-label">عدد التجديدات والاشتراكات</div>
+                            <div class="stat-value" id="sup-report-count">0</div>
+                        </div>
                     </div>
                 </div>
                 <!-- Itemized Tables inside Modal -->
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
-                    <div class="panel" style="max-height: 45vh; overflow-y: auto; padding:12px;">
-                        <h4 style="margin-bottom:10px; color:var(--text-main); font-weight:bold;"> المقبوضات والتجديدات</h4>
-                        <table style="font-size:0.82rem;">
+                <div class="form-grid-2">
+                    <div class="panel scroll-box-lg">
+                        <h4 class="strong-text"> المقبوضات والتجديدات</h4>
+                        <table class="hint">
                             <thead>
                                 <tr><th>الوقت</th><th>المشترك</th><th>الباقة</th><th>المبلغ</th></tr>
                             </thead>
                             <tbody id="sup-report-txns-body"></tbody>
                         </table>
                     </div>
-                    <div class="panel" style="max-height: 45vh; overflow-y: auto; padding:12px;">
-                        <h4 style="margin-bottom:10px; color:var(--text-main); font-weight:bold;"> المصروفات المسجلة</h4>
-                        <table style="font-size:0.82rem;">
+                    <div class="panel scroll-box-lg">
+                        <h4 class="strong-text"> المصروفات المسجلة</h4>
+                        <table class="hint">
                             <thead>
                                 <tr><th>الوقت</th><th>البيان</th><th>المبلغ</th></tr>
                             </thead>
@@ -2612,14 +2601,14 @@
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-outline" onclick="closeModal('supervisorDetailModal')">إغلاق</button>
-                <button type="button" class="btn" onclick="window.print()" style="background:#0284c7; border-color:#0284c7;"> طباعة تقرير المشرف</button>
+                <button type="button" class="btn btn-accent" onclick="window.print()"> طباعة تقرير المشرف</button>
             </div>
         </div>
     </div>
 
     <!-- Manual Attendance Modal (تسجيل حضور وانصراف يدوي) -->
     <div class="modal-overlay" style="display: none;" id="addManualAttendanceModal">
-        <div class="modal-dialog" style="max-width:500px;">
+        <div class="modal-dialog modal-md">
             <div class="modal-header">
                 <h3 class="modal-title" id="manual-att-title">تسجيل حضور يدوي</h3>
                 <button type="button" class="modal-close" onclick="closeModal('addManualAttendanceModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -2644,17 +2633,17 @@
                         <label>التاريخ</label>
                         <input type="date" id="manual-att-date" class="form-control" required>
                     </div>
-                    <div class="form-row" style="display: flex; gap: 10px;">
-                        <div class="form-group" style="flex: 1;">
+                    <div class="form-row row-gap">
+                        <div class="form-group grow">
                             <label>وقت الحضور</label>
                             <input type="time" id="manual-att-checkin" class="form-control" required>
                         </div>
-                        <div class="form-group" style="flex: 1;">
+                        <div class="form-group grow">
                             <label>وقت الانصراف (اختياري)</label>
                             <input type="time" id="manual-att-checkout" class="form-control">
                         </div>
                     </div>
-                    <div class="modal-actions" style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <div class="modal-actions row-actions">
                         <button type="button" class="btn btn-outline" onclick="closeModal('addManualAttendanceModal')">إلغاء</button>
                         <button type="submit" class="btn">حفظ السجل</button>
                     </div>
@@ -2665,7 +2654,7 @@
 
     <!-- Payment / Debt Settlement Modal -->
     <div class="modal-overlay" style="display: none;" id="paymentModal">
-        <div class="modal-dialog" style="max-width:460px;">
+        <div class="modal-dialog modal-sm">
             <div class="modal-header">
                 <h3>تسديد دفعة من المديونية</h3>
                 <button type="button" class="modal-close" onclick="closeModal('paymentModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -2673,8 +2662,8 @@
             <form onsubmit="event.preventDefault(); submitPayment();">
                 <div class="modal-body">
                     <input id="pay-member-id" type="hidden" />
-                    <div style="padding:12px; background:rgba(15, 23, 42, 0.6); border:1px solid var(--border-subtle); border-radius:8px; margin-bottom:1.25rem;">
-                        <div id="pay-member-name" style="font-weight:700; font-size:1.05rem; margin-bottom:8px;"></div>
+                    <div class="info-box">
+                        <div class="strong-text" id="pay-member-name"></div>
                         <div class="pay-summary">
                             <span>سعر الباقة</span><b id="pay-price">0 ج.م</b>
                         </div>
@@ -2698,7 +2687,7 @@
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn btn-outline" onclick="closeModal('paymentModal')">إلغاء</button>
-                    <button type="submit" class="btn" id="pay-submit-btn" style="background:var(--success); border-color:var(--success); color:#fff;">تأكيد السداد</button>
+                    <button type="submit" class="btn btn-accent" id="pay-submit-btn">تأكيد السداد</button>
                 </div>
             </form>
         </div>
@@ -2706,37 +2695,37 @@
 
     <!-- Invitation Modal -->
     <div class="modal-overlay" style="display: none;" id="invitationModal">
-        <div class="modal-dialog" style="max-width:460px;">
+        <div class="modal-dialog modal-sm">
             <div class="modal-header">
                 <h3>إرسال دعوة صديق مجانية</h3>
                 <button type="button" class="modal-close" onclick="closeModal('invitationModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
             <form id="invitationForm" onsubmit="saveInvitation(event)">
                 <div class="modal-body">
-                    <div id="invitation-limit-banner" style="display:none; background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#ef4444; padding:10px; border-radius:8px; font-size:0.85rem; margin-bottom:14px;">
+                    <div class="alert-danger" id="invitation-limit-banner" style="display:none;">
                          <b>تنبيه:</b> هذا المشترك استهلك بالفعل دعوته الشهرية لهذا الشهر! (مسموح بدعوة واحدة شهرياً).
                     </div>
                     <input type="hidden" id="inv-member-id">
-                    <div class="form-group" style="margin-bottom:12px;">
-                        <label style="font-size:0.85rem; color:var(--text-muted);">المشترك الداعي</label>
-                        <input type="text" class="form-control" id="inv-member-name" readonly style="background:rgba(255,255,255,0.05); font-weight:bold; color:#38bdf8;">
+                    <div class="form-group">
+                        <label class="hint">المشترك الداعي</label>
+                        <input type="text" class="form-control btn-accent" id="inv-member-name" readonly>
                     </div>
-                    <div class="form-group" style="margin-bottom:12px;">
-                        <label style="font-size:0.85rem; color:var(--text-muted);">اسم الصديق (المدعو) <span style="color:#ef4444;">*</span></label>
+                    <div class="form-group">
+                        <label class="hint">اسم الصديق (المدعو) <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="inv-guest-name" required placeholder="أدخل اسم الصديق المستلم للدعوة">
                     </div>
-                    <div class="form-group" style="margin-bottom:12px;">
-                        <label style="font-size:0.85rem; color:var(--text-muted);">رقم هاتف الصديق (مستقبل الدعوة عبر الواتساب) <span style="color:#ef4444;">*</span></label>
+                    <div class="form-group">
+                        <label class="hint">رقم هاتف الصديق (مستقبل الدعوة عبر الواتساب) <span class="text-danger">*</span></label>
                         <input type="tel" class="form-control" id="inv-guest-phone" required placeholder="مثال: 01012345678 (الرقم الذي ستصل إليه الدعوة)">
                     </div>
-                    <div class="form-group" style="margin-bottom:16px;">
-                        <label style="font-size:0.85rem; color:var(--text-muted);">ملاحظات إضافية (اختياري)</label>
+                    <div class="form-group">
+                        <label class="hint">ملاحظات إضافية (اختياري)</label>
                         <textarea class="form-control" id="inv-notes" rows="2" placeholder="أي ملاحظات إضافية..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline" onclick="closeModal('invitationModal')">إلغاء</button>
-                    <button type="submit" class="btn" id="btn-save-invitation" style="background:#10b981; color:#fff; border:none; padding: 8px 18px; font-weight: 700;">
+                    <button type="submit" class="btn btn-accent" id="btn-save-invitation">
                         <span>حفظ وإرسال الدعوة عبر الواتساب</span>
                     </button>
                 </div>
@@ -2746,7 +2735,7 @@
 
     <!-- Store Add/Edit Product Modal -->
     <div class="modal-overlay" style="display: none;" id="storeProductModal">
-        <div class="modal-dialog" style="max-width: 540px;">
+        <div class="modal-dialog modal-md">
             <div class="modal-header">
                 <h3 id="store-product-modal-title">إضافة منتج جديد للمتجر</h3>
                 <button type="button" class="modal-close" onclick="closeModal('storeProductModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -2755,14 +2744,14 @@
                 <div class="modal-body">
                     <input type="hidden" id="sp-id">
                     
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 0.85rem; color: var(--text-muted);">اسم المنتج / الأداة الرياضية <span style="color: var(--danger);">*</span></label>
+                    <div class="form-group">
+                        <label class="hint">اسم المنتج / الأداة الرياضية <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="sp-name" required placeholder="مثال: قفازات تمرين جلدية، حبل قفز...">
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div class="form-grid-2">
                         <div class="form-group">
-                            <label style="font-size: 0.85rem; color: var(--text-muted);">التصنيف <span style="color: var(--danger);">*</span></label>
+                            <label class="hint">التصنيف <span class="text-danger">*</span></label>
                             <select class="form-control" id="sp-category" required>
                                 <option value="أدوات رياضية">أدوات رياضية</option>
                                 <option value="مكملات">مكملات</option>
@@ -2770,46 +2759,46 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label style="font-size: 0.85rem; color: var(--text-muted);">الباركود / الكود (اختياري)</label>
+                            <label class="hint">الباركود / الكود (اختياري)</label>
                             <input type="text" class="form-control" id="sp-barcode" placeholder="كود المنتج أو الباركود">
                         </div>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div class="form-grid-3">
                         <div class="form-group">
-                            <label style="font-size: 0.85rem; color: var(--text-muted);">سعر البيع (ج.م) <span style="color: var(--danger);">*</span></label>
+                            <label class="hint">سعر البيع (ج.م) <span class="text-danger">*</span></label>
                             <input type="number" step="0.5" class="form-control" id="sp-price" required placeholder="0.00" min="0">
                         </div>
                         <div class="form-group">
-                            <label style="font-size: 0.85rem; color: var(--text-muted);">سعر التكلفة (ج.م)</label>
+                            <label class="hint">سعر التكلفة (ج.م)</label>
                             <input type="number" step="0.5" class="form-control" id="sp-cost" placeholder="0.00" min="0">
                         </div>
                         <div class="form-group">
-                            <label style="font-size: 0.85rem; color: var(--text-muted);">الكمية بالمخزن <span style="color: var(--danger);">*</span></label>
+                            <label class="hint">الكمية بالمخزن <span class="text-danger">*</span></label>
                             <input type="number" class="form-control" id="sp-stock" required placeholder="0" min="0">
                         </div>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 0.85rem; color: var(--text-muted);">صورة المنتج (اختياري - يمكنك تركها فارغة)</label>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <input type="text" class="form-control" id="sp-image" placeholder="رابط الصورة أو اتركها فارغة" style="flex: 1;">
+                    <div class="form-group">
+                        <label class="hint">صورة المنتج (اختياري - يمكنك تركها فارغة)</label>
+                        <div class="row-gap">
+                            <input type="text" class="form-control grow" id="sp-image" placeholder="رابط الصورة أو اتركها فارغة">
                             <input type="file" id="sp-image-file" accept="image/*" style="display:none;" onchange="handleProductImageUpload(this)">
-                            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('sp-image-file').click()" style="white-space:nowrap;"> اختر من جهازك</button>
+                            <button type="button" class="btn btn-outline btn-sm nowrap" onclick="document.getElementById('sp-image-file').click()"> اختر من جهازك</button>
                         </div>
-                        <div id="sp-image-preview-wrap" style="margin-top: 8px; display: none;">
-                            <img id="sp-image-preview" src="" style="width: 60px; height: 60px; object-fit: contain; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle);">
+                        <div id="sp-image-preview-wrap" style="display:none;">
+                            <img class="thumb" id="sp-image-preview" src="">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label style="font-size: 0.85rem; color: var(--text-muted);">ملاحظات / وصف المنتج</label>
+                        <label class="hint">ملاحظات / وصف المنتج</label>
                         <textarea class="form-control" id="sp-notes" rows="2" placeholder="وصف قصير أو تفاصيل إضافية..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline" onclick="closeModal('storeProductModal')">إلغاء</button>
-                    <button type="submit" class="btn" style="background: var(--primary); color: #0f172a; font-weight: 700;">حفظ المنتج</button>
+                    <button type="submit" class="btn btn-accent">حفظ المنتج</button>
                 </div>
             </form>
         </div>
@@ -2817,65 +2806,65 @@
 
     <!-- Store Checkout Modal (Full Interactive Cart Sheet) -->
     <div class="modal-overlay" id="storeCheckoutModal">
-        <div class="modal-content" style="max-width: 460px;">
+        <div class="modal-content modal-sm">
             <div class="modal-header">
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="row-gap">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                    <h3 style="margin: 0; font-size: 1.05rem;">سلة المشتريات وتأكيد البيع</h3>
+                    <h3 class="strong-text">سلة المشتريات وتأكيد البيع</h3>
                 </div>
                 <button type="button" class="close-modal" onclick="closeModal('storeCheckoutModal')">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
             </div>
-            <div class="modal-body" style="padding: 12px 14px;">
+            <div class="modal-body">
                 <!-- Cart Items List inside Modal -->
-                <div style="margin-bottom: 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">الأصناف المختارة</label>
-                        <button type="button" onclick="clearStoreCart()" style="background: none; border: none; color: var(--danger); font-size: 0.72rem; cursor: pointer; padding: 0;">تفريغ السلة</button>
+                <div>
+                    <div class="row-between">
+                        <label class="hint">الأصناف المختارة</label>
+                        <button class="btn-link-danger" type="button" onclick="clearStoreCart()">تفريغ السلة</button>
                     </div>
-                    <div class="store-cart-items-container" id="store-modal-cart-items" style="max-height: 160px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 6px 8px; border: 1px solid var(--border-subtle);">
+                    <div class="store-cart-items-container checkout-items" id="store-modal-cart-items">
                         <!-- Cart items rendered dynamically -->
                     </div>
                 </div>
 
                 <!-- Total Summary Box -->
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(0, 229, 255, 0.08); border-radius: 8px; border: 1px solid rgba(0, 229, 255, 0.25); margin-bottom: 12px;">
-                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">إجمالي الفاتورة:</span>
-                    <span id="store-modal-cart-total" style="font-size: 1.15rem; font-weight: 800; color: var(--primary);">0 ج.م</span>
+                <div class="checkout-total-row">
+                    <span class="hint">إجمالي الفاتورة:</span>
+                    <span class="big-number" id="store-modal-cart-total">0 ج.م</span>
                 </div>
 
                 <!-- Buyer Selection Box -->
-                <div class="store-cart-buyer-box" style="margin-bottom: 0;">
-                    <div style="margin-bottom: 10px;">
-                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 6px;">نوع المشتري</label>
-                        <div style="display: flex; gap: 6px;">
-                            <button type="button" class="btn store-buyer-toggle active" id="buyer-type-walkin" onclick="setStoreBuyerType('walkin')" style="flex: 1; height: 32px; font-size: 0.78rem;">عميل زائر</button>
-                            <button type="button" class="btn store-buyer-toggle" id="buyer-type-member" onclick="setStoreBuyerType('member')" style="flex: 1; height: 32px; font-size: 0.78rem;">مشترك مسجل</button>
+                <div class="store-cart-buyer-box">
+                    <div class="stack-sm">
+                        <label class="hint hint-block">نوع المشتري</label>
+                        <div class="row-gap">
+                            <button type="button" class="btn store-buyer-toggle active btn-sm grow" id="buyer-type-walkin" onclick="setStoreBuyerType('walkin')">عميل زائر</button>
+                            <button type="button" class="btn store-buyer-toggle btn-sm grow" id="buyer-type-member" onclick="setStoreBuyerType('member')">مشترك مسجل</button>
                         </div>
                     </div>
-                    <div id="buyer-member-select-wrap" style="display: none; margin-bottom: 10px;">
-                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 6px;">اختر المشترك</label>
-                        <select class="form-control" id="store-cart-member-select" onchange="onStoreMemberSelected()" style="height: 36px; font-size: 0.85rem;">
+                    <div class="stack-sm" id="buyer-member-select-wrap" style="display:none;">
+                        <label class="hint hint-block">اختر المشترك</label>
+                        <select class="form-control btn-sm" id="store-cart-member-select" onchange="onStoreMemberSelected()">
                             <option value="">-- اختر المشترك من القائمة --</option>
                         </select>
                     </div>
                     <div>
-                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 6px;">اسم العميل</label>
-                        <input type="text" class="form-control" id="store-cart-buyer-name" placeholder="اسم العميل الزائر..." style="height: 36px; font-size: 0.85rem;">
+                        <label class="hint hint-block">اسم العميل</label>
+                        <input type="text" class="form-control btn-sm" id="store-cart-buyer-name" placeholder="اسم العميل الزائر...">
                     </div>
                 </div>
             </div>
-            <div class="modal-actions" style="padding: 10px 14px;">
-                <button type="button" class="btn btn-outline" onclick="closeModal('storeCheckoutModal')" style="height: 36px; font-size: 0.85rem;">إلغاء</button>
-                <button type="button" class="btn" id="btn-submit-store-sale" onclick="submitStoreSale()" style="height: 36px; font-size: 0.88rem; font-weight: 700; background: linear-gradient(135deg, var(--success) 0%, #059669 100%); flex: 1;">تأكيد وتوريد الخزينة</button>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('storeCheckoutModal')">إلغاء</button>
+                <button type="button" class="btn btn-sm btn-accent grow" id="btn-submit-store-sale" onclick="submitStoreSale()">تأكيد وتوريد الخزينة</button>
             </div>
         </div>
     </div>
 
     <!-- Store Quick Restock Modal -->
     <div class="modal-overlay" style="display: none;" id="storeRestockModal">
-        <div class="modal-dialog" style="max-width: 400px;">
+        <div class="modal-dialog modal-sm">
             <div class="modal-header">
                 <h3>تزويد كمية المخزن (Restock)</h3>
                 <button type="button" class="modal-close" onclick="closeModal('storeRestockModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -2883,16 +2872,16 @@
             <form id="storeRestockForm" onsubmit="submitProductRestock(event)">
                 <div class="modal-body">
                     <input type="hidden" id="restock-prod-id">
-                    <div style="font-weight: 700; font-size: 1rem; color: var(--text-main); margin-bottom: 8px;" id="restock-prod-name">اسم المنتج</div>
-                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">الكمية الحالية في المخزن: <b id="restock-current-stock" style="color: var(--primary);">0</b></div>
+                    <div class="strong-text" id="restock-prod-name">اسم المنتج</div>
+                    <div class="hint stack-md">الكمية الحالية في المخزن: <b class="text-primary" id="restock-current-stock">0</b></div>
                     <div class="form-group">
-                        <label style="font-size: 0.85rem; color: var(--text-muted);">الكمية الإضافية المراد تزويدها (+)</label>
-                        <input type="number" class="form-control" id="restock-add-qty" required min="1" value="5" style="font-size: 1.1rem; font-weight: 800;">
+                        <label class="hint">الكمية الإضافية المراد تزويدها (+)</label>
+                        <input type="number" class="form-control input-lg" id="restock-add-qty" required min="1" value="5">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline" onclick="closeModal('storeRestockModal')">إلغاء</button>
-                    <button type="submit" class="btn" style="background: var(--success); color: #fff; font-weight: 700;">تأكيد الإضافة للمخزن</button>
+                    <button type="submit" class="btn btn-accent">تأكيد الإضافة للمخزن</button>
                 </div>
             </form>
         </div>
@@ -2900,15 +2889,15 @@
 
     <!-- Store Sales History Modal -->
     <div class="modal-overlay" style="display: none;" id="storeSalesModal">
-        <div class="modal-dialog" style="max-width: 780px;">
+        <div class="modal-dialog modal-xl">
             <div class="modal-header">
-                <div style="display:flex; align-items:center; gap:8px;">
+                <div class="row-gap">
                     <h3>سجل فواتير ومبيعات المتجر</h3>
                 </div>
                 <button type="button" class="modal-close" onclick="closeModal('storeSalesModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
-            <div class="modal-body" style="padding-top: 10px;">
-                <div style="max-height: 420px; overflow-y: auto;">
+            <div class="modal-body">
+                <div class="scroll-box-lg">
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -2934,7 +2923,7 @@
 
     <!-- Member Workout & Diet Plan Modal -->
     <div class="modal-overlay" style="display: none;" id="memberPlanModal">
-        <div class="modal-dialog" style="max-width: 620px;">
+        <div class="modal-dialog modal-lg">
             <div class="modal-header">
                 <h3 id="plan-modal-title">إنشاء خطة تدريب وتغذية جديدة</h3>
                 <button type="button" class="modal-close" onclick="closeModal('memberPlanModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -2944,20 +2933,20 @@
                     <input type="hidden" id="plan-id">
 
                     <!-- Member Selection -->
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 0.85rem; color: var(--text-muted);">اختر المشترك <span style="color: var(--danger);">*</span></label>
+                    <div class="form-group">
+                        <label class="hint">اختر المشترك <span class="text-danger">*</span></label>
                         <select class="form-control" id="plan-member-select" required onchange="onPlanMemberChange()">
                             <option value="">-- اختر المشترك من القائمة --</option>
                         </select>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div class="form-grid-2">
                         <div class="form-group">
-                            <label style="font-size: 0.85rem; color: var(--text-muted);">عنوان الخطة <span style="color: var(--danger);">*</span></label>
+                            <label class="hint">عنوان الخطة <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="plan-title" required placeholder="مثال: جدول تضخيم 4 أيام، دايت تنشيف...">
                         </div>
                         <div class="form-group">
-                            <label style="font-size: 0.85rem; color: var(--text-muted);">نوع الهدف / الخطة</label>
+                            <label class="hint">نوع الهدف / الخطة</label>
                             <select class="form-control" id="plan-type-select" onchange="applyPlanTemplatePreset(this.value)">
                                 <option value="تضخيم">تضخيم وبناء عضل (Bulk)</option>
                                 <option value="تنشيف">تنشيف وحرق دهون (Cut)</option>
@@ -2968,34 +2957,34 @@
                     </div>
 
                     <!-- Preset Auto-fill Helper Buttons -->
-                    <div style="margin-bottom: 12px; display: flex; gap: 6px; align-items: center; background: rgba(56, 189, 248, 0.08); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2);">
-                        <span style="font-size: 0.8rem; color: var(--primary); font-weight: 700;"> نماذج سريعة جاهزة:</span>
-                        <button type="button" class="btn btn-sm btn-outline" onclick="applyPlanTemplatePreset('تضخيم')" style="font-size: 0.75rem; padding: 2px 8px;">تضخيم 4 أيام</button>
-                        <button type="button" class="btn btn-sm btn-outline" onclick="applyPlanTemplatePreset('تنشيف')" style="font-size: 0.75rem; padding: 2px 8px;">تنشيف ودايت</button>
-                        <button type="button" class="btn btn-sm btn-outline" onclick="applyPlanTemplatePreset('فتنس')" style="font-size: 0.75rem; padding: 2px 8px;">فتنس شامل</button>
+                    <div class="callout callout-inline">
+                        <span class="hint text-primary"> نماذج سريعة جاهزة:</span>
+                        <button type="button" class="btn btn-sm btn-outline badge-sm" onclick="applyPlanTemplatePreset('تضخيم')">تضخيم 4 أيام</button>
+                        <button type="button" class="btn btn-sm btn-outline badge-sm" onclick="applyPlanTemplatePreset('تنشيف')">تنشيف ودايت</button>
+                        <button type="button" class="btn btn-sm btn-outline badge-sm" onclick="applyPlanTemplatePreset('فتنس')">فتنس شامل</button>
                     </div>
 
                     <!-- Workout Content -->
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 0.85rem; color: var(--text-muted);">️ جدول التمارين وتقسيم الأيام</label>
+                    <div class="form-group">
+                        <label class="hint">️ جدول التمارين وتقسيم الأيام</label>
                         <textarea class="form-control" id="plan-workout-content" rows="4" placeholder="السبت: صدر وترايسبس&#10;الأحد: ظهر وبايسبس&#10;الثلاثاء: أكتاف وترابيس&#10;الأربعاء: أرجل وبطن..."></textarea>
                     </div>
 
                     <!-- Diet Content -->
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 0.85rem; color: var(--text-muted);"> النظام والجدول الغذائي (الدايت والوجبات)</label>
+                    <div class="form-group">
+                        <label class="hint"> النظام والجدول الغذائي (الدايت والوجبات)</label>
                         <textarea class="form-control" id="plan-diet-content" rows="4" placeholder="وجبة 1: 4 بيضات + 80 جم شوفان مع حليب ولوز&#10;وجبة 2: 200 جم صدور دجاج + أرز بسمتي + طبق سلطة&#10;وجبة 3: شيك بروتين + موزة بعد التمرين&#10;وجبة 4: 150 جم لحم مشوي + بطاطا مشوية..."></textarea>
                     </div>
 
                     <!-- Notes & Recommendations -->
                     <div class="form-group">
-                        <label style="font-size: 0.85rem; color: var(--text-muted);"> نصائح وإرشادات الكابتن للمشترك</label>
+                        <label class="hint"> نصائح وإرشادات الكابتن للمشترك</label>
                         <input type="text" class="form-control" id="plan-notes" placeholder="شرب 3 لتر ماء، النوم 8 ساعات، الالتزام بالإحماء...">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline" onclick="closeModal('memberPlanModal')">إلغاء</button>
-                    <button type="submit" class="btn" style="background: var(--primary); color: #0f172a; font-weight: 700;">حفظ الخطة</button>
+                    <button type="submit" class="btn btn-accent">حفظ الخطة</button>
                 </div>
             </form>
         </div>
@@ -3003,123 +2992,123 @@
 
     <!-- Safe WhatsApp Bulk Sender Progress Modal -->
     <div class="modal-overlay" style="display: none;" id="whatsappBulkModal">
-        <div class="modal-dialog" style="max-width: 480px;">
+        <div class="modal-dialog modal-sm">
             <div class="modal-header">
                 <h3> طابور إرسال رسائل واتساب الآمن</h3>
                 <button type="button" class="modal-close" onclick="closeModal('whatsappBulkModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
-            <div class="modal-body" style="text-align: center; padding: 20px 10px;">
-                <div style="font-size: 2.2rem; margin-bottom: 10px;">️</div>
-                <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-main); margin-bottom: 6px;" id="bulk-queue-status">جاري معالجة طابور الإرسال...</div>
-                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">نظام أمان مكافحة الحظر: فواصل زمنية عشوائية (4 إلى 7 ثوانٍ) بين كل رسالة</div>
+            <div class="modal-body hint-center">
+                <div class="empty-state-icon">️</div>
+                <div class="strong-text" id="bulk-queue-status">جاري معالجة طابور الإرسال...</div>
+                <div class="hint stack-md">نظام أمان مكافحة الحظر: فواصل زمنية عشوائية (4 إلى 7 ثوانٍ) بين كل رسالة</div>
                 
-                <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 14px; border: 1px solid var(--border-subtle); margin-bottom: 16px; text-align: right;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px;">
+                <div class="info-box info-box-dark">
+                    <div class="row-between hint">
                         <span>المستلم الحالي:</span>
-                        <b id="bulk-current-recipient" style="color: var(--primary);">-</b>
+                        <b class="text-primary" id="bulk-current-recipient">-</b>
                     </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px;">
+                    <div class="row-between hint stack-sm">
                         <span>تقدم الإرسال:</span>
-                        <b id="bulk-progress-text" style="color: #10b981;">0 / 0</b>
+                        <b class="text-success" id="bulk-progress-text">0 / 0</b>
                     </div>
-                    <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
-                        <div id="bulk-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #38bdf8); transition: width 0.3s ease;"></div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="bulk-progress-bar"></div>
                     </div>
                 </div>
 
-                <div id="bulk-next-countdown" style="font-size: 0.82rem; color: var(--warning); font-weight: 700; min-height: 20px;">
+                <div class="hint text-warning countdown-line" id="bulk-next-countdown">
                     <!-- Countdown text -->
                 </div>
             </div>
-            <div class="modal-footer" style="justify-content: center;">
-                <button type="button" class="btn btn-outline" onclick="stopBulkWhatsAppQueue()" style="color: var(--danger); border-color: rgba(239,68,68,0.4);">️ إيقاف الطابور</button>
+            <div class="modal-footer row-center">
+                <button type="button" class="btn btn-outline btn-danger" onclick="stopBulkWhatsAppQueue()">️ إيقاف الطابور</button>
             </div>
         </div>
     </div>
 
     <!-- WhatsApp Settings & Templates Modal -->
     <div class="modal-overlay" style="display: none;" id="whatsAppSettingsModal">
-        <div class="modal-dialog" style="max-width: 640px;">
+        <div class="modal-dialog modal-lg">
             <div class="modal-header">
                 <h3>️ إعدادات منظومة واتساب والإشعارات الفورية</h3>
                 <button type="button" class="modal-close" onclick="closeModal('whatsAppSettingsModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
             <form onsubmit="saveWhatsAppSettings(event)">
-                <div class="modal-body" style="max-height: 480px; overflow-y: auto;">
-                    <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 20px;">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                <div class="modal-body scroll-md">
+                    <div class="callout">
+                        <div class="callout-head">
                             <div>
-                                <h4 style="margin: 0 0 6px; color: #10b981; font-weight:800; font-size:1.05rem;"> ربط حساب واتساب (سيرفر Baileys المخفي)</h4>
-                                <div id="wa-connection-status" style="font-size: 0.9rem; color: var(--text-muted); font-weight:700;">جاري الاتصال بالسيرفر...</div>
+                                <h4> ربط حساب واتساب (سيرفر Baileys المخفي)</h4>
+                                <div class="hint" id="wa-connection-status">جاري الاتصال بالسيرفر...</div>
                             </div>
-                            <div style="display:flex; gap:6px;">
-                                <button type="button" class="btn btn-sm" id="wa-reconnect-btn" onclick="handleWaReconnect()" style="background: var(--primary); color: #0f172a; font-weight: 700; font-size: 0.8rem;"> بدء الربط / تحديث QR</button>
-                                <button type="button" class="btn btn-sm" id="wa-logout-btn" onclick="handleWaLogout()" style="background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); font-weight:700; font-size:0.8rem; display:none;">تسجيل الخروج</button>
+                            <div class="row-gap">
+                                <button type="button" class="btn btn-sm btn-accent" id="wa-reconnect-btn" onclick="handleWaReconnect()"> بدء الربط / تحديث QR</button>
+                                <button type="button" class="btn btn-sm btn-danger" id="wa-logout-btn" onclick="handleWaLogout()" style="display:none;">تسجيل الخروج</button>
                             </div>
                         </div>
-                        <div id="wa-qr-container" style="background: #fff; padding: 12px; border-radius: 10px; display: none; flex-direction:column; align-items: center; justify-content: center; margin: 12px auto; max-width: 240px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
-                            <img id="wa-qr-img" src="" alt="WhatsApp QR Code" style="width: 200px; height: 200px; display: block;">
-                            <div style="color: #0f172a; font-size: 0.8rem; font-weight: 700; margin-top: 8px; text-align: center;">امسح الكود من واتساب هاتفك الآن </div>
+                        <div class="qr-box" id="wa-qr-container" style="display:none;">
+                            <img id="wa-qr-img" src="" alt="WhatsApp QR Code">
+                            <div class="qr-box-caption">امسح الكود من واتساب هاتفك الآن </div>
                         </div>
                     </div>
 
-                    <div style="font-weight: 800; font-size: 0.95rem; color: var(--primary); margin-bottom: 10px;"> مفاتيح تفعيل الإشعارات الفورية:</div>
+                    <div class="group-title"> مفاتيح تفعيل الإشعارات الفورية:</div>
                     
-                    <div style="display: flex; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 10px; border: 1px solid var(--border-subtle); margin-bottom: 16px;">
-                        <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-                            <span style="font-size: 0.88rem; color: var(--text-main);">إشعار حضور البصمة للمشترك (ترحيب فوري عند وضع الإصبع)</span>
-                            <input type="checkbox" id="waset-notify-attendance" checked style="width: 18px; height: 18px;">
+                    <div class="toggle-list">
+                        <label class="toggle-row">
+                            <span>إشعار حضور البصمة للمشترك (ترحيب فوري عند وضع الإصبع)</span>
+                            <input type="checkbox" id="waset-notify-attendance" checked>
                         </label>
-                        <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-                            <span style="font-size: 0.88rem; color: var(--text-main);">إشعار حضور البصمة لولي الأمر (طوارئ وأمان للناشئين)</span>
-                            <input type="checkbox" id="waset-notify-guardian" checked style="width: 18px; height: 18px;">
+                        <label class="toggle-row">
+                            <span>إشعار حضور البصمة لولي الأمر (طوارئ وأمان للناشئين)</span>
+                            <input type="checkbox" id="waset-notify-guardian" checked>
                         </label>
-                        <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-                            <span style="font-size: 0.88rem; color: var(--text-main);">إشعار تجديد الاشتراك وتوريد الاشتراك</span>
-                            <input type="checkbox" id="waset-notify-renewal" checked style="width: 18px; height: 18px;">
+                        <label class="toggle-row">
+                            <span>إشعار تجديد الاشتراك وتوريد الاشتراك</span>
+                            <input type="checkbox" id="waset-notify-renewal" checked>
                         </label>
-                        <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-                            <span style="font-size: 0.88rem; color: var(--text-main);">إرسال إيصالات فواتير المتجر (POS)</span>
-                            <input type="checkbox" id="waset-notify-store" checked style="width: 18px; height: 18px;">
+                        <label class="toggle-row">
+                            <span>إرسال إيصالات فواتير المتجر (POS)</span>
+                            <input type="checkbox" id="waset-notify-store" checked>
                         </label>
                     </div>
 
-                    <div style="font-weight: 800; font-size: 0.95rem; color: var(--primary); margin-bottom: 10px;"> قوالب الرسائل التلقائية:</div>
+                    <div class="group-title"> قوالب الرسائل التلقائية:</div>
                     
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 0.82rem; color: var(--text-muted);">قالب رسالة حضور البصمة للمشترك ({NAME}، {TIME}، {DAYS_LEFT})</label>
+                    <div class="form-group">
+                        <label class="hint">قالب رسالة حضور البصمة للمشترك ({NAME}، {TIME}، {DAYS_LEFT})</label>
                         <textarea class="form-control" id="waset-tpl-attendance" rows="2"></textarea>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 0.82rem; color: var(--text-muted);">قالب رسالة الحضور لولي الأمر ({NAME}، {TIME})</label>
+                    <div class="form-group">
+                        <label class="hint">قالب رسالة الحضور لولي الأمر ({NAME}، {TIME})</label>
                         <textarea class="form-control" id="waset-tpl-guardian" rows="2"></textarea>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 0.82rem; color: var(--text-muted);">قالب رسالة تحفيز الغياب ({NAME}، {ABSENCE_DAYS})</label>
+                    <div class="form-group">
+                        <label class="hint">قالب رسالة تحفيز الغياب ({NAME}، {ABSENCE_DAYS})</label>
                         <textarea class="form-control" id="waset-tpl-absence" rows="2"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline" onclick="openWhatsAppLogsModal()"> سجل الرسائل</button>
                     <button type="button" class="btn btn-outline" onclick="closeModal('whatsAppSettingsModal')">إلغاء</button>
-                    <button type="submit" class="btn" style="background: var(--primary); color: #0f172a; font-weight: 700;">حفظ الإعدادات</button>
+                    <button type="submit" class="btn btn-accent">حفظ الإعدادات</button>
                 </div>
             </form>
         </div>
     </div>
 
     <div class="modal-overlay" style="display: none;" id="whatsAppLogsModal">
-        <div class="modal" style="max-width: 900px;">
+        <div class="modal-dialog modal-2xl">
             <div class="modal-header">
                 <h3 class="modal-title"> سجل رسائل الواتساب (آخر 100 رسالة)</h3>
                 <button type="button" class="modal-close" onclick="closeModal('whatsAppLogsModal')" title="إغلاق"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
             <div class="modal-body">
-                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;">
-                    <label style="font-size: 0.85rem; color: var(--text-muted);">النوع:</label>
-                    <select class="form-control" id="wa-logs-type" onchange="loadWhatsAppLogs()" style="max-width: 220px; padding: 6px 10px; font-size: 0.85rem;">
+                <div class="toolbar">
+                    <label class="hint">النوع:</label>
+                    <select class="form-control select-sm" id="wa-logs-type" onchange="loadWhatsAppLogs()">
                         <option value="all">كل الأنواع</option>
                         <option value="attendance">حضور</option>
                         <option value="guardian">ولي أمر</option>
@@ -3128,11 +3117,11 @@
                         <option value="store_receipt">إيصال متجر</option>
                         <option value="plan">خطة تدريب</option>
                     </select>
-                    <button type="button" class="btn btn-sm btn-outline" onclick="loadWhatsAppLogs()" style="font-size: 0.8rem;"> تحديث</button>
-                    <div id="wa-logs-summary" style="font-size: 0.82rem; color: var(--text-muted); margin-inline-start: auto;"></div>
+                    <button type="button" class="btn btn-sm btn-outline" onclick="loadWhatsAppLogs()"> تحديث</button>
+                    <div class="toolbar-note" id="wa-logs-summary"></div>
                 </div>
-                <div style="overflow-x: auto; max-height: 460px; overflow-y: auto;">
-                    <table class="data-table" style="width: 100%;">
+                <div class="scroll-box-lg scroll-box-x">
+                    <table class="data-table">
                         <thead>
                             <tr>
                                 <th>التاريخ</th>
@@ -3144,7 +3133,7 @@
                             </tr>
                         </thead>
                         <tbody id="wa-logs-tbody">
-                            <tr><td colspan="6" style="text-align:center; padding:20px;">جاري التحميل...</td></tr>
+                            <tr><td class="empty-inline" colspan="6">جاري التحميل...</td></tr>
                         </tbody>
                     </table>
                 </div>

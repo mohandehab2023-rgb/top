@@ -849,29 +849,17 @@ async function attemptLogin() {
                 document.getElementById('reg-gender').disabled = true;
             }
 
-            // Align Supervisor non-admin charts side-by-side cleanly in 1 balanced row
-            const grid1 = document.getElementById('analytics-grid-row1');
-            const grid2 = document.getElementById('analytics-grid-row2');
+            // المشرف بيشوف رسمتين بس، فبيتحطوا جنب بعض في صف واحد.
+            // التخطيط بقى كلاس في الـ CSS بدل ما يتكتب element.style من هنا،
+            // عشان قواعد الموبايل تقدر تغلبه بدل ما تتصادم مع inline style
             const wrap = document.getElementById('supervisor-charts-wrap');
-            if (grid1) grid1.style.gridTemplateColumns = '1fr';
-            if (grid2) grid2.style.gridTemplateColumns = '1fr';
-            if (wrap) {
-                wrap.style.display = 'grid';
-                wrap.style.gridTemplateColumns = '1fr 1fr';
-                wrap.style.gap = '14px';
-            }
+            if (wrap) wrap.classList.add('is-supervisor');
         } else {
             document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
             document.getElementById('reg-gender').disabled = false;
 
-            const grid1 = document.getElementById('analytics-grid-row1');
-            const grid2 = document.getElementById('analytics-grid-row2');
             const wrap = document.getElementById('supervisor-charts-wrap');
-            if (grid1) grid1.style.gridTemplateColumns = '2fr 1fr';
-            if (grid2) grid2.style.gridTemplateColumns = '1fr 1fr';
-            if (wrap) {
-                wrap.style.display = 'block';
-            }
+            if (wrap) wrap.classList.remove('is-supervisor');
         }
 
         renderPackages();
@@ -926,22 +914,22 @@ function renderPackages() {
         selectHTML += `<option value="${safeName}|${p.price}">${safeName} - ${p.price} ج.م</option>`;
 
         let editBtn = currentUser && currentUser.role === 'admin' ?
-            `<button class="btn btn-sm btn-outline" style="margin-top:10px;" onclick="openEditPackage('${p.id}')">تعديل السعر</button>` : '';
-        
+            `<button class="btn btn-sm btn-outline" onclick="openEditPackage('${p.id}')">تعديل السعر</button>` : '';
+
         let deleteBtn = '';
         if (currentUser && currentUser.role === 'admin' && !isPremiumPackage(p)) {
-            deleteBtn = `<button class="btn btn-sm btn-danger" style="margin-top:10px;" onclick="deletePackage('${escapeJsArg(p.id)}')">حذف</button>`;
+            deleteBtn = `<button class="btn btn-sm btn-danger" onclick="deletePackage('${escapeJsArg(p.id)}')">حذف</button>`;
         }
+        // الأزرار تحت خط فاصل، وبتختفي مع الشريط لو المستخدم مش أدمن
+        let actions = (editBtn || deleteBtn) ?
+            `<div class="entity-card-actions">${editBtn}${deleteBtn}</div>` : '';
 
         cardsHTML += `
-          <div class="stat-card" style="flex-direction:column; align-items:flex-start; gap:8px;">
-            <div style="font-weight:700; font-size:1.1rem;">${safeName}</div>
-            <div style="font-size:0.85rem; color:var(--text-muted);">المدة: ${p.duration} يوم</div>
-            <div style="font-size:1.4rem; font-weight:800; color:var(--primary);">${p.price} ج.م</div>
-            <div style="display:flex; gap:5px;">
-              ${editBtn}
-              ${deleteBtn}
-            </div>
+          <div class="entity-card">
+            <div class="entity-card-title">${safeName}</div>
+            <div class="entity-card-meta">المدة: ${p.duration} يوم</div>
+            <div class="entity-card-price">${p.price} ج.م</div>
+            ${actions}
           </div>
         `;
     });
@@ -1104,20 +1092,20 @@ function renderMembers(searchQuery = '') {
             `<b class="text-danger">${due.toLocaleString()} ج.م</b>` :
             `<span class="text-success">مسدَّد</span>`;
 
-        let actions = `<div class="action-cell" style="display:flex; align-items:center; justify-content:center; gap:8px;">`;
+        let actions = `<div class="action-cell row-center">`;
         if (due > 0) {
-            actions += `<button class="icon-btn-sleek" style="color:var(--danger);" title="تسديد مديونية ${due} ج.م" onclick="openPaymentModal('${escapeJsArg(m.id)}')">
+            actions += `<button class="icon-btn-sleek text-danger" title="تسديد مديونية ${due} ج.م" onclick="openPaymentModal('${escapeJsArg(m.id)}')">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
             </button>`;
         }
         // زر التجديد الذكي: يظهر فقط للمشتركين المنتهيين أو الذين تنتهي اشتراكاتهم قريباً
         const needsRenewal = mSt === 'expired' || isExpiringSoon(m, today);
         if (needsRenewal) {
-            actions += `<button class="icon-btn-sleek" style="color:var(--success);" title="تجديد الاشتراك" onclick="openRenewModal('${m.id}')">
+            actions += `<button class="icon-btn-sleek text-success" title="تجديد الاشتراك" onclick="openRenewModal('${m.id}')">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l-5.46-5.46"/></svg>
             </button>`;
         }
-        actions += `<button class="icon-btn-sleek" style="color:var(--text-main);" title="الكارت والخيارات" onclick="openMemberProfile('${m.id}')">
+        actions += `<button class="icon-btn-sleek text-main" title="الكارت والخيارات" onclick="openMemberProfile('${m.id}')">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         </button>`;
         actions += `</div>`;
@@ -1133,7 +1121,7 @@ function renderMembers(searchQuery = '') {
             <td class="hide-on-mobile">${escapeHTML(m.address || '-')}</td>
             <td class="hide-on-mobile">${
               (m.pkg && m.pkg.includes('الباقة المتميزة')) 
-              ? ('<div style="display:flex; flex-direction:column; align-items:center; gap:4px;"><span>الباقة المتميزة</span><span class="badge" style="background-color:rgba(16,185,129,0.15); color:#10b981; font-size:0.75rem; font-weight:bold;">متبقي: ' + (m.sessions_balance || 0) + ' حصة</span></div>') 
+              ? ('<div class="col-center"><span>الباقة المتميزة</span><span class="badge badge-success badge-sm">متبقي: ' + (m.sessions_balance || 0) + ' حصة</span></div>') 
               : escapeHTML((m.pkg || '').replace(/[\?\uFFFD]/g, '').trim())
             }</td>
             <td class="hide-on-mobile">${Number(m.paid || 0).toLocaleString()} ج.م</td>
@@ -2036,7 +2024,7 @@ function renderDebtors(list) {
     if (elFoot) elFoot.innerText = total.toLocaleString() + ' ج.م';
 
     if (!list || list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;" class="text-success">لا توجد مديونيات — كل المشتركين مسدِّدون بالكامل</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="ta-center text-success">لا توجد مديونيات — كل المشتركين مسدِّدون بالكامل</td></tr>';
         return;
     }
 
@@ -2044,14 +2032,14 @@ function renderDebtors(list) {
         <tr>
             <td><b>${escapeHTML(r.name)}</b></td>
             <td><span class="badge badge-primary">${escapeHTML(r.zkid)}</span></td>
-            <td style="direction:ltr; text-align:right;">${escapeHTML(r.phone || '-')}</td>
+            <td class="ltr-num">${escapeHTML(r.phone || '-')}</td>
             <td>${Number(r.price || 0).toLocaleString()} ج.م</td>
             <td>${Number(r.paid || 0).toLocaleString()} ج.م</td>
-            <td class="text-danger" style="font-weight:800;">${Number(r.remaining || 0).toLocaleString()} ج.م</td>
+            <td class="text-danger fw-black">${Number(r.remaining || 0).toLocaleString()} ج.م</td>
             <td>${escapeHTML(r.exp || '-')}</td>
             <td class="action-buttons">
                 <div class="action-cell">
-                    <button class="btn btn-sm" style="background:var(--success); border-color:var(--success); color:#fff;"
+                    <button class="btn btn-sm btn-accent"
                             onclick="openPaymentModal('${escapeJsArg(r.id)}')">تسديد دفعة</button>
                     <button class="btn btn-sm btn-outline" onclick="openMemberProfile('${escapeJsArg(r.id)}')">الكارت</button>
                 </div>
@@ -2078,7 +2066,7 @@ function renderUsers() {
             `<button class="btn btn-sm btn-outline" onclick="openEditUser('${escapeJsArg(u.username)}')"> تعديل</button>` +
             (u.username !== 'admin' ?
                 `<button class="btn btn-sm btn-danger" onclick="deleteUser('${escapeJsArg(u.username)}')">حذف</button>` :
-                `<span style="color:var(--text-dim); font-size:0.8rem;">لا يمكن حذفه</span>`) +
+                `<span class="fs-xs text-dim">لا يمكن حذفه</span>`) +
             `</div>`;
         let shiftTxt = 'إدارة عامة';
         if (u.gender === 'male') shiftTxt = 'شيفت ذكور';
@@ -2277,7 +2265,7 @@ function renderTrainers() {
     }
 
     if (!list || list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-muted)">لا يوجد موظفين مسجلين في هذه الفئة — اضغط "+ إضافة موظف / مدرب جديد"</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="ta-center text-muted">لا يوجد موظفين مسجلين في هذه الفئة — اضغط "+ إضافة موظف / مدرب جديد"</td></tr>';
         populateTrainersDropdown();
         return;
     }
@@ -2296,9 +2284,9 @@ function renderTrainers() {
           <td><b>${escapeHTML(t.name)}</b></td>
           <td>${jobBadge}</td>
           <td>${zkidBadge}</td>
-          <td style="direction:ltr; text-align:right;">${escapeHTML(t.phone || '-')}</td>
+          <td class="ltr-num">${escapeHTML(t.phone || '-')}</td>
           <td>${trainerGenderText(t.gender)}</td>
-          <td><b style="color:var(--primary)">${s.current} مشترك</b></td>
+          <td><b class="text-primary">${s.current} مشترك</b></td>
           <td>${act}</td>
         </tr>`;
     });
@@ -2354,7 +2342,7 @@ function openTrainerReport(id) {
     tbody.innerHTML = '';
     const list = getTrainerMembers(t.name);
     if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--text-muted)">لا يوجد مشتركون مرتبطون بهذا المدرب</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="ta-center text-muted">لا يوجد مشتركون مرتبطون بهذا المدرب</td></tr>';
     } else {
         // الساري أولاً ثم الأحدث انتهاءً
         list.sort((a, b) => String(b.exp).localeCompare(String(a.exp)));
@@ -2365,11 +2353,11 @@ function openTrainerReport(id) {
                 (isCurrent ? '<span class="badge badge-success">ساري</span>' : '<span class="badge badge-danger">منتهي</span>');
             const isRegular = m.trainer === t.name;
             const isPrivate = m.privateTrainer === t.name;
-            const priveTag = '<span style="color:var(--warning); font-weight:bold;">بريفت</span>';
+            const priveTag = '<span class="fw-bold text-warning">بريفت</span>';
             const typeTxt = isRegular && isPrivate ? ('عادي + ' + priveTag) : (isPrivate ? priveTag : 'عادي');
             rowsHTML += `<tr>
             <td><b>${escapeHTML(m.name)}</b></td>
-            <td style="direction:ltr; text-align:right;">${escapeHTML(m.phone)}</td>
+            <td class="ltr-num">${escapeHTML(m.phone)}</td>
             <td>${typeTxt}</td>
             <td>${escapeHTML((m.pkg || '').replace(/[\?\uFFFD]/g, '').trim())}</td>
             <td>${Number(m.paid || 0).toLocaleString()} ج.م</td>
@@ -2556,10 +2544,12 @@ async function deleteTrainer(id) {
 
 function filterStatus(st, el) {
     currentStatusFilter = st;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    // مقصور على تبويبات قسم المشتركين: .tab-btn بقت مستعملة كمان في
+    // تبويبات المتجر والخطط، والبحث العام كان بيشيل تحديدها معاه
+    document.querySelectorAll('#members .tab-btn').forEach(b => b.classList.remove('active'));
     // كروت لوحة القيادة تستدعي الدالة بلا زر، فنطابق التبويب بالحالة
     // وإلا بقيت التبويبات مؤشِّرة على "الكل" بينما الجدول مُفلتر
-    const target = el || document.querySelector('.tab-btn[data-status="' + st + '"]');
+    const target = el || document.querySelector('#members .tab-btn[data-status="' + st + '"]');
     if (target) target.classList.add('active');
     renderMembers();
 }
@@ -2666,7 +2656,7 @@ async function loadActivity() {
         });
     }
 
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">جارٍ التحميل...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="ta-center">جارٍ التحميل...</td></tr>';
     try {
         allActivity = await window.electronAPI.getActivity({
             startDate: document.getElementById('act-date-start').value || null,
@@ -2677,7 +2667,7 @@ async function loadActivity() {
         renderActivity(allActivity);
     } catch (err) {
         (()=>{})('loadActivity failed', err);
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;" class="text-danger">خطأ في تحميل السجل</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="ta-center text-danger">خطأ في تحميل السجل</td></tr>';
     }
 }
 
@@ -2689,7 +2679,7 @@ function renderActivity(list) {
     if (countEl) countEl.innerText = (list || []).length + ' سجل';
 
     if (!list || list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;" class="text-muted">لا توجد تعديلات مسجَّلة في هذه الفترة</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="ta-center text-muted">لا توجد تعديلات مسجَّلة في هذه الفترة</td></tr>';
         return;
     }
 
@@ -2699,13 +2689,13 @@ function renderActivity(list) {
             '<span class="badge badge-warning">مدير</span>' :
             '<span class="badge badge-info">مشرف</span>';
         return `<tr>
-            <td style="direction:ltr; text-align:right;">${when}</td>
+            <td class="ltr-num">${when}</td>
             <td><b>${escapeHTML(a.username)}</b> ${roleTag}</td>
             <td>${escapeHTML(ACTION_LABELS[a.action] || a.action)}</td>
             <td><b>${escapeHTML(a.target_name || '-')}</b></td>
             <td class="text-muted">${escapeHTML(a.old_value || '—')}</td>
-            <td class="text-primary" style="font-weight:700;">${escapeHTML(a.new_value || '—')}</td>
-            <td class="text-muted" style="font-size:0.8rem;">${escapeHTML(a.note || '-')}</td>
+            <td class="text-primary fw-bold">${escapeHTML(a.new_value || '—')}</td>
+            <td class="text-muted fs-xs">${escapeHTML(a.note || '-')}</td>
         </tr>`;
     }).join('');
 }
@@ -2723,13 +2713,13 @@ function filterActivityTable(val) {
 async function loadTrash() {
     const tbody = document.getElementById('trash-table-body');
     if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">جاري تحميل سلة المهملات...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" class="ta-center">جاري تحميل سلة المهملات...</td></tr>';
     
     if (window.electronAPI && window.electronAPI.getTrash) {
         try {
             const trashItems = await window.electronAPI.getTrash() || [];
             if (trashItems.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">سلة المهملات فارغة حالياً </td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="ta-center text-muted">سلة المهملات فارغة حالياً </td></tr>';
                 return;
             }
             
@@ -2762,7 +2752,7 @@ async function loadTrash() {
                         <td>${dateStr}</td>
                         <td>${escapeHTML(item.deleted_by || 'admin')}</td>
                         <td>
-                            <button class="btn btn-sm btn-outline" style="color:var(--success); border-color:var(--success);" onclick="restoreTrashItem('${item.id}')"> استرجاع</button>
+                            <button class="btn btn-sm btn-accent" onclick="restoreTrashItem('${item.id}')"> استرجاع</button>
                             <button class="btn btn-sm btn-danger" onclick="deleteTrashItemPermanent('${item.id}')"> حذف نهائي</button>
                         </td>
                     </tr>
@@ -2771,7 +2761,7 @@ async function loadTrash() {
             tbody.innerHTML = html.join('');
         } catch(err) {
             (()=>{})(err);
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--danger);">حدث خطأ أثناء تحميل السلة</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="ta-center text-danger">حدث خطأ أثناء تحميل السلة</td></tr>';
         }
     }
 }
@@ -2864,9 +2854,9 @@ function buildTxnRows(txns, withSupervisorCol) {
     return (txns || []).map(t => {
         const timeStr = new Date(t.timestamp).toLocaleString('ar-EG');
         const supCol = withSupervisorCol ? `<td>${escapeHTML(t.username)}</td>` : '';
-        return `<tr><td style="direction:ltr; text-align:right;">${timeStr}</td>` +
+        return `<tr><td class="ltr-num">${timeStr}</td>` +
             `<td><b>${txnMemberName(t)}</b></td><td>${escapeHTML(t.pkg)}</td>` +
-            `<td class="text-primary" style="font-weight:bold;">${Number(t.amount || 0).toLocaleString()} ج.م</td>${supCol}</tr>`;
+            `<td class="text-primary fw-bold">${Number(t.amount || 0).toLocaleString()} ج.م</td>${supCol}</tr>`;
     }).join('');
 }
 
@@ -2877,9 +2867,9 @@ function buildExpenseRows(exps, withSupervisorCol, withDeleteCol) {
         const supCol = withSupervisorCol ? `<td>${escapeHTML(e.username || '-')}</td>` : '';
         const actCol = withDeleteCol ?
             `<td class="action-cell">${canDelete ? `<button class="btn btn-sm btn-danger" title="حذف المصروف" onclick="deleteExpense('${escapeJsArg(e.id)}')">حذف</button>` : ''}</td>` : '';
-        return `<tr><td style="direction:ltr; text-align:right;">${timeStr}</td>` +
+        return `<tr><td class="ltr-num">${timeStr}</td>` +
             `<td>${escapeHTML(e.description || '-')}</td>` +
-            `<td class="text-danger" style="font-weight:bold;">${Number(e.amount || 0).toLocaleString()} ج.م</td>${supCol}${actCol}</tr>`;
+            `<td class="text-danger fw-bold">${Number(e.amount || 0).toLocaleString()} ج.م</td>${supCol}${actCol}</tr>`;
     }).join('');
 }
 
@@ -2952,10 +2942,10 @@ async function loadFinancialReport(mode) {
                 <td>${escapeHtml(String(x.timestamp || '').slice(0, 16))}</td>
                 <td>${escapeHtml(x.kind)}</td>
                 <td>${escapeHtml(x.label)}</td>
-                <td style="font-weight:800; color:var(--success);">${money(x.amount)}</td>
+                <td class="fw-black text-success">${money(x.amount)}</td>
                 <td>${escapeHtml(x.username || '')}</td>
             </tr>`).join('')
-            : '<tr><td colspan="5" style="text-align:center; padding:20px;">لا توجد إيرادات في هذه الفترة</td></tr>';
+            : '<tr><td colspan="5" class="empty-inline">لا توجد إيرادات في هذه الفترة</td></tr>';
     }
 
     const expBody = document.getElementById('report-exp-tbody');
@@ -2964,10 +2954,10 @@ async function loadFinancialReport(mode) {
             <tr>
                 <td>${escapeHtml(String(x.timestamp || '').slice(0, 16))}</td>
                 <td>${escapeHtml(x.description || '')}</td>
-                <td style="font-weight:800; color:var(--danger);">${money(x.amount)}</td>
+                <td class="fw-black text-danger">${money(x.amount)}</td>
                 <td>${escapeHtml(x.username || '')}</td>
             </tr>`).join('')
-            : '<tr><td colspan="4" style="text-align:center; padding:20px;">لا توجد مصروفات في هذه الفترة</td></tr>';
+            : '<tr><td colspan="4" class="empty-inline">لا توجد مصروفات في هذه الفترة</td></tr>';
     }
 
     showToast(`تقرير ${r.label}: دخل ${money(r.income.total)} · مصروف ${money(r.expenses.total)} · صافي ${money(r.net)}`,
@@ -3024,8 +3014,8 @@ async function loadDailyReports() {
 
     const tbody = document.getElementById('reports-table-body');
     const expBody = document.getElementById('expenses-table-body');
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">جاري جلب البيانات...</td></tr>';
-    expBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">جاري جلب البيانات...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" class="ta-center">جاري جلب البيانات...</td></tr>';
+    expBody.innerHTML = '<tr><td colspan="5" class="ta-center">جاري جلب البيانات...</td></tr>';
 
     const txns = await window.electronAPI.getTransactions(filters) || [];
     const exps = await window.electronAPI.getExpenses(filters) || [];
@@ -3035,11 +3025,11 @@ async function loadDailyReports() {
 
     tbody.innerHTML = (txns && txns.length) ?
         buildTxnRows(txns, true) :
-        `<tr><td colspan="5" style="text-align:center;" class="text-muted">لا توجد معاملات مسجلة في هذه الفترة</td></tr>`;
+        `<tr><td colspan="5" class="ta-center text-muted">لا توجد معاملات مسجلة في هذه الفترة</td></tr>`;
 
     expBody.innerHTML = (exps && exps.length) ?
         buildExpenseRows(exps, true, true) :
-        `<tr><td colspan="5" style="text-align:center;" class="text-muted">لا توجد مصروفات مسجلة في هذه الفترة</td></tr>`;
+        `<tr><td colspan="5" class="ta-center text-muted">لا توجد مصروفات مسجلة في هذه الفترة</td></tr>`;
 
     document.getElementById('report-total').innerText = totalRev.toLocaleString() + ' ج.م';
 
@@ -3082,10 +3072,10 @@ async function loadDailyReports() {
                     <tr>
                         <td><b>${escapeHTML(d.name)}</b></td>
                         <td>${escapeHTML(d.zkid)}</td>
-                        <td style="direction:ltr; text-align:right;">${escapeHTML(d.phone || '-')}</td>
+                        <td class="ltr-num">${escapeHTML(d.phone || '-')}</td>
                         <td>${Number(d.price || 0).toLocaleString()} ج.م</td>
                         <td>${Number(d.paid || 0).toLocaleString()} ج.م</td>
-                        <td class="text-danger" style="font-weight:800;">${Number(d.remaining || 0).toLocaleString()} ج.م</td>
+                        <td class="text-danger fw-black">${Number(d.remaining || 0).toLocaleString()} ج.م</td>
                     </tr>`).join('');
                 if (foot) foot.innerText = outstanding.toLocaleString() + ' ج.م';
             }
@@ -3158,7 +3148,7 @@ async function loadDailyReports() {
         });
 
         if (userMap.size === 0) {
-            supReportBody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">لا يوجد مشرفون مسجلون في النظام</td></tr>';
+            supReportBody.innerHTML = '<tr><td colspan="7" class="ta-center text-muted">لا يوجد مشرفون مسجلون في النظام</td></tr>';
         } else {
             let rowsHTML = '';
             userMap.forEach(u => {
@@ -3174,12 +3164,12 @@ async function loadDailyReports() {
 
                 rowsHTML += `
               <tr>
-                <td><b>${escapeHTML(u.name)}</b> <span style="font-size:0.75rem; color:var(--text-muted);">(@${escapeHTML(u.username)})</span></td>
+                <td><b>${escapeHTML(u.name)}</b> <span class="fs-xs text-muted">(@${escapeHTML(u.username)})</span></td>
                 <td>${roleBadge}</td>
-                <td style="font-weight:bold; text-align:center;">${count} معاملة</td>
-                <td style="color:var(--primary); font-weight:bold;">${rev.toLocaleString()} ج.م</td>
-                <td style="color:var(--danger); font-weight:bold;">${exp.toLocaleString()} ج.م</td>
-                <td style="color:var(--success); font-weight:bold;">${net.toLocaleString()} ج.م</td>
+                <td class="fw-bold ta-center">${count} معاملة</td>
+                <td class="fw-bold text-primary">${rev.toLocaleString()} ج.م</td>
+                <td class="fw-bold text-danger">${exp.toLocaleString()} ج.م</td>
+                <td class="fw-bold text-success">${net.toLocaleString()} ج.م</td>
                 <td>
                   <button class="action-btn action-btn-text action-btn-primary" onclick="openSupervisorDetailReport('${escapeJsArg(u.username)}')">
                      تفاصيل التقرير
@@ -3429,16 +3419,17 @@ async function openMemberProfile(id) {
     if (finBox) {
         const due = remainingOf(m);
         const dueTxt = due > 0 ? `متبقي: ${due.toLocaleString()} ج.م` : 'مسدَّد بالكامل';
-        const dueColor = due > 0 ? '#ef4444' : '#10b981';
+        // اللون كان بيتحسب هنا ويتحقن inline؛ بقى كلاس والـ CSS هو اللي بيلوّن
+        const dueClass = due > 0 ? 'badge-danger' : 'badge-success';
         finBox.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-                <span class="label" style="font-weight:700;">الحالة المالية للاشتراك</span>
-                <span class="badge" style="background:${due > 0 ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)'}; color:${dueColor}; font-weight:800; font-size:0.82rem; border:1px solid ${due > 0 ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}; padding:2px 8px; border-radius:8px;">${dueTxt}</span>
+            <div class="row-between wrap">
+                <span class="label fw-bold">الحالة المالية للاشتراك</span>
+                <span class="badge badge-sm ${dueClass}">${dueTxt}</span>
             </div>
-            <div style="display:flex; gap:14px; margin-top:4px; font-size:0.85rem; color:var(--text-main); flex-wrap:wrap;">
+            <div class="row-gap fs-sm meta-row">
                 <span>السعر: <b>${Number(m.price || 0).toLocaleString()} ج.م</b></span>
-                <span>المدفوع: <b style="color:#10b981;">${Number(m.paid || 0).toLocaleString()} ج.م</b></span>
-                ${due > 0 ? `<span style="color:#ef4444;">المتبقي: <b>${due.toLocaleString()} ج.م</b></span>` : ''}
+                <span>المدفوع: <b class="text-success">${Number(m.paid || 0).toLocaleString()} ج.م</b></span>
+                ${due > 0 ? `<span class="text-danger">المتبقي: <b>${due.toLocaleString()} ج.م</b></span>` : ''}
             </div>
         `;
     }
@@ -3457,12 +3448,12 @@ async function openMemberProfile(id) {
 
         let actionsHTML = '';
         // 1. تجديد الاشتراك (دائماً في المقدمة)
-        actionsHTML += `<button class="btn-card-action" style="color:#10b981; border-color:rgba(16,185,129,0.35); background:rgba(16,185,129,0.06);" onclick="closeModal('memberHistoryModal'); openRenewModal('${m.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l-5.46-5.46"/></svg>تجديد الاشتراك</button>`;
+        actionsHTML += `<button class="btn-card-action btn-action-unfreeze" onclick="closeModal('memberHistoryModal'); openRenewModal('${m.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l-5.46-5.46"/></svg>تجديد الاشتراك</button>`;
 
         // 2. تسديد مديونية (إن وُجدت)
         const memberDue = remainingOf(m);
         if (memberDue > 0) {
-            actionsHTML += `<button class="btn-card-action btn-action-delete" style="color:#ef4444; border-color:rgba(239,68,68,0.35); background:rgba(239,68,68,0.06);" onclick="closeModal('memberHistoryModal'); openPaymentModal('${escapeJsArg(m.id)}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>تسديد ${memberDue.toLocaleString()} ج.م</button>`;
+            actionsHTML += `<button class="btn-card-action btn-action-delete is-active" onclick="closeModal('memberHistoryModal'); openPaymentModal('${escapeJsArg(m.id)}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>تسديد ${memberDue.toLocaleString()} ج.م</button>`;
         }
 
         // 3. التجميد / فك التجميد
@@ -3479,7 +3470,7 @@ async function openMemberProfile(id) {
         actionsHTML += `<button class="btn-card-action btn-action-ptrainer" onclick="openPrivateTrainerModal('${m.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 14 0v2"/><circle cx="19" cy="8" r="3"/><path d="M21 21v-2a5 5 0 0 0-7.5-4.2"/></svg>${priveLabel}</button>`;
 
         // 7. تعديل المدة
-        actionsHTML += `<button class="btn-card-action" style="color:var(--primary); border-color:rgba(0,229,255,0.35);" onclick="closeModal('memberHistoryModal'); openCustomDurationModal('${m.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg>تعديل المدة</button>`;
+        actionsHTML += `<button class="btn-card-action btn-action-edit is-active" onclick="closeModal('memberHistoryModal'); openCustomDurationModal('${m.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg>تعديل المدة</button>`;
 
         if (currentUser && currentUser.role === 'admin') {
             actionsHTML += `<button class="btn-card-action btn-action-edit" onclick="closeModal('memberHistoryModal'); openEditMember('${m.id}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>تعديل البيانات</button>`;
@@ -3492,8 +3483,8 @@ async function openMemberProfile(id) {
     const tbodyTxn = document.getElementById('hist-txns-body');
     const tbodyAtt = document.getElementById('hist-att-body');
 
-    tbodyTxn.innerHTML = '<tr><td colspan="4" style="text-align:center;">جاري التحميل...</td></tr>';
-    tbodyAtt.innerHTML = '<tr><td colspan="1" style="text-align:center;">جاري التحميل...</td></tr>';
+    tbodyTxn.innerHTML = '<tr><td colspan="4" class="ta-center">جاري التحميل...</td></tr>';
+    tbodyAtt.innerHTML = '<tr><td colspan="1" class="ta-center">جاري التحميل...</td></tr>';
 
     openModal('memberHistoryModal');
 
@@ -3501,12 +3492,12 @@ async function openMemberProfile(id) {
         const txns = await window.electronAPI.getMemberTransactions(id);
         tbodyTxn.innerHTML = '';
         if (!txns || txns.length === 0) {
-            tbodyTxn.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا توجد تجديدات مسجلة</td></tr>';
+            tbodyTxn.innerHTML = '<tr><td colspan="4" class="ta-center">لا توجد تجديدات مسجلة</td></tr>';
         } else {
             let txnsHTML = '';
             txns.forEach(t => {
                 const timeStr = new Date(t.timestamp).toLocaleDateString('ar-EG');
-                txnsHTML += `<tr><td>${timeStr}</td><td>${escapeHTML(t.pkg)}</td><td style="color:var(--primary); font-weight:bold;">${t.amount} ج.م</td><td>${escapeHTML(t.username)}</td></tr>`;
+                txnsHTML += `<tr><td>${timeStr}</td><td>${escapeHTML(t.pkg)}</td><td class="fw-bold text-primary">${t.amount} ج.م</td><td>${escapeHTML(t.username)}</td></tr>`;
             });
             tbodyTxn.innerHTML = txnsHTML;
         }
@@ -3515,7 +3506,7 @@ async function openMemberProfile(id) {
             const att = await window.electronAPI.getAttendance(m.zkid);
             tbodyAtt.innerHTML = '';
             if (!att || att.length === 0) {
-                tbodyAtt.innerHTML = '<tr><td colspan="1" style="text-align:center;">لم يسجل حضور</td></tr>';
+                tbodyAtt.innerHTML = '<tr><td colspan="1" class="ta-center">لم يسجل حضور</td></tr>';
             } else {
                 let attHTML = '';
                 // Limit to recent 200 items to prevent DOM bloat
@@ -3526,12 +3517,12 @@ async function openMemberProfile(id) {
                     const dateStr = (dateObj && !isNaN(dateObj)) ?
                         (dateObj.toLocaleDateString('ar-EG') + ' ' + dateObj.toLocaleTimeString('ar-EG')) :
                         'سجل قديم بلا وقت مسجَّل';
-                    attHTML += `<tr><td style="direction:ltr; text-align:right;">${escapeHTML(dateStr)}</td></tr>`;
+                    attHTML += `<tr><td class="ltr-num">${escapeHTML(dateStr)}</td></tr>`;
                 });
                 tbodyAtt.innerHTML = attHTML;
             }
         } else {
-            tbodyAtt.innerHTML = '<tr><td colspan="1" style="text-align:center;">ليس لديه رقم بصمة</td></tr>';
+            tbodyAtt.innerHTML = '<tr><td colspan="1" class="ta-center">ليس لديه رقم بصمة</td></tr>';
         }
     }
 }
@@ -3691,11 +3682,11 @@ async function openSupervisorDetailReport(username) {
 
     txnsBody.innerHTML = txns.length ?
         buildTxnRows(txns, false) :
-        '<tr><td colspan="4" style="text-align:center;" class="text-muted">لا توجد مقبوضات مسجلة لهذا المشرف</td></tr>';
+        '<tr><td colspan="4" class="ta-center text-muted">لا توجد مقبوضات مسجلة لهذا المشرف</td></tr>';
 
     expsBody.innerHTML = exps.length ?
         buildExpenseRows(exps, false, false) :
-        '<tr><td colspan="3" style="text-align:center;" class="text-muted">لا توجد مصروفات مسجلة لهذا المشرف</td></tr>';
+        '<tr><td colspan="3" class="ta-center text-muted">لا توجد مصروفات مسجلة لهذا المشرف</td></tr>';
 
     document.getElementById('sup-report-rev').innerText = totalRev.toLocaleString() + ' ج.م';
     document.getElementById('sup-report-exp').innerText = totalExp.toLocaleString() + ' ج.م';
@@ -3755,9 +3746,9 @@ function renderRevenues(list) {
         total += Number(r.amount);
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td style="direction:ltr; text-align:right;">${new Date(r.timestamp).toLocaleString('ar-EG')}</td>
+            <td class="ltr-num">${new Date(r.timestamp).toLocaleString('ar-EG')}</td>
             <td>${escapeHTML(r.description)}</td>
-            <td style="color:var(--success); font-weight:bold;">${Number(r.amount).toLocaleString()} ج.م</td>
+            <td class="fw-bold text-success">${Number(r.amount).toLocaleString()} ج.م</td>
             <td>${escapeHTML(r.username || 'admin')}</td>
             <td>
                 <button class="btn btn-sm btn-danger" onclick="deleteRevenue('${escapeHTML(String(r.id))}')" title="حذف">حذف</button>
@@ -3860,7 +3851,7 @@ function sendInvitationWhatsApp(id) {
 async function loadInvitations() {
     const tbody = document.getElementById('invitations-tbody');
     if (!tbody) return;
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">جاري تحميل سجل الدعوات...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="ta-center">جاري تحميل سجل الدعوات...</td></tr>';
     
     if (window.electronAPI && window.electronAPI.getInvitations) {
         try {
@@ -3876,7 +3867,7 @@ async function loadInvitations() {
             renderInvitations(allInvitations);
         } catch (err) {
             (()=>{})('Error loading invitations:', err);
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--danger);">خطأ في تحميل سجل الدعوات</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="ta-center text-danger">خطأ في تحميل سجل الدعوات</td></tr>';
         }
     }
 }
@@ -3885,7 +3876,7 @@ function renderInvitations(list) {
     const tbody = document.getElementById('invitations-tbody');
     if (!tbody) return;
     if (!list || list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">لا توجد دعوات مسجلة حتى الآن</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="ta-center text-muted">لا توجد دعوات مسجلة حتى الآن</td></tr>';
         return;
     }
 
@@ -3903,17 +3894,17 @@ function renderInvitations(list) {
                 <td>${dateStr}</td>
                 <td><b>${escapeHTML(inv.member_name || '-')}</b></td>
                 <td><b>${escapeHTML(inv.guest_name || '-')}</b></td>
-                <td style="direction:ltr; text-align:right;">${escapeHTML(inv.guest_phone || '-')}</td>
+                <td class="ltr-num">${escapeHTML(inv.guest_phone || '-')}</td>
                 <td>
-                    <select class="form-control" style="height:34px !important; padding:2px 8px !important; font-size:0.82rem;"
+                    <select class="form-control btn-sm"
                             onchange="updateInvitationStatus(${Number(inv.id)}, this.value)">
                         ${statusOptions}
                     </select>
                 </td>
                 <td>${escapeHTML(inv.notes || '-')}</td>
                 <td>
-                    <div style="display:flex; gap:6px;">
-                        <button class="btn btn-sm btn-outline" style="color:#25D366; border-color:#25D366;"
+                    <div class="row-gap">
+                        <button class="btn btn-sm btn-outline btn-whatsapp"
                                 onclick="sendInvitationWhatsApp(${Number(inv.id)})" title="إرسال عبر الواتساب">واتساب</button>
                         <button class="btn btn-sm btn-danger" onclick="deleteInvitation(${Number(inv.id)})" title="حذف الدعوة">حذف</button>
                     </div>
@@ -4106,7 +4097,7 @@ function renderTrainerAttendance(list) {
             <td><span class="badge badge-neutral">${escapeHTML(jobTitle)}</span></td>
             <td><span class="badge badge-success">${a.check_in || '-'}</span></td>
             <td><span class="badge ${a.check_out ? 'badge-primary' : 'badge-warning'}">${a.check_out || 'لم ينصرف'}</span></td>
-            <td style="font-weight:bold; color:var(--text-main);">${workInfo.text}</td>
+            <td class="fw-bold text-main">${workInfo.text}</td>
             <td>
                 <button class="btn btn-sm btn-danger" onclick="deleteTrainerAttendance('${a.id}')" title="حذف السجل">حذف</button>
             </td>
@@ -4147,7 +4138,7 @@ function loadEmployees() {
     tbody.innerHTML = '';
     
     if (!employees || employees.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted)">لا يوجد موظفين مسجلين — اضغط "+ إضافة موظف جديد"</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="ta-center text-muted">لا يوجد موظفين مسجلين — اضغط "+ إضافة موظف جديد"</td></tr>';
         return;
     }
     
@@ -4161,7 +4152,7 @@ function loadEmployees() {
             <td><b>${escapeHTML(emp.name)}</b></td>
             <td>${jobBadge}</td>
             <td>${zkidBadge}</td>
-            <td style="direction:ltr; text-align:right;">${escapeHTML(emp.phone || '-')}</td>
+            <td class="ltr-num">${escapeHTML(emp.phone || '-')}</td>
             <td>${genderText}</td>
             <td class="action-cell">
                 <button class="btn btn-sm btn-outline" onclick="openEditEmployeeModal('${escapeJsArg(emp.id)}')">تعديل</button>
@@ -4288,7 +4279,7 @@ async function loadEmployeeAttendance() {
     const tbody = document.getElementById('employee-att-tbody');
     if (!tbody) return;
     
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">جاري التحميل...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="ta-center">جاري التحميل...</td></tr>';
     try {
         const filters = { dateStart: startDate, dateEnd: endDate };
         if (empId && empId !== 'all') filters.employeeId = empId;
@@ -4296,7 +4287,7 @@ async function loadEmployeeAttendance() {
         let atts = await window.electronAPI.getEmployeeAttendance(filters) || [];
         tbody.innerHTML = '';
         if (atts.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-muted)">لا يوجد حضور مسجل في هذه الفترة</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="ta-center text-muted">لا يوجد حضور مسجل في هذه الفترة</td></tr>';
             return;
         }
         
@@ -4323,12 +4314,12 @@ async function loadEmployeeAttendance() {
             if (a.employee_id && a.date === today) todayEmps.add(a.employee_id);
             
             rowsHTML += `<tr>
-                <td style="direction:ltr; text-align:right;">${dateStr}</td>
+                <td class="ltr-num">${dateStr}</td>
                 <td><b>${escapeHTML(empName)}</b></td>
                 <td><span class="badge badge-neutral">${escapeHTML(jobTitle)}</span></td>
                 <td><span class="badge badge-success">${checkIn}</span></td>
                 <td><span class="badge ${a.check_out ? 'badge-primary' : 'badge-warning'}">${checkOut}</span></td>
-                <td style="font-weight:bold; color:var(--text-main);">${workHoursText}</td>
+                <td class="fw-bold text-main">${workHoursText}</td>
                 <td class="action-buttons">
                     <button class="btn btn-sm btn-danger" title="حذف السجل" onclick="deleteEmployeeAttendance('${a.id}')">حذف</button>
                 </td>
@@ -4346,7 +4337,7 @@ async function loadEmployeeAttendance() {
         
     } catch (e) {
         (()=>{})("Employee attendance load error:", e);
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--danger)">خطأ في جلب البيانات</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="ta-center text-danger">خطأ في جلب البيانات</td></tr>';
     }
 }
 
@@ -4511,7 +4502,7 @@ async function calculateTodayStoreSales() {
 
 function filterStoreCategory(cat, btn) {
     currentStoreCategory = cat;
-    document.querySelectorAll('.store-filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#store-category-filters .tab-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
     renderStoreProducts();
 }
@@ -4560,10 +4551,10 @@ function renderStoreProducts() {
 
     if (filtered.length === 0) {
         grid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: var(--text-muted); background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-subtle);">
-                <div style="font-size: 2.2rem; margin-bottom: 8px;">📦</div>
-                <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-main);">لم يتم العثور على منتجات</div>
-                <p style="margin: 4px 0 0; font-size: 0.85rem;">جرب تغيير التصنيف أو البحث بكلمات أخرى، أو أضف منتجات جديدة للمتجر.</p>
+            <div class="empty-state">
+                <div class="empty-state-icon">📦</div>
+                <div class="strong-text">لم يتم العثور على منتجات</div>
+                <p class="fs-sm">جرب تغيير التصنيف أو البحث بكلمات أخرى، أو أضف منتجات جديدة للمتجر.</p>
             </div>
         `;
         return;
@@ -4599,8 +4590,8 @@ function renderStoreProducts() {
                     <div class="product-card-category">${escapeHtml(p.category || 'أدوات رياضية')}</div>
                     <div class="product-card-title" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div>
                     <div class="product-card-price-row">
-                        <span class="product-card-price">${price.toLocaleString('ar-EG')} <small style="font-size:0.75rem; font-weight:normal;">ج.م</small></span>
-                        ${p.barcode ? `<small style="font-size:0.7rem; color:var(--text-dim);">${escapeHtml(p.barcode)}</small>` : ''}
+                        <span class="product-card-price">${price.toLocaleString('ar-EG')} <small class="fs-xs fw-normal">ج.م</small></span>
+                        ${p.barcode ? `<small class="fs-xs text-dim">${escapeHtml(p.barcode)}</small>` : ''}
                     </div>
                     <div class="product-card-actions">
                         <button type="button" class="btn-add-cart" onclick="addToStoreCart('${p.id}')" ${stock === 0 ? 'disabled' : ''}>
@@ -4725,12 +4716,12 @@ function renderStoreCart() {
     const floatCount = document.getElementById('floating-cart-count');
     const floatTotal = document.getElementById('floating-cart-total');
     if (floatBar) {
+        // كلاس بدل inline display: الشريط ده للموبايل بس، والـ CSS هو اللي
+        // بيقرر يظهر امتى — الـ inline كان بيظهّره على الديسكتوب كمان
+        floatBar.classList.toggle('has-items', totalItemsCount > 0);
         if (totalItemsCount > 0) {
-            floatBar.style.display = 'flex';
             if (floatCount) floatCount.textContent = totalItemsCount;
             if (floatTotal) floatTotal.textContent = totalAmount.toLocaleString('ar-EG') + ' ج.م';
-        } else {
-            floatBar.style.display = 'none';
         }
     }
 
@@ -4742,20 +4733,20 @@ function renderStoreCart() {
     }
     if (modalItemsContainer) {
         if (storeCart.length === 0) {
-            modalItemsContainer.innerHTML = '<div style="text-align:center; padding:16px; color:var(--text-dim); font-size:0.8rem;">السلة فارغة حالياً</div>';
+            modalItemsContainer.innerHTML = '<div class="empty-inline empty-inline-sm">السلة فارغة حالياً</div>';
         } else {
             modalItemsContainer.innerHTML = storeCart.map(item => `
-                <div class="store-cart-item" style="padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <div class="store-cart-item list-row">
                     <div class="store-cart-item-info">
-                        <div class="store-cart-item-name" style="font-size:0.82rem;">${escapeHtml(item.productName)}</div>
-                        <div class="store-cart-item-unit-price" style="font-size:0.72rem;">${item.unitPrice} ج × ${item.quantity}</div>
+                        <div class="store-cart-item-name fs-xs">${escapeHtml(item.productName)}</div>
+                        <div class="store-cart-item-unit-price fs-xs">${item.unitPrice} ج × ${item.quantity}</div>
                     </div>
                     <div class="store-cart-item-stepper">
                         <button type="button" class="cart-step-btn" onclick="changeCartItemQty('${item.productId}', -1)">-</button>
                         <span class="cart-item-qty">${item.quantity}</span>
                         <button type="button" class="cart-step-btn" onclick="changeCartItemQty('${item.productId}', 1)">+</button>
                     </div>
-                    <div class="store-cart-item-subtotal" style="font-size:0.85rem;">${item.totalPrice} ج</div>
+                    <div class="store-cart-item-subtotal fs-sm">${item.totalPrice} ج</div>
                 </div>
             `).join('');
         }
@@ -4767,9 +4758,9 @@ function renderStoreCart() {
     if (storeCart.length === 0) {
         container.innerHTML = `
             <div class="store-cart-empty">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="1.5" style="margin-bottom: 8px;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                <div style="font-weight: 700;">السلة فارغة حالياً</div>
-                <span style="font-size: 0.75rem; color: var(--text-dim);">اضغط على أي منتج لإضافته فوراً</span>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="1.5" class="stack-sm"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                <div class="fw-bold">السلة فارغة حالياً</div>
+                <span class="fs-xs text-dim">اضغط على أي منتج لإضافته فوراً</span>
             </div>
         `;
         return;
@@ -5118,13 +5109,13 @@ async function deleteStoreProduct(productId) {
 async function openStoreSalesModal() {
     openModal('storeSalesModal');
     const tbody = document.getElementById('store-sales-tbody');
-    if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">جاري تحميل الفواتير...</td></tr>';
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="empty-inline">جاري تحميل الفواتير...</td></tr>';
 
     if (!window.electronAPI || !window.electronAPI.getStoreSales) return;
     try {
         const sales = await window.electronAPI.getStoreSales() || [];
         if (sales.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">لا توجد فواتير مبيعات مسجلة حتى الآن</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-inline">لا توجد فواتير مبيعات مسجلة حتى الآن</td></tr>';
             return;
         }
         tbody.innerHTML = sales.map(s => {
@@ -5132,17 +5123,17 @@ async function openStoreSalesModal() {
             const total = parseFloat(s.total_amount) || 0;
             return `
                 <tr>
-                    <td style="font-weight:700; color:var(--primary);">${escapeHtml(s.id)}</td>
-                    <td style="font-size:0.85rem;">${escapeHtml(s.sale_date ? s.sale_date.slice(0, 16) : '')}</td>
-                    <td style="font-weight:700;">${escapeHtml(s.buyer_name || 'عميل زائر')}</td>
-                    <td style="font-size:0.85rem; max-width:240px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${itemsSummary}">${itemsSummary}</td>
-                    <td style="font-weight:800; color:#10b981;">${total.toLocaleString('ar-EG')} ج.م</td>
-                    <td style="font-size:0.82rem; color:var(--text-muted);">${escapeHtml(s.username || 'admin')}</td>
+                    <td class="fw-bold text-primary">${escapeHtml(s.id)}</td>
+                    <td class="fs-sm">${escapeHtml(s.sale_date ? s.sale_date.slice(0, 16) : '')}</td>
+                    <td class="fw-bold">${escapeHtml(s.buyer_name || 'عميل زائر')}</td>
+                    <td class="fs-sm truncate truncate-240" title="${itemsSummary}">${itemsSummary}</td>
+                    <td class="fw-black text-success">${total.toLocaleString('ar-EG')} ج.م</td>
+                    <td class="fs-xs text-muted">${escapeHtml(s.username || 'admin')}</td>
                 </tr>
             `;
         }).join('');
     } catch (e) {
-        if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--danger);">خطأ في تحميل الفواتير: ${escapeHtml(e.message)}</td></tr>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="ta-center text-danger">خطأ في تحميل الفواتير: ${escapeHtml(e.message)}</td></tr>`;
     }
 }
 
@@ -5205,10 +5196,11 @@ const WA_LOG_TYPES = {
     plan: 'خطة تدريب'
 };
 
+// الألوان بقت كلاسات بدل ما تتحقن inline في كل صف
 const WA_LOG_STATUS = {
-    sent: { text: 'تم الإرسال', color: '#10b981' },
-    manual: { text: 'إرسال يدوي', color: '#f59e0b' },
-    failed: { text: 'فشل', color: 'var(--danger)' }
+    sent: { text: 'تم الإرسال', cls: 'text-success' },
+    manual: { text: 'إرسال يدوي', cls: 'text-warning' },
+    failed: { text: 'فشل', cls: 'text-danger' }
 };
 
 function openWhatsAppLogsModal() {
@@ -5222,33 +5214,33 @@ async function loadWhatsAppLogs() {
     if (!tbody) return;
 
     if (!window.electronAPI || !window.electronAPI.getWhatsAppLogs) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--text-muted);">سجل الرسائل غير متاح</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-inline">سجل الرسائل غير متاح</td></tr>';
         return;
     }
 
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">جاري التحميل...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-inline">جاري التحميل...</td></tr>';
     try {
         const typeSel = document.getElementById('wa-logs-type');
         const logs = await window.electronAPI.getWhatsAppLogs({ type: typeSel ? typeSel.value : 'all' }) || [];
 
         if (logs.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">لا توجد رسائل مسجلة</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-inline">لا توجد رسائل مسجلة</td></tr>';
             if (summary) summary.textContent = '';
             return;
         }
 
         tbody.innerHTML = logs.map(l => {
-            const st = WA_LOG_STATUS[l.status] || { text: l.status || '-', color: 'var(--text-muted)' };
+            const st = WA_LOG_STATUS[l.status] || { text: l.status || '-', cls: 'text-muted' };
             const when = (l.created_at || '').replace('T', ' ').slice(0, 16);
             const msg = String(l.message_text || '').replace(/\n/g, ' ');
             return `
                 <tr>
-                    <td style="font-size:0.82rem; white-space:nowrap;">${escapeHtml(when)}</td>
-                    <td style="font-weight:700;">${escapeHtml(l.recipient_name || '-')}</td>
-                    <td style="font-size:0.85rem; direction:ltr; text-align:right;">${escapeHtml(l.recipient_phone || '-')}</td>
-                    <td style="font-size:0.82rem;">${escapeHtml(WA_LOG_TYPES[l.message_type] || l.message_type || '-')}</td>
-                    <td style="font-weight:700; color:${st.color}; font-size:0.82rem; white-space:nowrap;">${escapeHtml(st.text)}</td>
-                    <td style="font-size:0.8rem; color:var(--text-muted); max-width:280px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(msg)}">${escapeHtml(msg)}</td>
+                    <td class="fs-xs nowrap">${escapeHtml(when)}</td>
+                    <td class="fw-bold">${escapeHtml(l.recipient_name || '-')}</td>
+                    <td class="ltr-num fs-sm">${escapeHtml(l.recipient_phone || '-')}</td>
+                    <td class="fs-xs">${escapeHtml(WA_LOG_TYPES[l.message_type] || l.message_type || '-')}</td>
+                    <td class="fw-bold fs-xs nowrap ${st.cls}">${escapeHtml(st.text)}</td>
+                    <td class="fs-xs text-muted truncate truncate-280" title="${escapeHtml(msg)}">${escapeHtml(msg)}</td>
                 </tr>
             `;
         }).join('');
@@ -5259,7 +5251,7 @@ async function loadWhatsAppLogs() {
             summary.style.color = failed ? 'var(--danger)' : 'var(--text-muted)';
         }
     } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--danger);">خطأ في تحميل السجل: ${escapeHtml(e.message)}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="ta-center text-danger">خطأ في تحميل السجل: ${escapeHtml(e.message)}</td></tr>`;
     }
 }
 
@@ -5347,7 +5339,7 @@ function updatePlansKPIs() {
 
 function filterPlansType(type, btn) {
     currentPlansFilter = type;
-    document.querySelectorAll('#plans-filter-tabs .store-filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#plans-filter-tabs .tab-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
     renderMemberPlans();
 }
@@ -5511,37 +5503,31 @@ function renderMemberPlans() {
 
     if (filtered.length === 0) {
         grid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align:center; padding: 40px 20px; background:var(--bg-card); border-radius:12px; border:1px solid var(--border-subtle); color:var(--text-muted);">
-                <div style="font-size: 2.2rem; margin-bottom: 8px;">📋</div>
-                <div style="font-weight:700; color:var(--text-main); font-size:1.1rem;">لا توجد خطط مسجلة حالياً</div>
-                <p style="margin:4px 0 14px; font-size:0.85rem;">أنشئ خطة تدريب وغذاء مخصصة للاعبين بضغطة زر وأرسلها عبر واتساب.</p>
-                <button class="btn btn-sm" onclick="openMemberPlanModal()" style="background:var(--primary); color:#0f172a; font-weight:700;">+ إنشاء أول خطة</button>
+            <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <div class="empty-state-title">لا توجد خطط مسجلة حالياً</div>
+                <p>أنشئ خطة تدريب وغذاء مخصصة للاعبين بضغطة زر وأرسلها عبر واتساب.</p>
+                <button class="btn btn-sm btn-accent" onclick="openMemberPlanModal()">+ إنشاء أول خطة</button>
             </div>
         `;
         return;
     }
 
     grid.innerHTML = filtered.map(p => `
-        <div class="panel" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px; display:flex; flex-direction:column; justify-content:space-between; transition: transform 0.2s ease;">
-            <div>
-                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px;">
-                    <span style="font-size:0.75rem; font-weight:800; padding:2px 8px; border-radius:10px; background:rgba(56,189,248,0.15); color:var(--primary); border:1px solid rgba(56,189,248,0.3);">${escapeHtml(p.plan_type || 'تضخيم')}</span>
-                    <small style="font-size:0.72rem; color:var(--text-dim);">${p.created_at ? p.created_at.slice(0, 10) : ''}</small>
-                </div>
-                <div style="font-weight:800; font-size:1.05rem; color:var(--text-main); margin-bottom:4px;">${escapeHtml(p.title)}</div>
-                <div style="font-size:0.85rem; color:var(--primary); margin-bottom:12px;">👤 المشترك: <b>${escapeHtml(p.member_name)}</b></div>
-                
-                <div style="background:rgba(0,0,0,0.25); border-radius:8px; padding:10px; border:1px solid var(--border-subtle); font-size:0.8rem; color:var(--text-muted); margin-bottom:14px; max-height:100px; overflow-y:auto; line-height:1.5; white-space:pre-line;">
-                    ${escapeHtml(p.workout_content || p.diet_content || 'لا توجد تفاصيل إضافية')}
-                </div>
+        <div class="entity-card">
+            <div class="entity-card-head">
+                <span class="entity-card-tag">${escapeHtml(p.plan_type || 'تضخيم')}</span>
+                <small class="entity-card-date">${p.created_at ? p.created_at.slice(0, 10) : ''}</small>
             </div>
-
-            <div style="display:flex; gap:6px; border-top:1px solid var(--border-subtle); padding-top:10px;">
-                <button type="button" class="btn btn-sm" onclick="sendPlanWhatsApp('${p.id}')" style="flex:1; justify-content:center; background:#10b981; color:#fff; border:none; font-weight:700; gap:4px;">
+            <div class="entity-card-title">${escapeHtml(p.title)}</div>
+            <div class="entity-card-meta">👤 المشترك: <b>${escapeHtml(p.member_name)}</b></div>
+            <div class="entity-card-note">${escapeHtml(p.workout_content || p.diet_content || 'لا توجد تفاصيل إضافية')}</div>
+            <div class="entity-card-actions">
+                <button type="button" class="btn btn-sm btn-accent" onclick="sendPlanWhatsApp('${p.id}')">
                     <span>📲 إرسال واتساب</span>
                 </button>
-                <button type="button" class="btn btn-sm btn-outline" onclick="openEditPlanModal('${p.id}')" title="تعديل">✏️</button>
-                <button type="button" class="btn btn-sm btn-outline" onclick="deleteMemberPlan('${p.id}')" title="حذف" style="color:var(--danger); border-color:rgba(239,68,68,0.3);">🗑️</button>
+                <button type="button" class="btn btn-sm btn-outline btn-icon-only" onclick="openEditPlanModal('${p.id}')" title="تعديل">✏️</button>
+                <button type="button" class="btn btn-sm btn-danger btn-icon-only" onclick="deleteMemberPlan('${p.id}')" title="حذف">🗑️</button>
             </div>
         </div>
     `).join('');
@@ -5586,7 +5572,7 @@ function renderAbsentMembers(searchQuery = '') {
     });
 
     if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">🎉 رائع! لا يوجد مشتركون غائبون حالياً متجاوزين للمدة المحددة.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-inline">🎉 رائع! لا يوجد مشتركون غائبون حالياً متجاوزين للمدة المحددة.</td></tr>';
         return;
     }
 
@@ -5595,14 +5581,14 @@ function renderAbsentMembers(searchQuery = '') {
         const lastAtt = m.last_attendance ? m.last_attendance.slice(0, 16) : 'لم يسجل حضوراً';
         return `
             <tr>
-                <td style="font-weight:700; color:var(--text-main);">${escapeHtml(m.name)}</td>
-                <td style="font-family:monospace;">${escapeHtml(m.phone || 'بدون هاتف')}</td>
-                <td style="font-family:monospace; color:var(--text-muted);">${escapeHtml(m.guardian_phone || '-')}</td>
-                <td><span style="font-size:0.8rem; color:var(--primary); font-weight:700;">${escapeHtml((m.pkg || 'باقة شهرية').replace(/[\?\uFFFD]/g, '').trim())}</span></td>
-                <td style="font-size:0.82rem; color:var(--text-muted);">${escapeHtml(lastAtt)}</td>
-                <td><span style="font-size:0.82rem; font-weight:800; color:#ef4444; background:rgba(239,68,68,0.15); padding:2px 8px; border-radius:10px;">${days} أيام غياب</span></td>
+                <td class="fw-bold text-main">${escapeHtml(m.name)}</td>
+                <td class="mono">${escapeHtml(m.phone || 'بدون هاتف')}</td>
+                <td class="mono text-muted">${escapeHtml(m.guardian_phone || '-')}</td>
+                <td><span class="fs-xs fw-bold text-primary">${escapeHtml((m.pkg || 'باقة شهرية').replace(/[\?\uFFFD]/g, '').trim())}</span></td>
+                <td class="fs-xs text-muted">${escapeHtml(lastAtt)}</td>
+                <td><span class="badge badge-danger badge-sm">${days} أيام غياب</span></td>
                 <td>
-                    <button type="button" class="btn btn-sm" onclick="sendSingleAbsenceReminder('${m.id}')" style="background:#10b981; color:#fff; border:none; padding:4px 10px; font-weight:700; font-size:0.8rem; display:inline-flex; align-items:center; gap:4px;">
+                    <button type="button" class="btn btn-sm btn-accent" onclick="sendSingleAbsenceReminder('${m.id}')">
                         <span>📲 إرسال تحفيز</span>
                     </button>
                 </td>
