@@ -1814,41 +1814,97 @@ body.offline-mode #connection-status {
     }
     .dash-card-title { font-size: 0.8rem !important; }
     
-    /* 2) Member Tabs (All visible, compact pills) */
-    .filter-tabs {
+    /* 2) Members Top Actions & Chips Filter Bar */
+    .members-top-actions {
         display: flex !important;
-        flex-wrap: wrap !important;
+        gap: 8px !important;
         align-items: center !important;
-        gap: 6px !important;
-        padding-bottom: 4px !important;
-        margin-bottom: 10px !important;
-        overflow: visible !important;
+        width: 100% !important;
+        margin-top: 4px !important;
     }
-    .tab-btn {
-        padding: 4px 10px !important;
+    .members-top-actions .btn-compact {
+        flex: 1 !important;
+        height: 36px !important;
+        min-height: 36px !important;
+        padding: 0 10px !important;
+        font-size: 0.8rem !important;
+        font-weight: 700 !important;
+        border-radius: 8px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+    }
+    .chips-scroll-bar {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        gap: 6px !important;
+        padding: 4px 2px 8px 2px !important;
+        margin-bottom: 8px !important;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        align-items: center !important;
+    }
+    .chips-scroll-bar::-webkit-scrollbar { display: none; }
+    .chips-scroll-bar .tab-btn {
+        padding: 4px 12px !important;
         font-size: 0.76rem !important;
         font-weight: 700 !important;
         white-space: nowrap !important;
-        border-radius: 14px !important;
+        border-radius: 16px !important;
         flex-shrink: 0 !important;
         min-height: 28px !important;
-        height: auto !important;
+        height: 28px !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
         gap: 4px !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        background: rgba(15, 23, 42, 0.6) !important;
+        color: var(--text-muted) !important;
+        transition: all 0.15s ease !important;
+    }
+    .chips-scroll-bar .tab-btn.active {
+        background: var(--primary) !important;
+        color: #050b14 !important;
+        border-color: var(--primary) !important;
+        font-weight: 800 !important;
+        box-shadow: 0 0 8px rgba(0, 229, 255, 0.3) !important;
+    }
+    .chip-duration-wrap {
+        flex-shrink: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        margin: 0 !important;
+    }
+    .chip-duration-select {
+        background: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid rgba(0, 229, 255, 0.35) !important;
+        color: var(--primary) !important;
+        border-radius: 16px !important;
+        padding: 0 8px !important;
+        height: 28px !important;
+        font-size: 0.74rem !important;
+        font-weight: 700 !important;
+        outline: none !important;
+        cursor: pointer !important;
     }
 
-    /* 3) Member Cards (Relatively Smaller) */
+    /* 3) Member Cards (Relatively Smaller & Clean) */
     .styled-table tbody tr {
-        padding: 6px 8px !important;
-        margin-bottom: 6px !important;
-        border-radius: 6px !important;
+        padding: 8px 12px !important;
+        margin-bottom: 8px !important;
+        border-radius: 10px !important;
+        background: rgba(15, 23, 42, 0.55) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
     }
     .styled-table tbody td {
-        padding: 4px 0 !important;
-        min-height: 24px !important;
-        font-size: 11px !important;
+        padding: 3px 0 !important;
+        min-height: 22px !important;
+        font-size: 12px !important;
     }
 
     /* 4) Store Products Grid (Tiny single row) */

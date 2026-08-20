@@ -428,37 +428,29 @@
             <section class="view-section" id="members">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>
-                            سجل المشتركين
-                        </h2>
-                        <p>
-                            إدارة بيانات المشتركين وتحديث حالة الاشتراكات
-                        </p>
+                        <h2>سجل المشتركين</h2>
+                        <p class="hide-on-mobile">إدارة بيانات المشتركين وتحديث حالة الاشتراكات</p>
                     </div>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn btn-outline" onclick="openSessionModal()">
-                            تسجيل حصة (بدون عضوية)
+                    <div class="members-top-actions">
+                        <button class="btn btn-outline btn-compact" onclick="openSessionModal()">
+                            تسجيل حصة
                         </button>
-                        <button class="btn" onclick="openRegisterModal()">
-                            <svg fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                                <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round">
-                                </path>
+                        <button class="btn btn-compact" onclick="openRegisterModal()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
-                            <span>
-                                تسجيل مشترك جديد
-                            </span>
+                            <span>مشترك جديد</span>
                         </button>
                     </div>
                 </div>
-                <div class="filter-tabs">
+                <div class="filter-tabs chips-scroll-bar">
                     <button class="tab-btn active" data-status="all" onclick="filterStatus('all', this)">الكل (<span id="tab-all-cnt">0</span>)</button>
                     <button class="tab-btn" data-status="active" onclick="filterStatus('active', this)">السارية (<span id="tab-act-cnt">0</span>)</button>
                     <button class="tab-btn" data-status="expired" onclick="filterStatus('expired', this)">المنتهية (<span id="tab-exp-cnt">0</span>)</button>
                     <button class="tab-btn" data-status="expiring" onclick="filterStatus('expiring', this)">تنتهي قريباً (<span id="tab-expng-cnt">0</span>)</button>
                     <button class="tab-btn" data-status="frozen" onclick="filterStatus('frozen', this)">المتوقفة (<span id="tab-frz-cnt">0</span>)</button>
-                    <div style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
-                        <label for="member-duration-filter" style="font-size: 0.9rem; font-weight: 500; color: var(--text-main);">ينتهي قريباً:</label>
-                        <select id="member-duration-filter" class="form-control" style="width: auto; margin: 0; padding: 4px 8px;" onchange="renderMembers()">
+                    <div class="chip-duration-wrap">
+                        <select id="member-duration-filter" class="chip-duration-select" onchange="renderMembers()" title="فترة الانتهاء">
                             <option value="3">خلال 3 أيام</option>
                             <option value="7">خلال 7 أيام</option>
                             <option value="14">خلال 14 يوم</option>
