@@ -1928,6 +1928,14 @@ body.offline-mode #connection-status {
         min-height: 24px;
         white-space: nowrap;
         font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    /* السماح للرسائل الطويلة (مثل لا يوجد موظفين) بالالتفاف وعدم كسر الشاشة */
+    .view-section table tbody td[colspan] {
+        white-space: normal;
+        text-align: center;
+        justify-content: center;
     }
     .view-section table tbody td:last-child { border-bottom: none; }
 

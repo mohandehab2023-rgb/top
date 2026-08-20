@@ -198,11 +198,11 @@ window.__TF_CLOUD__ = true;
         getExpenses: async (filters) => {
             let q = sb.from('expenses').select('*');
             if (filters) {
-                if (filters.startDate) q = q.gte('date', filters.startDate);
-                if (filters.endDate) q = q.lte('date', filters.endDate);
+                if (filters.startDate) q = q.gte('timestamp', filters.startDate);
+                if (filters.endDate) q = q.lte('timestamp', filters.endDate);
                 if (filters.category && filters.category !== 'all') q = q.eq('category', filters.category);
             }
-            const { data, error } = await q.order('date', { ascending: false });
+            const { data, error } = await q.order('timestamp', { ascending: false });
             if (error) return [];
             return data || [];
         },
@@ -222,11 +222,11 @@ window.__TF_CLOUD__ = true;
         getRevenues: async (filters) => {
             let q = sb.from('revenues').select('*');
             if (filters) {
-                if (filters.startDate) q = q.gte('date', filters.startDate);
-                if (filters.endDate) q = q.lte('date', filters.endDate);
+                if (filters.startDate) q = q.gte('timestamp', filters.startDate);
+                if (filters.endDate) q = q.lte('timestamp', filters.endDate);
                 if (filters.category && filters.category !== 'all') q = q.eq('category', filters.category);
             }
-            const { data, error } = await q.order('date', { ascending: false });
+            const { data, error } = await q.order('timestamp', { ascending: false });
             if (error) return [];
             return data || [];
         },
