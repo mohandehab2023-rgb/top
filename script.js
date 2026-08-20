@@ -407,11 +407,8 @@ function todayStr() {
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 // عدد الأيام المعتمد لتعريف "تنتهي قريباً": مصدر واحد للجدول وللوحة القيادة معاً.
-// كان الجدول يستخدم 7 أيام ثابتة بينما اللوحة تقرأ القائمة، فتختلف الأرقام.
 function getExpiringDays() {
-    const el = document.getElementById('member-duration-filter');
-    const n = el ? parseInt(el.value, 10) : 3;
-    return isNaN(n) ? 3 : n;
+    return 3;
 }
 
 // "تنتهي قريباً" حالة عرض لا حالة مخزَّنة: لو كتبناها في m.status لانكسرت
