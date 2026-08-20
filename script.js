@@ -1174,27 +1174,38 @@ function loadDashboardStats() {
     if (elNewMembersText) elNewMembersText.innerText = newMembersToday;
 
     if (currentUser && window.electronAPI) {
-        window.electronAPI.getTransactions(today).then(txns => {
-            if (!currentUser) return;
-            let myTxns = txns || [];
-            if (currentUser.role !== 'admin') {
-                const myUsername = currentUser.username || currentUser.name;
-                const myName = currentUser.name;
-                myTxns = myTxns.filter(t => t.username === myUsername || t.username === myName);
-            }
-            const todayRev = myTxns.reduce((sum, t) => sum + Number(t.amount || 0), 0);
-            const elRev = document.getElementById('total-revenue');
-            if (elRev) elRev.innerText = todayRev.toLocaleString() + ' ج.م';
+        if (window.electronAPI.getFinancialSummary) {
+            window.electronAPI.getFinancialSummary({ date: today, username: currentUser.role === 'admin' ? null : currentUser.name }).then(summary => {
+                if (!summary) return;
+                const elRev = document.getElementById('total-revenue');
+                if (elRev) elRev.innerText = (summary.income.total || 0).toLocaleString() + ' ج.م';
+                
+                const elRenewalsText = document.getElementById('today-renewals-text');
+                const elStoreText = document.getElementById('today-store-text');
+                if (elRenewalsText) elRenewalsText.innerText = summary.counts.subs || 0;
+                if (elStoreText) elStoreText.innerText = (summary.income.store || 0).toLocaleString() + ' ج.م';
+            }).catch(()=>{});
+        } else {
+            // Fallback
+            window.electronAPI.getTransactions(today).then(txns => {
+                if (!currentUser) return;
+                let myTxns = txns || [];
+                if (currentUser.role !== 'admin') {
+                    const myUsername = currentUser.username || currentUser.name;
+                    const myName = currentUser.name;
+                    myTxns = myTxns.filter(t => t.username === myUsername || t.username === myName);
+                }
+                const todayRev = myTxns.reduce((sum, t) => sum + Number(t.amount || 0), 0);
+                const elRev = document.getElementById('total-revenue');
+                if (elRev) elRev.innerText = todayRev.toLocaleString() + ' ج.م';
 
-            // تحديث إحصائيات ملخص اليوم (التجديدات والمبيعات)
-            const renewalsToday = myTxns.filter(t => t.type === 'renew' || t.type === 'subscription' || (t.desc && String(t.desc).includes('تجديد'))).length;
-            const storeRevenue = myTxns.filter(t => t.type === 'store').reduce((sum, t) => sum + Number(t.amount || 0), 0);
-            
-            const elRenewalsText = document.getElementById('today-renewals-text');
-            const elStoreText = document.getElementById('today-store-text');
-            if (elRenewalsText) elRenewalsText.innerText = renewalsToday;
-            if (elStoreText) elStoreText.innerText = storeRevenue.toLocaleString();
-        });
+                const renewalsToday = myTxns.filter(t => (t.pkg && String(t.pkg).includes('تجديد')) || (t.desc && String(t.desc).includes('تجديد'))).length;
+                const elRenewalsText = document.getElementById('today-renewals-text');
+                const elStoreText = document.getElementById('today-store-text');
+                if (elRenewalsText) elRenewalsText.innerText = renewalsToday || myTxns.length;
+                if (elStoreText) elStoreText.innerText = '0';
+            });
+        }
         
         // جلب عدد الحضور اليوم لدعم شريط الملخص
         if (window.electronAPI.getAttendanceDaily) {
@@ -1625,10 +1636,16 @@ async function saveNewMember() {
     renderTrainers();
     closeModal('registerModal');
 
-    const sendWa = await customConfirm('تم الحفظ بنجاح! هل تريد إرسال رسالة ترحيبية عبر واتساب للعميل الجديد؟');
-    if (sendWa) {
-        const msg = `مرحباً ${name}، نرحب بك في الصالة الرياضية! تم تفعيل اشتراكك بنجاح في باقة (${pkgName}). نتمنى لك تمريناً ممتعاً!`;
-        openWhatsApp(phone, msg);
+    // ترحيب العميل الجديد بيروح لوحده زي إشعارات الحضور والغياب: مفيش سؤال
+    // للمستخدم ومفيش تبويب متصفح بيتفتح. القالب قابل للتعديل من إعدادات
+    // الواتساب، ولو الواتساب مش متصل تتسجل الرسالة كـ failed في السجل.
+    if (waConfig && waConfig.notifyWelcome !== false) {
+        const msg = (waConfig.tplWelcome || "مرحباً {NAME}، نرحب بك في TOP FITNESS! 🎉\nتم تفعيل اشتراكك بنجاح في باقة ({PACKAGE}).\nتاريخ الانتهاء: {EXP_DATE}\nنتمنى لك تمريناً ممتعاً! 💪")
+            .replace(/{NAME}/g, name)
+            .replace(/{PACKAGE}/g, pkgName || '')
+            .replace(/{PAID}/g, paid || 0)
+            .replace(/{EXP_DATE}/g, finalExpStr || '');
+        waAutoSend(phone, name, 'welcome', msg);
     }
 }
 
@@ -1772,16 +1789,14 @@ async function confirmRenew() {
     showToast('تم تجديد الاشتراك وتنشيطه بنجاح ', 'success');
 
     // قالب التجديد قابل للتعديل من إعدادات الواتساب، وكان متسمّر هنا فالتعديل مكانش بيأثر
+    // التجديد كمان بيروح لوحده — كان بيسأل المستخدم كل مرة
     if (waConfig && waConfig.notifyRenewal !== false) {
-        const sendWa = await customConfirm('تم تجديد الاشتراك بنجاح! هل تريد إرسال رسالة واتساب للعميل؟');
-        if (sendWa) {
-            const msg = (waConfig.tplRenewal || "أهلاً {NAME}، تم تجديد اشتراكك بنجاح!\nالباقة: {PACKAGE}\nالمبلغ المدفوع: {PAID} ج.م\nتاريخ الانتهاء الجديد: {EXP_DATE}")
-                .replace(/{NAME}/g, m.name)
-                .replace(/{PACKAGE}/g, m.pkg || '')
-                .replace(/{PAID}/g, paid || 0)
-                .replace(/{EXP_DATE}/g, m.exp || '');
-            waManualSend(m.phone, m.name, 'renewal', msg);
-        }
+        const msg = (waConfig.tplRenewal || "أهلاً {NAME}، تم تجديد اشتراكك بنجاح!\nالباقة: {PACKAGE}\nالمبلغ المدفوع: {PAID} ج.م\nتاريخ الانتهاء الجديد: {EXP_DATE}")
+            .replace(/{NAME}/g, m.name)
+            .replace(/{PACKAGE}/g, m.pkg || '')
+            .replace(/{PAID}/g, paid || 0)
+            .replace(/{EXP_DATE}/g, m.exp || '');
+        waAutoSend(m.phone, m.name, 'renewal', msg);
     }
 }
 
@@ -5144,6 +5159,7 @@ let waConfig = {
     notifyAttendance: true,
     notifyGuardian: true,
     notifyRenewal: true,
+    notifyWelcome: true,
     notifyStore: true,
     notifyAbsence: true,
     absenceDaysThreshold: 2,
@@ -5151,7 +5167,8 @@ let waConfig = {
     tplGuardian: "إشعار صالة TOP FITNESS 📢:\nتم تسجيل حضور ابنكم ({NAME}) اليوم الساعة {TIME}.\nنتمنى له تمريناً ممتعاً وآمناً. 🛡️",
     tplAbsence: "وحشتنا في TOP FITNESS يا {NAME}! 🏋️🔥\nلاحظنا غيابك منذ {ABSENCE_DAYS} أيام.. صحتك ولياقتك تهمنا، مستنينك النهاردة تكمل فورمتك وتمرينك بقوة!",
     tplStore: "إيصال مشتريات من متجر TOP FITNESS 🛍️:\nعزيزي {NAME}، شكراً لتعاملك معنا!\nالأصناف: {ITEMS}\nالإجمالي: {TOTAL} ج.م\nتاريخ العملية: {DATE}",
-    tplRenewal: "أهلاً {NAME}، تم تجديد اشتراكك بنجاح في TOP FITNESS! 🌟\nالباقة: {PACKAGE}\nالمبلغ المدفوع: {PAID} ج.م\nتاريخ الانتهاء الجديد: {EXP_DATE}"
+    tplRenewal: "أهلاً {NAME}، تم تجديد اشتراكك بنجاح في TOP FITNESS! 🌟\nالباقة: {PACKAGE}\nالمبلغ المدفوع: {PAID} ج.م\nتاريخ الانتهاء الجديد: {EXP_DATE}",
+    tplWelcome: "مرحباً {NAME}، نرحب بك في TOP FITNESS! 🎉\nتم تفعيل اشتراكك بنجاح في باقة ({PACKAGE}).\nتاريخ الانتهاء: {EXP_DATE}\nنتمنى لك تمريناً ممتعاً! 💪"
 };
 
 let waQueue = [];
@@ -5173,6 +5190,8 @@ function renderWhatsAppConfigUI() {
     if (document.getElementById('waset-notify-attendance')) document.getElementById('waset-notify-attendance').checked = !!waConfig.notifyAttendance;
     if (document.getElementById('waset-notify-guardian')) document.getElementById('waset-notify-guardian').checked = !!waConfig.notifyGuardian;
     if (document.getElementById('waset-notify-renewal')) document.getElementById('waset-notify-renewal').checked = !!waConfig.notifyRenewal;
+    if (document.getElementById('waset-notify-welcome')) document.getElementById('waset-notify-welcome').checked = !!waConfig.notifyWelcome;
+    if (document.getElementById('waset-tpl-welcome')) document.getElementById('waset-tpl-welcome').value = waConfig.tplWelcome || '';
     if (document.getElementById('waset-notify-store')) document.getElementById('waset-notify-store').checked = !!waConfig.notifyStore;
     if (document.getElementById('waset-tpl-attendance')) document.getElementById('waset-tpl-attendance').value = waConfig.tplAttendance;
     if (document.getElementById('waset-tpl-guardian')) document.getElementById('waset-tpl-guardian').value = waConfig.tplGuardian;
@@ -5192,6 +5211,7 @@ const WA_LOG_TYPES = {
     guardian: 'ولي أمر',
     absence: 'غياب',
     renewal: 'تجديد',
+    welcome: 'ترحيب',
     store_receipt: 'إيصال متجر',
     plan: 'خطة تدريب'
 };
@@ -5260,6 +5280,8 @@ async function saveWhatsAppSettings(event) {
     waConfig.notifyAttendance = document.getElementById('waset-notify-attendance').checked;
     waConfig.notifyGuardian = document.getElementById('waset-notify-guardian').checked;
     waConfig.notifyRenewal = document.getElementById('waset-notify-renewal').checked;
+    if (document.getElementById('waset-notify-welcome')) waConfig.notifyWelcome = document.getElementById('waset-notify-welcome').checked;
+    if (document.getElementById('waset-tpl-welcome')) waConfig.tplWelcome = document.getElementById('waset-tpl-welcome').value;
     waConfig.notifyStore = document.getElementById('waset-notify-store').checked;
     waConfig.tplAttendance = document.getElementById('waset-tpl-attendance').value;
     waConfig.tplGuardian = document.getElementById('waset-tpl-guardian').value;
