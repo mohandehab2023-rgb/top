@@ -4708,6 +4708,20 @@ function renderStoreCart() {
         submitBtn.disabled = storeCart.length === 0;
     }
 
+    // Update floating mobile cart bar
+    const floatBar = document.getElementById('store-mobile-floating-cart');
+    const floatCount = document.getElementById('floating-cart-count');
+    const floatTotal = document.getElementById('floating-cart-total');
+    if (floatBar) {
+        if (totalItemsCount > 0) {
+            floatBar.style.display = 'flex';
+            if (floatCount) floatCount.textContent = totalItemsCount;
+            if (floatTotal) floatTotal.textContent = totalAmount.toLocaleString('ar-EG') + ' ج.م';
+        } else {
+            floatBar.style.display = 'none';
+        }
+    }
+
     if (!container) return;
 
     if (storeCart.length === 0) {
@@ -4793,7 +4807,8 @@ function openStoreCheckoutModal() {
     if (storeCart.length === 0) {
         return showToast('السلة فارغة، أضف منتجات أولاً', 'warning');
     }
-    document.getElementById('storeCheckoutModal').style.display = 'flex';
+    populateStoreMembers();
+    openModal('storeCheckoutModal');
 }
 
 async function submitStoreSale() {

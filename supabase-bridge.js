@@ -317,9 +317,65 @@ window.__TF_CLOUD__ = true;
         deleteStoreProduct: async (id) => {
             await sb.from('store_products').delete().eq('id', id);
         },
-        createStoreSale: async (sale) => {
-            if (!sale.id) sale.id = 'SS-' + Date.now();
-            await sb.from('store_sales').insert(sale);
+        createStoreSale: async (saleData) => {
+            try {
+                const saleId = 'SS-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
+                const now = new Date().toISOString();
+                const { items, buyerType, buyerName, buyerId, totalAmount, username, notes } = saleData || {};
+
+                // 1. Insert into store_sales
+                const { error: saleErr } = await sb.from('store_sales').insert({
+                    id: saleId,
+                    sale_date: now,
+                    total_amount: Number(totalAmount || 0),
+                    buyer_type: buyerType || 'walkin',
+                    buyer_name: buyerName || 'عميل زائر',
+                    buyer_id: buyerId || null,
+                    username: username || 'admin',
+                    notes: notes || ''
+                });
+                if (saleErr) {
+                    console.error('store_sales insert error:', saleErr);
+                }
+
+                // 2. Decrement stock for each sold item in store_products
+                if (Array.isArray(items)) {
+                    for (const item of items) {
+                        if (item.productId && item.quantity) {
+                            try {
+                                const { data: prod } = await sb.from('store_products').select('stock').eq('id', item.productId).single();
+                                if (prod && prod.stock !== undefined) {
+                                    const currentStock = parseInt(prod.stock, 10) || 0;
+                                    const soldQty = parseInt(item.quantity, 10) || 0;
+                                    const newStock = Math.max(0, currentStock - soldQty);
+                                    await sb.from('store_products').update({ stock: newStock }).eq('id', item.productId);
+                                }
+                            } catch (e) {
+                                console.warn('stock update error for product:', item.productId, e);
+                            }
+                        }
+                    }
+                }
+
+                // 3. Insert items into store_sale_items if table exists
+                if (Array.isArray(items)) {
+                    const saleItems = items.map((it, idx) => ({
+                        id: 'SSI-' + Date.now() + '-' + idx,
+                        sale_id: saleId,
+                        product_id: it.productId,
+                        product_name: it.productName || '',
+                        quantity: Number(it.quantity || 1),
+                        unit_price: Number(it.unitPrice || 0),
+                        total_price: Number(it.totalPrice || 0)
+                    }));
+                    await sb.from('store_sale_items').insert(saleItems).catch(() => {});
+                }
+
+                return { success: true, saleId };
+            } catch (err) {
+                console.error('createStoreSale error:', err);
+                return { success: false, error: err.message };
+            }
         },
         getStoreSales: async (filters) => {
             const { data } = await sb.from('store_sales').select('*')

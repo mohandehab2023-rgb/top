@@ -1981,6 +1981,53 @@ body.offline-mode #connection-status {
         padding: 12px !important;
         border-radius: 12px !important;
         border: 1px solid rgba(0, 229, 255, 0.2) !important;
+        margin-bottom: 70px !important;
+    }
+    .store-floating-cart-bar {
+        display: none;
+        position: fixed !important;
+        bottom: 68px !important;
+        left: 12px !important;
+        right: 12px !important;
+        background: rgba(10, 15, 29, 0.95) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        border: 1px solid rgba(0, 229, 255, 0.4) !important;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75), 0 0 16px rgba(0, 229, 255, 0.25) !important;
+        border-radius: 14px !important;
+        padding: 8px 14px !important;
+        z-index: 9999 !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        cursor: pointer !important;
+        animation: slideUpFloat 0.25s ease-out;
+    }
+    @keyframes slideUpFloat {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    .floating-cart-info {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+    .floating-cart-icon {
+        font-size: 1.3rem !important;
+    }
+    .floating-cart-btn {
+        height: 34px !important;
+        padding: 0 14px !important;
+        border-radius: 8px !important;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        color: #fff !important;
+        font-weight: 800 !important;
+        font-size: 0.82rem !important;
+        border: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4) !important;
+        cursor: pointer !important;
     }
 
     /* 5) Member Profile Modal (Compact & Sleek) */
