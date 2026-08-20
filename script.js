@@ -2612,6 +2612,12 @@ function switchSection(secId, el) {
         .find(a => (a.getAttribute('onclick') || '').includes(`'${secId}'`));
     if (navEl) navEl.classList.add('active');
 
+    // Show top bar search ONLY in members section
+    const topSearch = document.getElementById('top-search-group') || document.querySelector('.search-input-group');
+    if (topSearch) {
+        topSearch.style.display = (secId === 'members') ? 'flex' : 'none';
+    }
+
     if (secId === 'dashboard') loadDashboardStats();
     if (secId === 'members') renderMembers();
     if (secId === 'packages') renderPackages();
