@@ -4598,8 +4598,8 @@ function renderStoreProducts() {
                     </div>
                     <div class="product-card-actions">
                         <button type="button" class="btn-add-cart" onclick="addToStoreCart('${p.id}')" ${stock === 0 ? 'disabled' : ''}>
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                            <span>${stock === 0 ? 'غير متوفر' : 'إضافة للسلة'}</span>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <span>${stock === 0 ? 'نفذ' : 'إضافة'}</span>
                         </button>
                         ${isAdmin ? `
                             <button type="button" class="product-card-tool-btn" onclick="openRestockModal('${p.id}')" title="تزويد المخزن (+)">
