@@ -1882,25 +1882,38 @@ body.offline-mode #connection-status {
     }
 
     /* 4) Store & POS Layout (Ultra-Sleek 2-Column Mobile Grid) */
-    #store-kpi-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 8px !important;
+    .store-kpi-strip {
+        display: flex !important;
+        gap: 6px !important;
+        overflow-x: auto !important;
+        padding-bottom: 4px !important;
         margin-bottom: 10px !important;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
     }
-    .store-kpi-card {
-        padding: 8px 10px !important;
-        border-radius: 8px !important;
+    .store-kpi-strip::-webkit-scrollbar { display: none; }
+    .store-kpi-pill {
+        flex-shrink: 0 !important;
+        background: rgba(15, 23, 42, 0.65) !important;
+        border: 1px solid rgba(255, 255, 255, 0.09) !important;
+        border-radius: 20px !important;
+        padding: 4px 10px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        height: 28px !important;
     }
-    .store-kpi-card .stat-label {
+    .store-kpi-pill .pill-label {
         font-size: 0.72rem !important;
+        color: var(--text-muted) !important;
+        font-weight: 600 !important;
     }
-    .store-kpi-card .stat-value {
-        font-size: 1.05rem !important;
+    .store-kpi-pill .pill-val {
+        font-size: 0.82rem !important;
+        font-weight: 800 !important;
     }
     .store-main-layout {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 12px !important;
+        display: block !important;
     }
     .store-products-grid {
         display: grid !important;
@@ -1978,10 +1991,7 @@ body.offline-mode #connection-status {
         color: var(--text-muted) !important;
     }
     .store-cart-panel {
-        padding: 12px !important;
-        border-radius: 12px !important;
-        border: 1px solid rgba(0, 229, 255, 0.2) !important;
-        margin-bottom: 70px !important;
+        display: none !important;
     }
     .store-floating-cart-bar {
         display: none;

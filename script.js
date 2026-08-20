@@ -4708,7 +4708,13 @@ function renderStoreCart() {
         submitBtn.disabled = storeCart.length === 0;
     }
 
-    // Update floating mobile cart bar
+    // 1. Update Top Header Cart Badge
+    const topCartCountEl = document.getElementById('store-top-cart-count');
+    if (topCartCountEl) {
+        topCartCountEl.textContent = totalItemsCount;
+    }
+
+    // 2. Update Floating Mobile Cart Bar
     const floatBar = document.getElementById('store-mobile-floating-cart');
     const floatCount = document.getElementById('floating-cart-count');
     const floatTotal = document.getElementById('floating-cart-total');
@@ -4722,6 +4728,34 @@ function renderStoreCart() {
         }
     }
 
+    // 3. Update Modal Cart Items & Total
+    const modalItemsContainer = document.getElementById('store-modal-cart-items');
+    const modalTotalEl = document.getElementById('store-modal-cart-total');
+    if (modalTotalEl) {
+        modalTotalEl.textContent = totalAmount.toLocaleString('ar-EG') + ' ج.م';
+    }
+    if (modalItemsContainer) {
+        if (storeCart.length === 0) {
+            modalItemsContainer.innerHTML = '<div style="text-align:center; padding:16px; color:var(--text-dim); font-size:0.8rem;">السلة فارغة حالياً</div>';
+        } else {
+            modalItemsContainer.innerHTML = storeCart.map(item => `
+                <div class="store-cart-item" style="padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <div class="store-cart-item-info">
+                        <div class="store-cart-item-name" style="font-size:0.82rem;">${escapeHtml(item.productName)}</div>
+                        <div class="store-cart-item-unit-price" style="font-size:0.72rem;">${item.unitPrice} ج × ${item.quantity}</div>
+                    </div>
+                    <div class="store-cart-item-stepper">
+                        <button type="button" class="cart-step-btn" onclick="changeCartItemQty('${item.productId}', -1)">-</button>
+                        <span class="cart-item-qty">${item.quantity}</span>
+                        <button type="button" class="cart-step-btn" onclick="changeCartItemQty('${item.productId}', 1)">+</button>
+                    </div>
+                    <div class="store-cart-item-subtotal" style="font-size:0.85rem;">${item.totalPrice} ج</div>
+                </div>
+            `).join('');
+        }
+    }
+
+    // 4. Update Desktop Sidebar Cart Container
     if (!container) return;
 
     if (storeCart.length === 0) {
