@@ -1889,27 +1889,81 @@ body.offline-mode #connection-status {
         font-size: 12px !important;
     }
 
-    /* 4) Store Products Grid (Tiny single row) */
-    #store-products-grid {
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
+    /* 4) Store & POS Layout (Ultra-Sleek 2-Column Mobile Grid) */
+    #store-kpi-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
         gap: 8px !important;
-        padding-bottom: 12px !important;
-        scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
+        margin-bottom: 10px !important;
     }
-    #store-products-grid::-webkit-scrollbar { display: none; }
+    .store-kpi-card {
+        padding: 8px 10px !important;
+        border-radius: 8px !important;
+    }
+    .store-kpi-card .stat-label {
+        font-size: 0.72rem !important;
+    }
+    .store-kpi-card .stat-value {
+        font-size: 1.05rem !important;
+    }
+    .store-main-layout {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+    .store-products-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
     .store-product-card {
-        flex: 0 0 120px !important;
-        min-width: 120px !important;
-        height: auto !important;
-        padding: 0 !important;
+        border-radius: 10px !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        background: rgba(15, 23, 42, 0.6) !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        min-width: 0 !important;
+        flex: initial !important;
     }
-    .store-product-card .product-img-wrap { height: 90px !important; }
-    .store-product-card .product-details { padding: 6px !important; }
-    .store-product-card h4 { font-size: 0.8rem !important; margin: 0 0 4px !important; }
-    .store-product-card .product-price { font-size: 0.9rem !important; }
+    .store-product-card .product-img-wrap {
+        height: 95px !important;
+    }
+    .store-product-card .product-card-body {
+        padding: 8px !important;
+    }
+    .store-product-card .product-card-category {
+        font-size: 0.68rem !important;
+    }
+    .store-product-card .product-card-title {
+        font-size: 0.8rem !important;
+        margin-bottom: 4px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    .store-product-card .product-card-price {
+        font-size: 0.92rem !important;
+    }
+    .store-product-card .btn-add-cart {
+        height: 32px !important;
+        font-size: 0.74rem !important;
+        padding: 0 6px !important;
+        border-radius: 6px !important;
+    }
+    .store-product-card .product-card-tool-btn {
+        width: 28px !important;
+        height: 28px !important;
+        min-width: 28px !important;
+        min-height: 28px !important;
+        padding: 2px !important;
+        border-radius: 6px !important;
+    }
+    .store-cart-panel {
+        padding: 12px !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(0, 229, 255, 0.2) !important;
+    }
 
     /* 5) Member Profile Modal (Compact & Sleek) */
     .member-card-grid {
