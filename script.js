@@ -4517,15 +4517,14 @@ function searchStoreProducts() {
 }
 
 function getCategoryPlaceholderIcon(category) {
-    if (category === 'أحزمة وواقيات') {
-        return `<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
-    } else if (category === 'إكسسوارات') {
-        return `<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="7"/><polyline points="12 9 12 12 13.5 13.5"/><path d="M16.51 17.35l-.35 3.83a2 2 0 0 1-2 1.82H9.83a2 2 0 0 1-2-1.82l-.35-3.83m.01-10.7l.35-3.83A2 2 0 0 1 9.83 1h4.35a2 2 0 0 1 2 1.82l.35 3.83"/></svg>`;
-    } else if (category === 'مكملات ومشروبات') {
-        return `<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h12v3H6z"/><path d="M7 5v14a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3V5"/><line x1="6" y1="12" x2="18" y2="12"/></svg>`;
+    if (!category) category = '';
+    if (category.includes('مشروبات')) {
+        return `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="12" x2="18" y2="12"/></svg>`;
+    } else if (category.includes('مكملات')) {
+        return `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h12v3H6z"/><path d="M7 5v14a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3V5"/><line x1="6" y1="12" x2="18" y2="12"/></svg>`;
     } else {
         // أدوات رياضية
-        return `<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="6" y1="5" x2="6" y2="19"/><line x1="18" y1="5" x2="18" y2="19"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="8" x2="2" y2="16"/><line x1="22" y1="8" x2="22" y2="16"/></svg>`;
+        return `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="6" y1="5" x2="6" y2="19"/><line x1="18" y1="5" x2="18" y2="19"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="8" x2="2" y2="16"/><line x1="22" y1="8" x2="22" y2="16"/></svg>`;
     }
 }
 
@@ -4534,7 +4533,19 @@ function renderStoreProducts() {
     if (!grid) return;
 
     let filtered = allStoreProducts.filter(p => {
-        const matchesCat = (currentStoreCategory === 'all' || p.category === currentStoreCategory);
+        let matchesCat = (currentStoreCategory === 'all');
+        if (!matchesCat) {
+            const cat = p.category || '';
+            if (currentStoreCategory === 'مكملات') {
+                matchesCat = cat === 'مكملات' || cat.includes('مكملات');
+            } else if (currentStoreCategory === 'مشروبات') {
+                matchesCat = cat === 'مشروبات' || cat.includes('مشروبات');
+            } else if (currentStoreCategory === 'أدوات رياضية') {
+                matchesCat = cat === 'أدوات رياضية' || cat.includes('أدوات') || cat.includes('إكسسوارات') || cat.includes('أحزمة');
+            } else {
+                matchesCat = (cat === currentStoreCategory);
+            }
+        }
         const name = (p.name || '').toLowerCase();
         const barcode = (p.barcode || '').toLowerCase();
         const matchesSearch = !storeSearchQuery || name.includes(storeSearchQuery) || barcode.includes(storeSearchQuery);
