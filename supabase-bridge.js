@@ -554,7 +554,7 @@ window.__TF_CLOUD__ = true;
                 if (m) buckets[m] = (buckets[m] || 0) + (t.amount || 0);
             });
             return Object.keys(buckets).sort().reverse().slice(0, months)
-                .map(m => ({ month: m, revenue: buckets[m] }));
+                .map(m => ({ month_key: m, total: buckets[m] }));
         },
         getDailyRevenue: async (days = 7) => {
             const { data } = await sb.from('transactions').select('amount, timestamp')
@@ -566,7 +566,7 @@ window.__TF_CLOUD__ = true;
                 if (d) buckets[d] = (buckets[d] || 0) + (t.amount || 0);
             });
             return Object.keys(buckets).sort().reverse().slice(0, days)
-                .map(d => ({ date: d, revenue: buckets[d] }));
+                .map(d => ({ day: d, total: buckets[d] }));
         },
         getMemberTransactions: async (memberId) => {
             const { data } = await sb.from('transactions').select('*').eq('member_id', memberId).order('timestamp', { ascending: false });
@@ -718,7 +718,7 @@ window.__TF_CLOUD__ = true;
                 if (d) buckets[d] = (buckets[d] || 0) + 1;
             });
             return Object.keys(buckets).sort().reverse().slice(0, days)
-                .map(d => ({ date: d, count: buckets[d] }));
+                .map(d => ({ day: d, total: buckets[d] }));
         },
         getTrainerAttendance: async (filters) => {
             let q = sb.from('trainer_attendance').select('*').order('date', { ascending: false }).limit(200);
