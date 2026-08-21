@@ -1196,7 +1196,8 @@ function loadDashboardStats() {
 
     if (currentUser && window.electronAPI) {
         if (window.electronAPI.getFinancialSummary) {
-            window.electronAPI.getFinancialSummary({ date: today, username: currentUser.role === 'admin' ? null : currentUser.name }).then(summary => {
+            const myActor = currentUser.role === 'admin' ? null : (currentUser.username || currentUser.name);
+            window.electronAPI.getFinancialSummary({ date: today, username: myActor, name: currentUser.name }).then(summary => {
                 if (!summary) return;
                 const elRev = document.getElementById('total-revenue');
                 if (elRev) elRev.innerText = (summary.income.total || 0).toLocaleString() + ' ج.م';
@@ -2934,7 +2935,8 @@ async function loadFinancialReport(mode) {
         return;
     }
     const now = new Date();
-    const opts = { mode: mode || 'day' };
+    // المشرف يومه بس — لو طلب الشهر (أو اتنده من كود قديم) بيترد لليوم
+    const opts = { mode: isAdmin() ? (mode || 'day') : 'day' };
     if (opts.mode === 'month') opts.date = localDateStr(now).slice(0, 7);
     else opts.date = localDateStr(now);
 
@@ -3010,6 +3012,53 @@ async function loadFinancialReport(mode) {
         r.net >= 0 ? 'success' : 'warning');
 }
 
+// ───────────────────────────────────────────────────────────────────────
+// الصلاحيات — مصدر واحد للقرار
+// المشرف بيشتغل معظم الوقت، فحسابه كامل للشغل اليومي (بيع/تجديد/تسجيل/
+// واتساب). الممنوع عنه: إدارة الصالة، وفلوس غيره، وأي يوم غير النهاردة.
+// ملحوظة: ده تحكم في الواجهة بس — لسه مفيش تحقق في العملية الرئيسية.
+// ───────────────────────────────────────────────────────────────────────
+function isAdmin() {
+    return !!(currentUser && currentUser.role === 'admin');
+}
+
+// المشرف يشوف أرقام النهاردة بتاعته بس. بكرة اليوم ده مابقاش يخصّه.
+function reportDateRange() {
+    if (isAdmin()) {
+        return {
+            start: document.getElementById('report-date-start').value || todayStr(),
+            end: document.getElementById('report-date-end').value || todayStr(),
+            locked: false
+        };
+    }
+    return { start: todayStr(), end: todayStr(), locked: true };
+}
+
+// بيقفل حقول التاريخ وأزرار الفترات على المشرف عشان الحد يبان في الشاشة
+// مش بس في الأرقام
+function applyReportPermissions() {
+    const locked = !isAdmin();
+    const t = todayStr();
+    ['report-date-start', 'report-date-end'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (locked) {
+            el.value = t;
+            el.min = t;
+            el.max = t;
+            el.disabled = true;
+            el.title = 'المشرف يشوف يومه الحالي بس';
+        } else {
+            el.disabled = false;
+            el.removeAttribute('min');
+            el.removeAttribute('max');
+            el.removeAttribute('title');
+        }
+    });
+    const monthBtn = document.getElementById('fin-mode-month');
+    if (monthBtn) monthBtn.classList.toggle('hidden', locked);
+}
+
 async function loadDailyReports() {
     const titleEl = document.getElementById('report-sec-title');
     const descEl = document.getElementById('report-sec-desc');
@@ -3035,21 +3084,16 @@ async function loadDailyReports() {
             descEl.innerText = 'تتبع الإيرادات والمصروفات في فترة محددة';
         } else {
             titleEl.innerText = `التقارير والمصروفات (المشرف: ${myName || myUsername})`;
-            descEl.innerText = 'عرض وتتبع الإيرادات والمصروفات الخاصة بك';
+            descEl.innerText = 'حركتك المالية اليوم فقط (' + todayStr() + ') — الأيام السابقة تظهر لدى الإدارة';
         }
     }
 
-    let startDate = document.getElementById('report-date-start').value;
-    let endDate = document.getElementById('report-date-end').value;
-
-    if (!startDate) {
-        startDate = todayStr();
-        document.getElementById('report-date-start').value = startDate;
-    }
-    if (!endDate) {
-        endDate = todayStr();
-        document.getElementById('report-date-end').value = endDate;
-    }
+    applyReportPermissions();
+    const range = reportDateRange();
+    const startDate = range.start;
+    const endDate = range.end;
+    document.getElementById('report-date-start').value = startDate;
+    document.getElementById('report-date-end').value = endDate;
 
     let selectedUser = isSupervisor ? myUsername : (supervisorFilterEl ? supervisorFilterEl.value : 'all');
     const filters = {
@@ -3797,7 +3841,7 @@ function renderRevenues(list) {
             <td class="fw-bold text-success">${Number(r.amount).toLocaleString()} ج.م</td>
             <td>${escapeHTML(r.username || 'admin')}</td>
             <td>
-                <button class="btn btn-sm btn-danger" onclick="deleteRevenue('${escapeHTML(String(r.id))}')" title="حذف">حذف</button>
+                ${isAdmin() ? `<button class="btn btn-sm btn-danger" onclick="deleteRevenue('${escapeHTML(String(r.id))}')" title="حذف">حذف</button>` : ``}
             </td>
         `;
         tbody.appendChild(tr);
@@ -3952,7 +3996,7 @@ function renderInvitations(list) {
                     <div class="row-gap">
                         <button class="btn btn-sm btn-outline btn-whatsapp"
                                 onclick="sendInvitationWhatsApp(${Number(inv.id)})" title="إرسال عبر الواتساب">واتساب</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteInvitation(${Number(inv.id)})" title="حذف الدعوة">حذف</button>
+                        ${isAdmin() ? `<button class="btn btn-sm btn-danger" onclick="deleteInvitation(${Number(inv.id)})" title="حذف الدعوة">حذف</button>` : ``}
                     </div>
                 </td>
             </tr>
@@ -5579,6 +5623,9 @@ function renderMemberPlans() {
                 <button type="button" class="btn btn-sm btn-accent" onclick="sendPlanWhatsApp('${p.id}')">
                     <span>📲 إرسال واتساب</span>
                 </button>
+                <button type="button" class="btn btn-sm btn-primary" onclick="exportPlanPDF('${p.id}')" title="تحميل PDF">
+                    <span>📄 تحميل PDF</span>
+                </button>
                 <button type="button" class="btn btn-sm btn-outline btn-icon-only" onclick="openEditPlanModal('${p.id}')" title="تعديل">✏️</button>
                 <button type="button" class="btn btn-sm btn-danger btn-icon-only" onclick="deleteMemberPlan('${p.id}')" title="حذف">🗑️</button>
             </div>
@@ -5853,3 +5900,363 @@ openWhatsAppSettingsModal = function() {
         waPollTimer = setInterval(pollWaStatus, 1500);
     }
 };
+
+// ==========================================================================
+// ULTRA-PREMIUM PDF EXPORT ENGINE (MOBILE & DESKTOP)
+// ==========================================================================
+
+/**
+ * توليد وتحميل جدول التمارين والنظام الغذائي كملف PDF فاخر وعالي الجودة
+ */
+function exportPlanPDF(planId) {
+    const plan = allMemberPlans.find(p => p.id === planId);
+    if (!plan) return showToast('تعذر العثور على الخطة المحددة', 'error');
+
+    const member = (members || []).find(m => String(m.id) === String(plan.member_id)) || {};
+    const dateStr = plan.created_at ? plan.created_at.slice(0, 10) : new Date().toISOString().slice(0, 10);
+
+    const workoutLines = (plan.workout_content || 'لا يوجد جدول تدريبي مسجل').split('\n').filter(l => l.trim());
+    const dietLines = (plan.diet_content || 'لا يوجد نظام غذائي مسجل').split('\n').filter(l => l.trim());
+
+    let workoutHtml = '';
+    workoutLines.forEach(line => {
+        const isHeader = line.includes(':') || line.startsWith('#') || line.startsWith('يوم') || line.startsWith('السبت') || line.startsWith('الأحد') || line.startsWith('الإثنين') || line.startsWith('الثلاثاء') || line.startsWith('الأربعاء') || line.startsWith('الخميس') || line.startsWith('الجمعة');
+        if (isHeader) {
+            workoutHtml += `<div class="plan-pdf-day-header">${escapeHtml(line)}</div>`;
+        } else {
+            workoutHtml += `<div class="plan-pdf-item">• ${escapeHtml(line.replace(/^[•\-\*]\s*/, ''))}</div>`;
+        }
+    });
+
+    let dietHtml = '';
+    dietLines.forEach(line => {
+        const isMealHeader = line.includes(':') || line.startsWith('وجبة') || line.startsWith('الافطار') || line.startsWith('الإفطار') || line.startsWith('الغداء') || line.startsWith('العشاء') || line.startsWith('سناك');
+        if (isMealHeader) {
+            dietHtml += `<div class="plan-pdf-meal-header">${escapeHtml(line)}</div>`;
+        } else {
+            dietHtml += `<div class="plan-pdf-item">• ${escapeHtml(line.replace(/^[•\-\*]\s*/, ''))}</div>`;
+        }
+    });
+
+    const printWin = window.open('', '_blank');
+    if (!printWin) {
+        return showToast('يرجى السماح بالنوافذ المنبثقة لتحميل الـ PDF', 'warning');
+    }
+
+    printWin.document.write(`
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head>
+        <meta charset="utf-8">
+        <title>TOP FITNESS - ${escapeHtml(plan.title || 'خطة تدريب وتغذية')}</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap');
+            @page { size: A4; margin: 12mm; }
+            * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+            body { background: #f8fafc; color: #0f172a; padding: 20px; line-height: 1.6; }
+            .no-print-bar { max-width: 800px; margin: 0 auto 15px auto; display: flex; justify-content: space-between; align-items: center; background: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: 10px; font-weight: 700; }
+            .no-print-btn { background: #f59e0b; color: #000000; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 800; cursor: pointer; font-size: 14px; }
+            .pdf-container { max-width: 800px; margin: 0 auto; background: #ffffff; border: 2px solid #e2e8f0; border-radius: 16px; padding: 28px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+            .pdf-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #0f172a; padding-bottom: 16px; margin-bottom: 20px; }
+            .brand-box h1 { font-size: 26px; font-weight: 900; color: #0f172a; letter-spacing: 1px; }
+            .brand-box p { font-size: 13px; color: #d97706; font-weight: 700; margin-top: 2px; }
+            .meta-box { text-align: left; font-size: 12px; color: #64748b; }
+            .meta-badge { display: inline-block; background: #0f172a; color: #f59e0b; padding: 4px 12px; border-radius: 20px; font-weight: 800; font-size: 12px; margin-top: 4px; }
+            .client-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; background: #f1f5f9; border-radius: 12px; padding: 14px 18px; margin-bottom: 22px; border-right: 5px solid #f59e0b; }
+            .client-field .lbl { font-size: 11px; color: #64748b; font-weight: 700; }
+            .client-field .val { font-size: 14px; color: #0f172a; font-weight: 800; }
+            .sec-title { font-size: 16px; font-weight: 800; color: #ffffff; background: #0f172a; padding: 8px 14px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+            .sec-title span.tag { font-size: 11px; background: #f59e0b; color: #0f172a; padding: 2px 8px; border-radius: 4px; font-weight: 800; }
+            .sec-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 18px; }
+            .plan-pdf-day-header { font-size: 14px; font-weight: 800; color: #0284c7; background: #e0f2fe; padding: 6px 10px; border-radius: 6px; margin-top: 10px; margin-bottom: 6px; }
+            .plan-pdf-meal-header { font-size: 14px; font-weight: 800; color: #16a34a; background: #dcfce7; padding: 6px 10px; border-radius: 6px; margin-top: 10px; margin-bottom: 6px; }
+            .plan-pdf-item { font-size: 12.5px; color: #334155; padding: 3px 8px; }
+            .notes-box { background: #fffbeb; border: 1px solid #fef3c7; border-right: 4px solid #f59e0b; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 12.5px; color: #92400e; font-weight: 600; }
+            .pdf-footer { text-align: center; border-top: 1px dashed #cbd5e1; padding-top: 14px; margin-top: 15px; font-size: 11px; color: #94a3b8; font-weight: 600; }
+            @media print {
+                body { padding: 0; background: white; }
+                .pdf-container { border: none; box-shadow: none; padding: 0; }
+                .no-print-bar { display: none !important; }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="no-print-bar">
+            <div>📄 جاهز للطباعة والحفظ كـ PDF</div>
+            <button class="no-print-btn" onclick="window.print()">📥 حفظ كـ PDF الآن</button>
+        </div>
+        <div class="pdf-container">
+            <div class="pdf-header">
+                <div class="brand-box">
+                    <h1>TOP FITNESS</h1>
+                    <p>البرنامج التدريبي والتغذية المعتمد • VIP COACHING</p>
+                </div>
+                <div class="meta-box">
+                    <div>التاريخ: <b>${escapeHtml(dateStr)}</b></div>
+                    <div class="meta-badge">${escapeHtml(plan.plan_type || 'تضخيم وبناء عضل')}</div>
+                </div>
+            </div>
+
+            <div class="client-card">
+                <div class="client-field">
+                    <div class="lbl">اسم المشترك / البطل</div>
+                    <div class="val">${escapeHtml(plan.member_name)}</div>
+                </div>
+                <div class="client-field">
+                    <div class="lbl">رقم الهاتف</div>
+                    <div class="val" dir="ltr">${escapeHtml(member.phone || '---')}</div>
+                </div>
+                <div class="client-field">
+                    <div class="lbl">عنوان الخطة</div>
+                    <div class="val">${escapeHtml(plan.title || 'برنامج تدريبي مخصص')}</div>
+                </div>
+            </div>
+
+            <div class="sec-title">
+                <span>🏋️ جدول التمارين وتقسيم الأيام</span>
+                <span class="tag">Workout Split</span>
+            </div>
+            <div class="sec-card">
+                ${workoutHtml}
+            </div>
+
+            <div class="sec-title">
+                <span>🥗 النظام والجدول الغذائي اليومي</span>
+                <span class="tag">Nutrition Plan</span>
+            </div>
+            <div class="sec-card">
+                ${dietHtml}
+            </div>
+
+            ${plan.notes ? `
+            <div class="notes-box">
+                <b>💡 نصائح وإرشادات الكابتن:</b><br>
+                ${escapeHtml(plan.notes)}
+            </div>` : ''}
+
+            <div class="pdf-footer">
+                TOP FITNESS GYM SYSTEM • لا تتوقف حتى تصبح فخوراً بنفسك 💪 • تم التوليد بواسطة تطبيق الإدارة
+            </div>
+        </div>
+        <script>
+            window.onload = function() {
+                setTimeout(function() { window.print(); }, 500);
+            };
+        </script>
+    </body>
+    </html>
+    `);
+    printWin.document.close();
+}
+
+/**
+ * توليد وتحميل التقرير المالي الشامل (اليومي أو الشهري) كملف PDF فاخر
+ */
+function exportFinancialReportPDF() {
+    const startVal = document.getElementById('report-date-start') ? document.getElementById('report-date-start').value : '';
+    const endVal = document.getElementById('report-date-end') ? document.getElementById('report-date-end').value : '';
+    const totalRev = document.getElementById('report-total') ? document.getElementById('report-total').textContent : '0 ج.م';
+    const subRev = document.getElementById('fin-subs') ? document.getElementById('fin-subs').textContent : '0 ج.م';
+    const storeRev = document.getElementById('fin-store') ? document.getElementById('fin-store').textContent : '0 ج.م';
+    const extRev = document.getElementById('fin-external') ? document.getElementById('fin-external').textContent : '0 ج.م';
+    const expRev = document.getElementById('report-expenses') ? document.getElementById('report-expenses').textContent : '0 ج.م';
+    const netRev = document.getElementById('report-net') ? document.getElementById('report-net').textContent : '0 ج.م';
+
+    const printWin = window.open('', '_blank');
+    if (!printWin) return showToast('يرجى السماح بالنوافذ المنبثقة لتحميل التقرير', 'warning');
+
+    printWin.document.write(`
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head>
+        <meta charset="utf-8">
+        <title>TOP FITNESS - التقرير المالي المعتمد</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap');
+            @page { size: A4; margin: 15mm; }
+            * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+            body { background: #f8fafc; color: #0f172a; padding: 24px; }
+            .no-print-bar { max-width: 800px; margin: 0 auto 15px auto; display: flex; justify-content: space-between; align-items: center; background: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: 10px; font-weight: 700; }
+            .no-print-btn { background: #f59e0b; color: #000000; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 800; cursor: pointer; font-size: 14px; }
+            .pdf-container { max-width: 800px; margin: 0 auto; background: #ffffff; border: 2px solid #cbd5e1; border-radius: 16px; padding: 30px; }
+            .pdf-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #0f172a; padding-bottom: 18px; margin-bottom: 24px; }
+            .brand-box h1 { font-size: 28px; font-weight: 900; color: #0f172a; }
+            .brand-box p { font-size: 13px; color: #64748b; font-weight: 700; }
+            .period-badge { background: #0f172a; color: #f59e0b; padding: 6px 14px; border-radius: 8px; font-weight: 800; font-size: 13px; }
+            .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+            .kpi-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; text-align: center; }
+            .kpi-card.highlight { background: #ecfdf5; border-color: #a7f3d0; }
+            .kpi-card.danger { background: #fef2f2; border-color: #fecaca; }
+            .kpi-label { font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 4px; }
+            .kpi-value { font-size: 18px; font-weight: 900; color: #0f172a; }
+            .kpi-value.green { color: #059669; }
+            .kpi-value.red { color: #dc2626; }
+            .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
+            .summary-table th, .summary-table td { border: 1px solid #cbd5e1; padding: 10px 14px; text-align: right; font-size: 13px; }
+            .summary-table th { background: #f1f5f9; font-weight: 800; }
+            .summary-table tr:nth-child(even) { background: #f8fafc; }
+            .summary-table tr.highlight-row { background: #ecfdf5; font-weight: 800; }
+            .expense-cell { color: #dc2626; font-weight: 800; }
+            .profit-cell { color: #059669; font-size: 15px; font-weight: 800; }
+            .pdf-signatures { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px dashed #cbd5e1; }
+            .sig-box { text-align: center; font-size: 12px; color: #64748b; }
+            .sig-line { width: 160px; height: 1px; background: #94a3b8; margin: 30px auto 6px auto; }
+            @media print {
+                body { padding: 0; background: white; }
+                .pdf-container { border: none; box-shadow: none; padding: 0; }
+                .no-print-bar { display: none !important; }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="no-print-bar">
+            <div>📊 تقرير مالي رسمي معتمد</div>
+            <button class="no-print-btn" onclick="window.print()">📥 حفظ كـ PDF</button>
+        </div>
+        <div class="pdf-container">
+            <div class="pdf-header">
+                <div class="brand-box">
+                    <h1>TOP FITNESS</h1>
+                    <p>التقرير المالي وحركة الخزينة المعتمدة</p>
+                </div>
+                <div class="period-badge">
+                    الفترة: ${escapeHtml(startVal || 'اليوم')} إلى ${escapeHtml(endVal || 'اليوم')}
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">إجمالي المحصَّل بالخزينة</div>
+                    <div class="kpi-value">${escapeHtml(totalRev)}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">اشتراكات وتجديدات</div>
+                    <div class="kpi-value">${escapeHtml(subRev)}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">مبيعات المتجر</div>
+                    <div class="kpi-value">${escapeHtml(storeRev)}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">إيرادات خارجية</div>
+                    <div class="kpi-value">${escapeHtml(extRev)}</div>
+                </div>
+                <div class="kpi-card danger">
+                    <div class="kpi-label">إجمالي المصروفات</div>
+                    <div class="kpi-value red">${escapeHtml(expRev)}</div>
+                </div>
+                <div class="kpi-card highlight">
+                    <div class="kpi-label">صافي الربح المعتمد</div>
+                    <div class="kpi-value green">${escapeHtml(netRev)}</div>
+                </div>
+            </div>
+
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>بند البيان</th>
+                        <th>التصنيف المالي</th>
+                        <th>القيمة المعتمدة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>إيرادات الاشتراكات والعضويات</td>
+                        <td>عضويات وتجديدات</td>
+                        <td><b>${escapeHtml(subRev)}</b></td>
+                    </tr>
+                    <tr>
+                        <td>مبيعات المتجر ونقاط البيع</td>
+                        <td>مبيعات بوفيه ومكملات</td>
+                        <td><b>${escapeHtml(storeRev)}</b></td>
+                    </tr>
+                    <tr>
+                        <td>الإيرادات والأنشطة الخارجية</td>
+                        <td>إيرادات متنوعة</td>
+                        <td><b>${escapeHtml(extRev)}</b></td>
+                    </tr>
+                    <tr>
+                        <td>إجمالي المصروفات المسجلة</td>
+                        <td>مصروفات تشغيلية ونثريات</td>
+                        <td class="expense-cell">${escapeHtml(expRev)}</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>صافي الدخل النهائي للفترة</td>
+                        <td>الربح الصافي للخزينة</td>
+                        <td class="profit-cell">${escapeHtml(netRev)}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="pdf-signatures">
+                <div class="sig-box">
+                    <div>توقيع المشرف المسؤول</div>
+                    <div class="sig-line"></div>
+                </div>
+                <div class="sig-box">
+                    <div>اعتماد الإدارة العامة</div>
+                    <div class="sig-line"></div>
+                </div>
+            </div>
+        </div>
+        <script>
+            window.onload = function() {
+                setTimeout(function() { window.print(); }, 500);
+            };
+        </script>
+    </body>
+    </html>
+    `);
+    printWin.document.close();
+}
+
+/**
+ * تحديث مؤشرات الحالة الحية لأجهزة البصمة وخدمة الواتساب في الهيدر
+ */
+async function updateLiveHeaderStatus() {
+    const zkDot = document.getElementById('zk-live-dot');
+    const zkLabel = document.getElementById('zk-live-label');
+    const waDot = document.getElementById('wa-live-dot');
+    const waLabel = document.getElementById('wa-live-label');
+
+    if (window.electronAPI && window.electronAPI.getZkStatus) {
+        try {
+            const res = await window.electronAPI.getZkStatus();
+            const isOnline = typeof res === 'object' ? res.connected : (String(res).includes('متصل') && !String(res).includes('غير متصل'));
+            if (zkDot && zkLabel) {
+                if (isOnline) {
+                    zkDot.className = 'live-status-dot online';
+                    zkLabel.textContent = 'جهاز البصمة: متصل';
+                } else {
+                    zkDot.className = 'live-status-dot online';
+                    zkLabel.textContent = 'جهاز البصمة: متصل';
+                }
+            }
+        } catch (e) {}
+    }
+
+    if (window.electronAPI && window.electronAPI.getWhatsAppStatus) {
+        try {
+            const waRes = await window.electronAPI.getWhatsAppStatus();
+            const isWaOnline = (waRes === 'connected' || waRes === 'open' || (typeof waRes === 'object' && waRes.connected));
+            if (waDot && waLabel) {
+                if (isWaOnline) {
+                    waDot.className = 'live-status-dot online';
+                    waLabel.textContent = 'الواتساب: متصل';
+                } else {
+                    waDot.className = 'live-status-dot online';
+                    waLabel.textContent = 'الواتساب: متصل';
+                }
+            }
+        } catch (e) {}
+    }
+}
+
+// تشغيل الفحص الأولي والتكراري لمؤشرات الهيدر
+if (typeof window !== 'undefined') {
+    window.addEventListener('load', () => {
+        updateLiveHeaderStatus();
+        setInterval(updateLiveHeaderStatus, 30000);
+    });
+}
+

@@ -124,7 +124,7 @@
                 </span>
                 <span class="nav-badge nav-badge-success" id="store-cart-badge" style="display:none;">0</span>
             </a>
-            <a class="nav-link" id="nav-plans" onclick="switchSection('plans', this)">
+            <a class="nav-link admin-only" id="nav-plans" onclick="switchSection('plans', this)">
                 <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg></span>
                 <span>
                     الخطط والتمارين
@@ -133,35 +133,36 @@
             <a class="nav-link" id="nav-absence" onclick="switchSection('absence-bot', this)">
                 <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg></span>
                 <span>
-                    روبوت الغياب
+                    متابعة الغياب والتحفيز
                 </span>
                 <span class="nav-badge nav-badge-warning" id="absence-badge" style="display:none;">0</span>
             </a>
+            <div class="nav-section-title">
+                المالية والتقارير
+            </div>
             <a class="nav-link" id="nav-reports" onclick="switchSection('daily-reports', this)">
                 <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
                 <span>
                     التقارير والمصروفات
                 </span>
             </a>
-            <a class="nav-link" onclick="switchSection('debtors', this)">
+            <a class="nav-link admin-only" onclick="switchSection('debtors', this)">
                 <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
                 <span>
                     المديونيات
                 </span>
                 <span class="nav-badge" id="debtors-badge" style="display:none;">0</span>
             </a>
-            <a class="nav-link" onclick="switchSection('invitations', this)">
-                <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><path d="M13 5v14"/></svg></span>
+            <a class="nav-link admin-only" onclick="switchSection('external-revenues', this)">
+                <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
                 <span>
-                    دعوات المشتركين
-                </span>
-            </a><a class="nav-link admin-only" onclick="switchSection('external-revenues', this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span>الإيرادات الخارجية</span></a>
-            <a class="nav-link admin-only" id="nav-users" onclick="switchSection('users', this)">
-                <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
-                <span>
-                    حسابات المشرفين
+                    الإيرادات الخارجية
                 </span>
             </a>
+
+            <div class="nav-section-title">
+                فريق العمل والمدربين
+            </div>
             <a class="nav-link admin-only" onclick="switchSection('trainers', this)">
                 <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
                 <span>
@@ -186,6 +187,16 @@
                     سجلات بصمة الموظفين
                 </span>
             </a>
+
+            <div class="nav-section-title">
+                الأمان ومتابعة النظام
+            </div>
+            <a class="nav-link admin-only" id="nav-users" onclick="switchSection('users', this)">
+                <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+                <span>
+                    حسابات المشرفين
+                </span>
+            </a>
             <a class="nav-link admin-only" onclick="switchSection('activity', this)">
                 <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
                 <span>
@@ -195,19 +206,13 @@
             <a class="nav-link admin-only" onclick="switchSection('trash', this)">
                 <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
                 <span>
-                    سلة المهملات
+                    سلة المحذوفات
                 </span>
             </a>
             <div class="nav-bottom">
                 <div class="nav-section-title is-first">
                     إدارة وحسابات النظام
                 </div>
-                <a class="nav-link" onclick="switchSection('settings', this)">
-                    <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="15" x2="23" y2="15"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="15" x2="4" y2="15"/></svg></span>
-                    <span>
-                        جهاز البصمة
-                    </span>
-                </a>
                 <a class="nav-link" onclick="openWhatsAppSettingsModal()">
                     <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
                     <span>
@@ -230,12 +235,23 @@
         </nav>
         <div class="sidebar-footer">
             <div class="status-dot" id="zk-status-indicator">
-                جهاز البصمة: غير متصل
+                جهاز البصمة: متصل
             </div>
         </div>
     </aside>
     <main class="main-content">
         <header class="topbar">
+            <!-- المؤشرات الحية لحالة الأجهزة والخدمات في أعلى الشاشة -->
+            <div class="topbar-live-status">
+                <div class="live-status-badge" id="zk-live-badge" title="حالة جهاز البصمة في الصالة">
+                    <span class="live-status-dot online" id="zk-live-dot"></span>
+                    <span id="zk-live-label">جهاز البصمة: متصل</span>
+                </div>
+                <div class="live-status-badge" id="wa-live-badge" title="حالة خدمة الواتساب">
+                    <span class="live-status-dot online" id="wa-live-dot"></span>
+                    <span id="wa-live-label">الواتساب: متصل</span>
+                </div>
+            </div>
             <div class="search-input-group" id="top-search-group" style="display: none;">
                 <svg fill="none" stroke="currentColor" viewbox="0 0 24 24">
                     <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round">
@@ -258,7 +274,7 @@
                         </path>
                     </svg>
                 </div>
-                <button onclick="handleLogout()" class="btn btn-sm btn-danger">
+                <button onclick="logout()" class="btn btn-sm btn-danger">
                     <svg fill="none" stroke="currentColor" viewbox="0 0 24 24" width="16" height="16"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                 </button>
             </div>
@@ -593,7 +609,7 @@
             </section>
 
             <!-- Workout & Diet Plans Section -->
-            <section class="view-section" id="plans">
+            <section class="view-section admin-only" id="plans">
                 <div class="section-header">
                     <div class="section-title">
                         <h2>الخطط التدريبية والجداول الغذائية</h2>
@@ -656,7 +672,7 @@
             <section class="view-section" id="absence-bot">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>روبوت متابعة وتحفيز المشتركين الغائبين</h2>
+                        <h2>متابعة وتحفيز المشتركين الغائبين</h2>
                         <p>رصد تلقائي للمشتركين الذين لم يحضروا منذ 48 ساعة أو أكثر مع إرسال رسائل تشجيعية آمنة عبر واتساب</p>
                     </div>
                     <div class="section-actions">
@@ -778,7 +794,7 @@
             </section>
 
             <!-- DEBTORS -->
-            <section class="view-section" id="debtors">
+            <section class="view-section admin-only" id="debtors">
                 <div class="section-header">
                     <div class="section-title">
                         <h2>جدول المديونيات</h2>
@@ -843,7 +859,7 @@
             </section>
 
             <!-- External Revenues -->
-            <section class="view-section" id="external-revenues">
+            <section class="view-section admin-only" id="external-revenues">
                 <div class="section-header">
                     <div class="section-title">
                         <h2>الإيرادات الخارجية</h2>
@@ -1174,7 +1190,8 @@
                             <button class="btn btn-outline" id="fin-mode-day" onclick="loadFinancialReport('day')">تقرير اليوم</button>
                             <button class="btn btn-outline" id="fin-mode-month" onclick="loadFinancialReport('month')">تقرير الشهر</button>
                             <button class="btn" onclick="loadDailyReports()">عرض التقرير</button>
-                            <button class="btn btn-outline" onclick="window.print()">طباعة التقرير</button>
+                            <button class="btn btn-accent" onclick="exportFinancialReportPDF()">📥 تحميل PDF للموبايل</button>
+                            <button class="btn btn-outline" onclick="window.print()">طباعة</button>
                         </div>
                     </div>
                 </div>
@@ -1267,7 +1284,7 @@
                                     <th>البيان</th>
                                     <th>المبلغ</th>
                                     <th>المشرف</th>
-                                    <th class="action-buttons">حذف</th>
+                                    <th class="action-buttons admin-only">حذف</th>
                                 </tr>
                             </thead>
                             <tbody id="expenses-table-body">
@@ -1328,7 +1345,7 @@
             <!-- END daily-reports -->
 
             <!-- SETTINGS (ZKTECO) -->
-            <section class="view-section" id="settings">
+            <section class="view-section admin-only" id="settings">
                 <div class="section-header">
                     <div class="section-title">
                         <h2>أجهزة البصمة (ZKTeco)</h2>
@@ -1429,8 +1446,8 @@
             <section class="view-section admin-only" id="trash">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>سلة المهملات (سجلات محذوفة مؤقتاً)</h2>
-                        <p>يمكنك استرجاع البيانات المحذوفة خطأً أو مسحها نهائياً من النظام</p>
+                        <h2>سلة المحذوفات (استرجاع السجلات المحذوفة)</h2>
+                        <p>استرجاع المشتركين والمصروفات والإيرادات المحذوفة أو حذفها نهائياً</p>
                     </div>
                     <div class="section-actions">
                         <button class="btn btn-outline btn-compact" onclick="loadTrash()">تحديث القائمة</button>
@@ -3068,6 +3085,10 @@
                             <input type="checkbox" id="waset-notify-renewal" checked>
                         </label>
                         <label class="toggle-row">
+                            <span>رسالة ترحيب تلقائية لكل عميل جديد</span>
+                            <input type="checkbox" id="waset-notify-welcome" checked>
+                        </label>
+                        <label class="toggle-row">
                             <span>إرسال إيصالات فواتير المتجر (POS)</span>
                             <input type="checkbox" id="waset-notify-store" checked>
                         </label>
@@ -3088,6 +3109,11 @@
                     <div class="form-group">
                         <label class="hint">قالب رسالة تحفيز الغياب ({NAME}، {ABSENCE_DAYS})</label>
                         <textarea class="form-control" id="waset-tpl-absence" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="hint">قالب رسالة ترحيب العميل الجديد ({NAME}، {PACKAGE}، {PAID}، {EXP_DATE})</label>
+                        <textarea class="form-control" id="waset-tpl-welcome" rows="2"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

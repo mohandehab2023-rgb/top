@@ -197,10 +197,17 @@ window.__TF_CLOUD__ = true;
         // ═══════════════════════════════════════════════════════════════
         getExpenses: async (filters) => {
             let q = sb.from('expenses').select('*');
-            if (filters) {
-                if (filters.startDate) q = q.gte('timestamp', filters.startDate);
-                if (filters.endDate) q = q.lte('timestamp', filters.endDate);
+            if (filters && typeof filters === 'object') {
+                if (filters.startDate) {
+                    const localStart = new Date(filters.startDate.includes('T') ? filters.startDate : filters.startDate + 'T00:00:00');
+                    if (!isNaN(localStart.getTime())) q = q.gte('timestamp', localStart.toISOString());
+                }
+                if (filters.endDate) {
+                    const localEnd = new Date(filters.endDate.includes('T') ? filters.endDate : filters.endDate + 'T23:59:59');
+                    if (!isNaN(localEnd.getTime())) q = q.lte('timestamp', localEnd.toISOString());
+                }
                 if (filters.category && filters.category !== 'all') q = q.eq('category', filters.category);
+                if (filters.username && filters.username !== 'all') q = q.eq('username', filters.username);
             }
             const { data, error } = await q.order('timestamp', { ascending: false });
             if (error) return [];
@@ -221,10 +228,17 @@ window.__TF_CLOUD__ = true;
         },
         getRevenues: async (filters) => {
             let q = sb.from('revenues').select('*');
-            if (filters) {
-                if (filters.startDate) q = q.gte('timestamp', filters.startDate);
-                if (filters.endDate) q = q.lte('timestamp', filters.endDate);
+            if (filters && typeof filters === 'object') {
+                if (filters.startDate) {
+                    const localStart = new Date(filters.startDate.includes('T') ? filters.startDate : filters.startDate + 'T00:00:00');
+                    if (!isNaN(localStart.getTime())) q = q.gte('timestamp', localStart.toISOString());
+                }
+                if (filters.endDate) {
+                    const localEnd = new Date(filters.endDate.includes('T') ? filters.endDate : filters.endDate + 'T23:59:59');
+                    if (!isNaN(localEnd.getTime())) q = q.lte('timestamp', localEnd.toISOString());
+                }
                 if (filters.category && filters.category !== 'all') q = q.eq('category', filters.category);
+                if (filters.username && filters.username !== 'all') q = q.eq('username', filters.username);
             }
             const { data, error } = await q.order('timestamp', { ascending: false });
             if (error) return [];
@@ -245,9 +259,15 @@ window.__TF_CLOUD__ = true;
         // ═══════════════════════════════════════════════════════════════
         getAttendance: async (filters) => {
             let q = sb.from('attendance').select('*');
-            if (filters) {
-                if (filters.startDate) q = q.gte('timestamp', filters.startDate);
-                if (filters.endDate) q = q.lte('timestamp', filters.endDate + ' 23:59:59');
+            if (filters && typeof filters === 'object') {
+                if (filters.startDate) {
+                    const localStart = new Date(filters.startDate.includes('T') ? filters.startDate : filters.startDate + 'T00:00:00');
+                    if (!isNaN(localStart.getTime())) q = q.gte('timestamp', localStart.toISOString());
+                }
+                if (filters.endDate) {
+                    const localEnd = new Date(filters.endDate.includes('T') ? filters.endDate : filters.endDate + 'T23:59:59');
+                    if (!isNaN(localEnd.getTime())) q = q.lte('timestamp', localEnd.toISOString());
+                }
                 if (filters.type && filters.type !== 'all') q = q.eq('user_type', filters.type);
             }
             const { data, error } = await q.order('timestamp', { ascending: false }).limit(500);
@@ -398,9 +418,65 @@ window.__TF_CLOUD__ = true;
             }
         },
         getStoreSales: async (filters) => {
-            const { data } = await sb.from('store_sales').select('*')
-                .order('sale_date', { ascending: false }).limit(200);
-            return data || [];
+            let q = sb.from('store_sales').select('*');
+            if (filters && typeof filters === 'object') {
+                if (filters.startDate) {
+                    const localStart = new Date(filters.startDate.includes('T') ? filters.startDate : filters.startDate + 'T00:00:00');
+                    if (!isNaN(localStart.getTime())) q = q.gte('sale_date', localStart.toISOString());
+                }
+                if (filters.endDate) {
+                    const localEnd = new Date(filters.endDate.includes('T') ? filters.endDate : filters.endDate + 'T23:59:59');
+                    if (!isNaN(localEnd.getTime())) q = q.lte('sale_date', localEnd.toISOString());
+                }
+                if (filters.username && filters.username !== 'all') {
+                    q = q.eq('username', filters.username);
+                }
+            }
+            const { data: sales } = await q.order('sale_date', { ascending: false }).limit(200);
+            if (!sales || !sales.length) return [];
+            
+            // Attach sale items from store_sale_items
+            const saleIds = sales.map(s => s.id);
+            const { data: items } = await sb.from('store_sale_items').select('*').in('sale_id', saleIds);
+            const byId = new Map(sales.map(s => [s.id, (s.items = [])]));
+            if (items) {
+                for (const it of items) {
+                    const arr = byId.get(it.sale_id);
+                    if (arr) arr.push(it);
+                }
+            }
+            return sales;
+        },
+        cancelStoreSale: async (saleId) => {
+            try {
+                if (!saleId) return { success: false, error: 'معرف الفاتورة مطلوب' };
+                const { data: sale } = await sb.from('store_sales').select('*').eq('id', saleId).maybeSingle();
+                if (!sale) return { success: false, error: 'الفاتورة غير موجودة' };
+
+                const { data: items } = await sb.from('store_sale_items').select('*').eq('sale_id', saleId);
+                if (items && items.length > 0) {
+                    for (const item of items) {
+                        if (item.product_id && item.quantity > 0) {
+                            const { data: p } = await sb.from('store_products').select('stock').eq('id', item.product_id).maybeSingle();
+                            if (p) {
+                                await sb.from('store_products').update({ stock: (Number(p.stock) || 0) + Number(item.quantity) }).eq('id', item.product_id);
+                            }
+                        }
+                    }
+                }
+                await sb.from('revenues').delete().eq('id', 'REV-STORE-' + saleId);
+                if (sale.payment_method === 'credit' && sale.buyer_id) {
+                    const { data: m } = await sb.from('members').select('price').eq('id', sale.buyer_id).maybeSingle();
+                    if (m) {
+                        await sb.from('members').update({ price: Math.max(0, (Number(m.price) || 0) - (Number(sale.total_amount) || 0)) }).eq('id', sale.buyer_id);
+                    }
+                }
+                await sb.from('store_sale_items').delete().eq('sale_id', saleId);
+                await sb.from('store_sales').delete().eq('id', saleId);
+                return { success: true };
+            } catch (e) {
+                return { success: false, error: e.message };
+            }
         },
 
         // ═══════════════════════════════════════════════════════════════
@@ -583,12 +659,31 @@ window.__TF_CLOUD__ = true;
         // اترجعت بعد ما أداة التجويف شالتها. بدونها الموقع مبيعملش تقارير
         // مالية ولا دفعات ولا حضور مدربين/موظفين ولا دعوات ولا خطط.
         getTransactions: async (filters) => {
-            let q = sb.from('transactions').select('*').order('timestamp', { ascending: false }).limit(500);
-            // filters could be a date string for "today"
-            if (filters && typeof filters === 'string') {
-                q = q.gte('timestamp', filters);
+            let q = sb.from('transactions').select('*');
+            if (filters) {
+                if (typeof filters === 'string') {
+                    const localStart = new Date(filters.includes('T') ? filters : filters + 'T00:00:00');
+                    const localEnd = new Date(filters.includes('T') ? filters : filters + 'T23:59:59');
+                    if (!isNaN(localStart.getTime())) q = q.gte('timestamp', localStart.toISOString());
+                    if (!isNaN(localEnd.getTime())) q = q.lte('timestamp', localEnd.toISOString());
+                } else if (typeof filters === 'object') {
+                    if (filters.startDate) {
+                        const localStart = new Date(filters.startDate.includes('T') ? filters.startDate : filters.startDate + 'T00:00:00');
+                        if (!isNaN(localStart.getTime())) q = q.gte('timestamp', localStart.toISOString());
+                    }
+                    if (filters.endDate) {
+                        const localEnd = new Date(filters.endDate.includes('T') ? filters.endDate : filters.endDate + 'T23:59:59');
+                        if (!isNaN(localEnd.getTime())) q = q.lte('timestamp', localEnd.toISOString());
+                    }
+                    if (filters.username && filters.username !== 'all') {
+                        q = q.eq('username', filters.username);
+                    }
+                    if (filters.memberId) {
+                        q = q.eq('member_id', filters.memberId);
+                    }
+                }
             }
-            const { data } = await q;
+            const { data } = await q.order('timestamp', { ascending: false }).limit(1000);
             return data || [];
         },
         getMonthlyRevenue: async (months = 6) => {
@@ -597,8 +692,14 @@ window.__TF_CLOUD__ = true;
             if (!data) return [];
             const buckets = {};
             data.forEach(t => {
-                const m = (t.timestamp || '').substring(0, 7);
-                if (m) buckets[m] = (buckets[m] || 0) + (t.amount || 0);
+                const raw = t.timestamp || '';
+                let m;
+                if (raw.includes('T') || raw.includes('Z')) {
+                    m = new Date(raw).toLocaleDateString('en-CA').substring(0, 7);
+                } else {
+                    m = raw.substring(0, 7);
+                }
+                if (m) buckets[m] = (buckets[m] || 0) + (Number(t.amount) || 0);
             });
             return Object.keys(buckets).sort().reverse().slice(0, months)
                 .map(m => ({ month_key: m, total: buckets[m] }));
@@ -609,8 +710,14 @@ window.__TF_CLOUD__ = true;
             if (!data) return [];
             const buckets = {};
             data.forEach(t => {
-                const d = (t.timestamp || '').split('T')[0].split(' ')[0];
-                if (d) buckets[d] = (buckets[d] || 0) + (t.amount || 0);
+                const raw = t.timestamp || '';
+                let d;
+                if (raw.includes('T') || raw.includes('Z')) {
+                    d = new Date(raw).toLocaleDateString('en-CA');
+                } else {
+                    d = raw.split(' ')[0];
+                }
+                if (d) buckets[d] = (buckets[d] || 0) + (Number(t.amount) || 0);
             });
             return Object.keys(buckets).sort().reverse().slice(0, days)
                 .map(d => ({ day: d, total: buckets[d] }));
@@ -724,7 +831,10 @@ window.__TF_CLOUD__ = true;
             // نوحّد اسم عمود الوقت والمبلغ زي البرنامج المكتبي
             const sales = salesRaw.map(s => Object.assign({}, s, { timestamp: s.sale_date, amount: s.total_amount }));
 
-            const filterMine = (rows) => o.username ? rows.filter(r => r.username === o.username) : rows;
+            const filterMine = (rows) => {
+                if (!o.username) return rows;
+                return rows.filter(r => r.username === o.username || (o.name && r.username === o.name));
+            };
             const S = filterMine(subs), SA = filterMine(sales), EX = filterMine(external), EP = filterMine(expenses);
 
             const sum = (rows) => rows.reduce((a, r) => a + (Number(r.amount) || 0), 0);
@@ -848,9 +958,11 @@ window.__TF_CLOUD__ = true;
         getAbsentMembers: async (daysThreshold) => {
             const { data: members } = await sb.from('members').select('*').eq('status', 'active');
             if (!members) return [];
+            const todayStr = new Date().toISOString().slice(0, 10);
+            const activeOnly = members.filter(m => !m.exp || m.exp >= todayStr);
             const cutoff = new Date();
-            cutoff.setDate(cutoff.getDate() - (daysThreshold || 7));
-            return members.filter(m => {
+            cutoff.setDate(cutoff.getDate() - (daysThreshold || 2));
+            return activeOnly.filter(m => {
                 if (!m.last_checkin) return true;
                 return new Date(m.last_checkin) < cutoff;
             });
