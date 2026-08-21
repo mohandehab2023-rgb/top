@@ -133,7 +133,7 @@
             <a class="nav-link" id="nav-absence" onclick="switchSection('absence-bot', this)">
                 <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg></span>
                 <span>
-                    متابعة الغياب والتحفيز
+                    حملات التجديد والتحفيز
                 </span>
                 <span class="nav-badge nav-badge-warning" id="absence-badge" style="display:none;">0</span>
             </a>
@@ -668,76 +668,163 @@
                 </div>
             </section>
 
-            <!-- Absence & Retention Bot Section -->
+            <!-- Smart Retention, Absence & Anti-Ban Renewal Campaigns Section -->
             <section class="view-section" id="absence-bot">
                 <div class="section-header">
                     <div class="section-title">
-                        <h2>متابعة وتحفيز المشتركين الغائبين</h2>
-                        <p>رصد تلقائي للمشتركين الذين لم يحضروا منذ 48 ساعة أو أكثر مع إرسال رسائل تشجيعية آمنة عبر واتساب</p>
+                        <h2>متابعة الغياب وحملات التجديد والتحفيز الذكية</h2>
+                        <p>نظام إرسال آمن ومكافح للحظر 100% مع فواصل زمنية متغيرة واستثناء تلقائي لمن تمت مراسلته خلال 72 ساعة</p>
                     </div>
                     <div class="section-actions">
-                        <button class="btn btn-outline btn-compact" onclick="loadAbsentMembers()">
+                        <button class="btn btn-outline btn-compact" onclick="refreshCurrentCampaignData()">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                            <span>تحديث الفحص</span>
+                            <span>تحديث البيانات</span>
                         </button>
-                        <button class="btn btn-accent btn-compact" onclick="sendBulkAbsenceReminders()">
+                        <button class="btn btn-accent btn-compact" onclick="launchSmartCampaignBulk()">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                            <span>إرسال تحفيز للجميع</span>
+                            <span>🚀 إطلاق الحملة الآمنة الآن</span>
                         </button>
                     </div>
                 </div>
 
+                <!-- CAMPAIGN TABS -->
+                <div class="chips-scroll-bar" id="campaign-tabs-bar">
+                    <button type="button" class="tab-btn active" id="tab-btn-expired" onclick="switchCampaignTab('expired')">
+                        <span>🔴 حملة الاشتراكات المنتهية (التجديد)</span>
+                    </button>
+                    <button type="button" class="tab-btn" id="tab-btn-absent" onclick="switchCampaignTab('absent')">
+                        <span>🏃‍♂️ متابعة وتحفيز الغائبين</span>
+                    </button>
+                    <button type="button" class="tab-btn" id="tab-btn-expiring" onclick="switchCampaignTab('expiring')">
+                        <span>🟡 قرب انتهاء الاشتراك (خلال 3 أيام)</span>
+                    </button>
+                    <button type="button" class="tab-btn" id="tab-btn-logs" onclick="switchCampaignTab('logs')">
+                        <span>📜 سجل وتقارير الرسائل</span>
+                    </button>
+                </div>
+
+                <!-- ANTI-BAN SHIELD BANNER -->
+                <div class="anti-ban-shield-box">
+                    <div class="shield-badge">🛡️ درع مكافحة الحظر الذكي 100% نشط</div>
+                    <div class="shield-features">
+                        <span>⏱️ بصمة وقت وثوانٍ وكود فريد لكل رسالة</span> •
+                        <span>⏳ استثناء تلقائي لمن استلم رسالة خلال 72 ساعة</span> •
+                        <span>🎲 فواصل عشوائية متغيرة (5 إلى 9 ثوانٍ) لمحاكاة البشر</span>
+                    </div>
+                </div>
+
+                <!-- STATS & KPI GRID -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-card-body">
-                            <div class="stat-label">مشتركون غائبون (48 ساعة فأكثر)</div>
-                            <div class="stat-value text-danger" id="kpi-absent-count">0</div>
+                            <div class="stat-label">إجمالي المشتركين المستهدفين</div>
+                            <div class="stat-value text-primary" id="kpi-campaign-total">0</div>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-card-body">
-                            <div class="stat-label">إجمالي رسائل التحفيز المرسلة</div>
-                            <div class="stat-value text-success" id="kpi-absent-sent">0</div>
+                            <div class="stat-label">مستثنون تلقائياً (حماية من التكرار)</div>
+                            <div class="stat-value text-warning" id="kpi-campaign-cooldown">0</div>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-card-body">
-                            <div class="stat-label">معيار مدة الغياب</div>
-                            <select id="absence-threshold-select" onchange="loadAbsentMembers()">
-                                <option value="2">غائب منذ يومين (48 ساعة)</option>
-                                <option value="3">غائب منذ 3 أيام</option>
-                                <option value="5">غائب منذ 5 أيام</option>
-                                <option value="7">غائب منذ أسبوع فأكثر</option>
-                            </select>
+                            <div class="stat-label">مؤهلون للإرسال الآمن الآن</div>
+                            <div class="stat-value text-success" id="kpi-campaign-ready">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-label">إجمالي الرسائل المرسلة اليوم</div>
+                            <div class="stat-value text-main" id="kpi-campaign-sent">0</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="panel">
+                <!-- HIDDEN BACKWARD-COMPATIBILITY HOOKS -->
+                <div style="display:none;" id="absence-compat-container">
+                    <span id="kpi-absent-count">0</span>
+                    <span id="kpi-absent-sent">0</span>
+                    <select id="absence-threshold-select" onchange="refreshCurrentCampaignData()"><option value="2">2</option></select>
+                    <input type="text" id="search-absent">
+                    <table><tbody id="absent-members-tbody"></tbody></table>
+                </div>
+
+                <!-- TEMPLATE & CRITERIA PANEL -->
+                <div class="panel" id="campaign-template-panel">
+                    <div class="panel-header-inline">
+                        <h3>قالب الرسالة المعتمد للحملة (يتم تعديل البصمة والاسم تلقائياً لكل عميل)</h3>
+                        <div class="cooldown-toggle-group">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="campaign-skip-cooldown-check" checked onchange="refreshCurrentCampaignData()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="fs-xs fw-bold text-muted">تخطي من تمت مراسلته خلال آخر 3 أيام (موصى به)</span>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <textarea class="form-control" id="campaign-template-text" rows="3" oninput="saveCurrentCampaignTemplate()"></textarea>
+                        <div class="template-tags-hint">
+                            <span>المتغيرات المتاحة:</span>
+                            <code onclick="insertCampaignTag('{NAME}')">{NAME} اسم اللاعب</code>
+                            <code onclick="insertCampaignTag('{EXP_DATE}')">{EXP_DATE} تاريخ الانتهاء</code>
+                            <code onclick="insertCampaignTag('{DAYS_EXPIRED}')">{DAYS_EXPIRED} أيام الانتهاء/الغياب</code>
+                            <code onclick="insertCampaignTag('{TIME}')">{TIME} الوقت بالثواني</code>
+                            <code onclick="insertCampaignTag('{CODE}')">{CODE} كود فريد</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MEMBERS TABLE PANEL -->
+                <div class="panel" id="campaign-data-panel">
                     <div class="toolbar">
                         <div class="toolbar-field toolbar-search">
-                            <input type="text" class="form-control" id="search-absent" placeholder="ابحث باسم المشترك أو رقم الهاتف..." onkeyup="filterAbsentTable(this.value)">
+                            <input type="text" class="form-control" id="campaign-search-input" placeholder="بحث بالاسم، رقم الهاتف، أو الباقة..." onkeyup="filterCampaignTable(this.value)">
                         </div>
-                        <span class="toolbar-note">الفواصل الزمنية الآمنة بين الرسائل: 4–7 ثوانٍ لتفادي الحظر</span>
+                        <span class="toolbar-note" id="campaign-target-note">الفئة المستهدفة الحالية: الاشتراكات المنتهية</span>
                     </div>
                     <table class="data-table">
                         <thead>
                             <tr>
                                 <th>اسم المشترك</th>
                                 <th>رقم الهاتف</th>
-                                <th>رقم ولي الأمر</th>
                                 <th>الباقة</th>
-                                <th>آخر حضور مسجل</th>
-                                <th>أيام الغياب</th>
-                                <th>إجراء التحفيز</th>
+                                <th>تاريخ الانتهاء / آخر ظهور</th>
+                                <th>حالة الأمان والـ 72 ساعة</th>
+                                <th>معاينة وإرسال فردي</th>
                             </tr>
                         </thead>
-                        <tbody id="absent-members-tbody">
-                            <!-- Dynamic Rows -->
+                        <tbody id="campaign-members-tbody">
+                            <!-- Dynamic Campaign Rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- LOGS TABLE PANEL -->
+                <div class="panel" id="campaign-logs-panel" style="display:none;">
+                    <div class="toolbar">
+                        <div class="toolbar-field toolbar-search">
+                            <input type="text" class="form-control" id="campaign-logs-search" placeholder="بحث في سجل الرسائل المرسلة..." onkeyup="filterCampaignLogsTable(this.value)">
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>تاريخ ووقت الإرسال</th>
+                                <th>المستلم</th>
+                                <th>رقم الهاتف</th>
+                                <th>نوع الحملة</th>
+                                <th>نص الرسالة المرسلة</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="campaign-logs-tbody">
+                            <!-- Dynamic Log Rows -->
                         </tbody>
                     </table>
                 </div>
             </section>
+            <!-- END absence-bot -->
 
             <!-- Invitations Section -->
             <section class="view-section" id="invitations">

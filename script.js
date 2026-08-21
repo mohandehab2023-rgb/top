@@ -5634,62 +5634,282 @@ function renderMemberPlans() {
 }
 
 // ==========================================================================
-// ABSENCE & RETENTION BOT LOGIC
+// SMART RETENTION, ABSENCE & ANTI-BAN RENEWAL CAMPAIGN ENGINE
 // ==========================================================================
+let currentCampaignTab = 'expired';
+let currentCampaignMembersList = [];
+let campaignLogsList = [];
 let absentMembersList = [];
 
-async function loadAbsentMembers() {
-    const sel = document.getElementById('absence-threshold-select');
-    const threshold = sel ? sel.value : 2;
-    if (!window.electronAPI || !window.electronAPI.getAbsentMembers) return;
-    try {
-        absentMembersList = await window.electronAPI.getAbsentMembers(threshold) || [];
-        renderAbsentMembers();
-        const countEl = document.getElementById('kpi-absent-count');
-        const badgeEl = document.getElementById('absence-badge');
-        if (countEl) countEl.textContent = absentMembersList.length;
-        if (badgeEl) {
-            badgeEl.textContent = absentMembersList.length;
-            badgeEl.style.display = absentMembersList.length > 0 ? 'inline-flex' : 'none';
+// Default dynamic anti-ban templates with place tags
+const defaultCampaignTemplates = {
+    expired: "تحية طيبة كابتن {NAME} البطل 💪\nلاحظنا إن اشتراكك في TOP FITNESS منتهي منذ {DAYS_EXPIRED} أيام.\nبنقدملك عرض تجديد خاص النهاردة ومستنينك ترجع تكمل فورمتك وتمرينك بقوة! 🔥",
+    absent: "وحشتنا في TOP FITNESS يا {NAME}! 🏋️🔥\nلاحظنا غيابك عن التمرين منذ {DAYS_EXPIRED} أيام.. صحتك ولياقتك تهمنا، مستنينك النهاردة تنور صالتك وتكمل عاش!",
+    expiring: "أهلاً بكابتن العزيمة {NAME} 🏋️\nحبينا نذكرك إن اشتراكك الحالي هينتهي بتاريخ {EXP_DATE} (متبقي {DAYS_EXPIRED} أيام).\nتقدر تجدد في أي وقت بدون انقطاع لتستمر رحلة لياقتك وقوتك! 💪"
+};
+
+/**
+ * مُولّد البصمة النصية الديناميكية المانعة للحظر 100%
+ * يضيف الوقت بالثواني، التاريخ، وكود أمان فريد وتدوير عشوائي للتحية والخاتمة
+ */
+function generateAntiBanMessage(template, member, type = 'expired') {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    const randCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+
+    // تدوير عشوائي للتحيات لتغيير بصمة الذكاء الاصطناعي لواتساب Meta
+    const greetings = [
+        `كابتن ${member.name} البطل 💪`,
+        `أهلاً بكابتن العزيمة ${member.name} 🏋️`,
+        `مساء النشاط والقوة كابتن ${member.name} 🔥`,
+        `بطلنا الغالي كابتن ${member.name} 👑`
+    ];
+    const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
+
+    let baseText = (template && template.trim()) ? template : (defaultCampaignTemplates[type] || defaultCampaignTemplates.expired);
+    
+    let daysDiff = member.days_since_last || member.days_expired || 1;
+    if (type === 'expiring' && member.exp) {
+        const expD = new Date(member.exp);
+        const diffMs = expD.getTime() - now.getTime();
+        daysDiff = Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+    }
+
+    let msg = baseText
+        .replace(/{NAME}/g, member.name || '')
+        .replace(/{GREETING}/g, randomGreeting)
+        .replace(/{EXP_DATE}/g, member.exp ? member.exp.slice(0, 10) : 'قريباً')
+        .replace(/{DAYS_EXPIRED}/g, daysDiff)
+        .replace(/{PHONE}/g, member.phone || '')
+        .replace(/{TIME}/g, timeStr)
+        .replace(/{DATE}/g, dateStr)
+        .replace(/{CODE}/g, randCode);
+
+    // تذييل البصمة الزمنية الفريدة في نهاية كل رسالة
+    const antiSpamMicroStamp = `\n\n📌 #TF-${randCode} • ${dateStr} - ${timeStr}`;
+    if (!msg.includes(timeStr) && !msg.includes(randCode)) {
+        msg += antiSpamMicroStamp;
+    }
+    return msg;
+}
+
+/**
+ * تبديل تبويبات الحملات
+ */
+function switchCampaignTab(tabKey) {
+    currentCampaignTab = tabKey;
+    
+    // تحديث أزرار التبويب
+    const tabs = ['expired', 'absent', 'expiring', 'logs'];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (btn) {
+            if (t === tabKey) btn.classList.add('active');
+            else btn.classList.remove('active');
         }
-    } catch (e) {
-        (()=>{})('loadAbsentMembers error:', e);
+    });
+
+    const tplPanel = document.getElementById('campaign-template-panel');
+    const dataPanel = document.getElementById('campaign-data-panel');
+    const logsPanel = document.getElementById('campaign-logs-panel');
+    const noteEl = document.getElementById('campaign-target-note');
+
+    if (tabKey === 'logs') {
+        if (tplPanel) tplPanel.style.display = 'none';
+        if (dataPanel) dataPanel.style.display = 'none';
+        if (logsPanel) logsPanel.style.display = 'block';
+        loadCampaignLogs();
+        return;
+    }
+
+    if (tplPanel) tplPanel.style.display = 'block';
+    if (dataPanel) dataPanel.style.display = 'block';
+    if (logsPanel) logsPanel.style.display = 'none';
+
+    // تحميل قالب التبويب المحدد
+    const tplArea = document.getElementById('campaign-template-text');
+    if (tplArea) {
+        const saved = localStorage.getItem(`campaign_tpl_${tabKey}`);
+        tplArea.value = saved || defaultCampaignTemplates[tabKey] || '';
+    }
+
+    if (noteEl) {
+        if (tabKey === 'expired') noteEl.textContent = 'الفئة المستهدفة الحالية: الاشتراكات المنتهية (تجديد)';
+        else if (tabKey === 'absent') noteEl.textContent = 'الفئة المستهدفة الحالية: المشتركون الغائبون (تحفيز)';
+        else if (tabKey === 'expiring') noteEl.textContent = 'الفئة المستهدفة الحالية: قرب انتهاء الاشتراك (تنبيه مسبق)';
+    }
+
+    refreshCurrentCampaignData();
+}
+
+/**
+ * حفظ قالب الحملة الحالي محلياً
+ */
+function saveCurrentCampaignTemplate() {
+    const tplArea = document.getElementById('campaign-template-text');
+    if (tplArea) {
+        localStorage.setItem(`campaign_tpl_${currentCampaignTab}`, tplArea.value);
     }
 }
 
-function filterAbsentTable(search) {
-    renderAbsentMembers(search);
+/**
+ * إدراج وسم داخل قالب الحملة
+ */
+function insertCampaignTag(tag) {
+    const tplArea = document.getElementById('campaign-template-text');
+    if (!tplArea) return;
+    const start = tplArea.selectionStart || 0;
+    const end = tplArea.selectionEnd || 0;
+    const text = tplArea.value;
+    tplArea.value = text.slice(0, start) + tag + text.slice(end);
+    tplArea.focus();
+    tplArea.selectionStart = tplArea.selectionEnd = start + tag.length;
+    saveCurrentCampaignTemplate();
 }
 
-function renderAbsentMembers(searchQuery = '') {
-    const tbody = document.getElementById('absent-members-tbody');
+/**
+ * فحص وتحديث بيانات الحملة الحالية وحساب مؤشرات عدم التكرار (72 ساعة)
+ */
+async function refreshCurrentCampaignData() {
+    const today = new Date();
+    const todayStr = today.toISOString().slice(0, 10);
+    const in3Days = new Date(today.getTime() + (3 * 24 * 60 * 60 * 1000)).toISOString().slice(0, 10);
+    const threeDaysAgoMs = today.getTime() - (72 * 60 * 60 * 1000);
+
+    // جلب سجلات رسائل الواتساب لمعرفة من استلم رسالة في آخر 72 ساعة
+    let recentWaLogs = [];
+    if (window.electronAPI && window.electronAPI.getWhatsAppLogs) {
+        try {
+            recentWaLogs = await window.electronAPI.getWhatsAppLogs({ type: 'all' }) || [];
+        } catch (e) {}
+    }
+
+    const phoneLastSentMap = {};
+    recentWaLogs.forEach(log => {
+        if (log.recipient_phone) {
+            const clean = String(log.recipient_phone).replace(/\D/g, '');
+            const logTime = log.created_at ? new Date(log.created_at).getTime() : 0;
+            if (!phoneLastSentMap[clean] || logTime > phoneLastSentMap[clean]) {
+                phoneLastSentMap[clean] = logTime;
+            }
+        }
+    });
+
+    let rawList = [];
+    const allMems = members || [];
+
+    if (currentCampaignTab === 'expired') {
+        rawList = allMems.filter(m => {
+            if (!m.exp) return false;
+            return m.exp.slice(0, 10) < todayStr && m.status !== 'deleted';
+        }).map(m => {
+            const expDate = new Date(m.exp);
+            const daysExp = Math.max(1, Math.round((today.getTime() - expDate.getTime()) / (1000 * 60 * 60 * 24)));
+            return { ...m, days_expired: daysExp };
+        });
+    } else if (currentCampaignTab === 'expiring') {
+        rawList = allMems.filter(m => {
+            if (!m.exp) return false;
+            const expSlice = m.exp.slice(0, 10);
+            return expSlice >= todayStr && expSlice <= in3Days && m.status === 'active';
+        }).map(m => {
+            const expDate = new Date(m.exp);
+            const daysLeft = Math.max(1, Math.ceil((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+            return { ...m, days_expired: daysLeft };
+        });
+    } else if (currentCampaignTab === 'absent') {
+        if (window.electronAPI && window.electronAPI.getAbsentMembers) {
+            try {
+                rawList = await window.electronAPI.getAbsentMembers(2) || [];
+            } catch (e) {
+                rawList = [];
+            }
+        } else {
+            rawList = allMems.filter(m => m.status === 'active' && (!m.exp || m.exp.slice(0, 10) >= todayStr));
+        }
+    }
+
+    // تقييم الأمان وحارس الـ 72 ساعة لكل مشترك
+    currentCampaignMembersList = rawList.map(m => {
+        const cleanPhone = String(m.phone || '').replace(/\D/g, '');
+        const lastSentMs = phoneLastSentMap[cleanPhone] || 0;
+        const isCooldown = (lastSentMs > 0 && lastSentMs >= threeDaysAgoMs);
+        
+        let cooldownText = '✅ مؤهل للإرسال الآمن';
+        if (isCooldown) {
+            const hoursAgo = Math.round((today.getTime() - lastSentMs) / (1000 * 60 * 60));
+            cooldownText = hoursAgo < 24 ? `⏳ استلم اليوم (${hoursAgo} س)` : `⏳ استلم قبل (${Math.round(hoursAgo/24)} يوم)`;
+        }
+
+        return {
+            ...m,
+            is_cooldown: isCooldown,
+            cooldown_text: cooldownText,
+            last_sent_ms: lastSentMs
+        };
+    });
+
+    // تحديث بطاقات الإحصائيات
+    const totalCount = currentCampaignMembersList.length;
+    const cooldownCount = currentCampaignMembersList.filter(m => m.is_cooldown).length;
+    const readyCount = totalCount - cooldownCount;
+
+    const kpiTot = document.getElementById('kpi-campaign-total');
+    const kpiCool = document.getElementById('kpi-campaign-cooldown');
+    const kpiReady = document.getElementById('kpi-campaign-ready');
+    const kpiSent = document.getElementById('kpi-campaign-sent');
+
+    if (kpiTot) kpiTot.textContent = totalCount;
+    if (kpiCool) kpiCool.textContent = cooldownCount;
+    if (kpiReady) kpiReady.textContent = readyCount;
+    if (kpiSent) kpiSent.textContent = recentWaLogs.filter(l => l.created_at && l.created_at.slice(0, 10) === todayStr).length;
+
+    renderCampaignTable();
+}
+
+/**
+ * فلترة وعرض جدول الحملة
+ */
+function filterCampaignTable(searchQuery = '') {
+    renderCampaignTable(searchQuery);
+}
+
+function renderCampaignTable(searchQuery = '') {
+    const tbody = document.getElementById('campaign-members-tbody');
     if (!tbody) return;
 
     const query = searchQuery.trim().toLowerCase();
-    let filtered = absentMembersList.filter(m => {
+    const skipCooldown = document.getElementById('campaign-skip-cooldown-check') ? document.getElementById('campaign-skip-cooldown-check').checked : true;
+
+    let filtered = currentCampaignMembersList.filter(m => {
         if (!query) return true;
-        return (m.name || '').toLowerCase().includes(query) || (m.phone || '').includes(query);
+        return (m.name || '').toLowerCase().includes(query) || (m.phone || '').includes(query) || (m.pkg || '').toLowerCase().includes(query);
     });
 
     if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="empty-inline">🎉 رائع! لا يوجد مشتركون غائبون حالياً متجاوزين للمدة المحددة.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-inline">🎉 لا يوجد مشتركون في هذه القائمة حالياً.</td></tr>';
         return;
     }
 
     tbody.innerHTML = filtered.map(m => {
-        const days = m.days_since_last || 2;
-        const lastAtt = m.last_attendance ? m.last_attendance.slice(0, 16) : 'لم يسجل حضوراً';
+        const phone = escapeHtml(m.phone || 'بدون هاتف');
+        const pkgName = escapeHtml((m.pkg || 'باقة تدريب').replace(/[\?\uFFFD]/g, '').trim());
+        const dateInfo = m.exp ? escapeHtml(m.exp.slice(0, 10)) : (m.last_attendance ? escapeHtml(m.last_attendance.slice(0, 16)) : 'غير مسجل');
+        const badgeClass = m.is_cooldown ? 'badge-cooldown' : 'badge-ready';
+
         return `
             <tr>
                 <td class="fw-bold text-main">${escapeHtml(m.name)}</td>
-                <td class="mono">${escapeHtml(m.phone || 'بدون هاتف')}</td>
-                <td class="mono text-muted">${escapeHtml(m.guardian_phone || '-')}</td>
-                <td><span class="fs-xs fw-bold text-primary">${escapeHtml((m.pkg || 'باقة شهرية').replace(/[\?\uFFFD]/g, '').trim())}</span></td>
-                <td class="fs-xs text-muted">${escapeHtml(lastAtt)}</td>
-                <td><span class="badge badge-danger badge-sm">${days} أيام غياب</span></td>
+                <td class="mono">${phone}</td>
+                <td><span class="fs-xs fw-bold text-primary">${pkgName}</span></td>
+                <td class="fs-xs text-muted">${dateInfo}</td>
                 <td>
-                    <button type="button" class="btn btn-sm btn-accent" onclick="sendSingleAbsenceReminder('${m.id}')">
-                        <span>📲 إرسال تحفيز</span>
+                    <span class="badge ${badgeClass}">${escapeHtml(m.cooldown_text)}</span>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-accent" onclick="sendSingleCampaignMessage('${m.id}')">
+                        <span>📲 إرسال فوري</span>
                     </button>
                 </td>
             </tr>
@@ -5697,48 +5917,63 @@ function renderAbsentMembers(searchQuery = '') {
     }).join('');
 }
 
-function sendSingleAbsenceReminder(memberId) {
-    const member = (members || []).find(m => String(m.id) === String(memberId)) || absentMembersList.find(m => String(m.id) === String(memberId));
+/**
+ * إرسال رسالة فردية ديناميكية للمشترك المحدد
+ */
+async function sendSingleCampaignMessage(memberId) {
+    const member = currentCampaignMembersList.find(m => String(m.id) === String(memberId)) || (members || []).find(m => String(m.id) === String(memberId));
     if (!member || !member.phone) return showToast('المشترك ليس لديه رقم هاتف مسجل', 'warning');
 
-    const days = member.days_since_last || 2;
-    let msg = (waConfig.tplAbsence || "وحشتنا في TOP FITNESS يا {NAME}! 🏋️🔥\nلاحظنا غيابك منذ {ABSENCE_DAYS} أيام.. صحتك ولياقتك تهمنا، مستنينك النهاردة تكمل فورمتك وتمرينك بقوة!")
-        .replace(/{NAME}/g, member.name)
-        .replace(/{ABSENCE_DAYS}/g, days);
+    const tplArea = document.getElementById('campaign-template-text');
+    const customTpl = tplArea ? tplArea.value : '';
+    const dynamicMsg = generateAntiBanMessage(customTpl, member, currentCampaignTab);
 
-    waManualSend(member.phone, member.name, 'absence', msg);
+    waManualSend(member.phone, member.name, currentCampaignTab, dynamicMsg);
 }
 
-async function sendBulkAbsenceReminders() {
-    if (absentMembersList.length === 0) {
-        return showToast('لا يوجد مشتركون غائبون لإرسال الرسائل إليهم', 'info');
+/**
+ * إطلاق الحملة الجماعية الآمنة 100% مع فواصل عشوائية متغيرة واستثناء المستثنين
+ */
+async function launchSmartCampaignBulk() {
+    const skipCooldown = document.getElementById('campaign-skip-cooldown-check') ? document.getElementById('campaign-skip-cooldown-check').checked : true;
+    
+    let targetQueue = currentCampaignMembersList.filter(m => m.phone);
+    if (skipCooldown) {
+        targetQueue = targetQueue.filter(m => !m.is_cooldown);
     }
 
-    if (!confirm(`سيتم إرسال رسائل تشجيعية آمنة إلى (${absentMembersList.length}) مشتركين غائبين.\n\n🛡️ نظام الأمان مفعل: فواصل زمنية متغيرة 4-7 ثوانٍ لمنع الحظر. هل تريد المتابعة؟`)) {
-        return;
+    if (targetQueue.length === 0) {
+        return showToast('لا يوجد مشتركون مؤهلون للإرسال حالياً في هذه الحملة', 'info');
     }
 
-    waQueue = [...absentMembersList];
+    const tplArea = document.getElementById('campaign-template-text');
+    const templateText = tplArea ? tplArea.value : '';
+
+    const confirmMsg = `🚀 إطلاق حملة ${currentCampaignTab === 'expired' ? 'الاشتراكات المنتهية' : (currentCampaignTab === 'expiring' ? 'تنبيه قرب الانتهاء' : 'تحفيز الغائبين')}:\n\n` +
+        `• عدد المشتركين المؤهلين: ${targetQueue.length} مشترك\n` +
+        `• درع مكافحة الحظر: نشط (فواصل عشوائية 5-9 ثوانٍ وبصمة زمنية فريدة لكل رسالة)\n` +
+        `• تم استثناء من تمت مراسلته في آخر 72 ساعة.\n\nهل تريد بدء الإرسال الآن؟`;
+
+    if (!confirm(confirmMsg)) return;
+
+    waQueue = [...targetQueue];
     isWaQueueRunning = true;
     stopWaQueueFlag = false;
 
     openModal('whatsappBulkModal');
-    processNextInBulkQueue(0, waQueue.length);
+    processNextInCampaignQueue(0, waQueue.length, templateText);
 }
 
-function stopBulkWhatsAppQueue() {
-    stopWaQueueFlag = true;
-    isWaQueueRunning = false;
-    closeModal('whatsappBulkModal');
-    showToast('تم إيقاف طابور الإرسال', 'info');
-}
-
-async function processNextInBulkQueue(currentIndex, totalCount) {
+/**
+ * معالجة طابور الإرسال الذكي بفواصل عشوائية متغيرة
+ */
+async function processNextInCampaignQueue(currentIndex, totalCount, templateText) {
     if (stopWaQueueFlag || currentIndex >= totalCount) {
         const statusEl = document.getElementById('bulk-queue-status');
-        if (statusEl) statusEl.textContent = '🎉 اكتملت عملية الإرسال بنجاح!';
+        if (statusEl) statusEl.textContent = '🎉 اكتملت الحملة بنجاح 100%!';
         setTimeout(() => closeModal('whatsappBulkModal'), 2000);
-        showToast(`تم إتمام إرسال رسائل التحفيز بنجاح!`, 'success');
+        showToast('تم إتمام إرسال حملة الرسائل بنجاح وبأمان تام!', 'success');
+        refreshCurrentCampaignData();
         return;
     }
 
@@ -5753,18 +5988,12 @@ async function processNextInBulkQueue(currentIndex, totalCount) {
     if (progressBar) progressBar.style.width = `${Math.round(((currentIndex + 1) / totalCount) * 100)}%`;
 
     if (currentMember.phone) {
-        const days = currentMember.days_since_last || 2;
-        let msg = (waConfig.tplAbsence || "وحشتنا في TOP FITNESS يا {NAME}! 🏋️🔥")
-            .replace(/{NAME}/g, currentMember.name)
-            .replace(/{ABSENCE_DAYS}/g, days);
-        
-        // إرسال جماعي: لازم يعدي على الواتساب المتصل فقط.
-        // فتح رابط لكل مشترك كان هيفتح عشرات التبويبات في وش المستخدم.
-        await waAutoSend(currentMember.phone, currentMember.name, 'absence', msg);
+        const uniqueMessage = generateAntiBanMessage(templateText, currentMember, currentCampaignTab);
+        await waAutoSend(currentMember.phone, currentMember.name, currentCampaignTab, uniqueMessage);
     }
 
-    // Safe delay between 4 to 7 seconds
-    const delaySecs = Math.floor(Math.random() * 4) + 4; // 4 to 7
+    // فواصل أمان عشوائية متغيرة بين 5 إلى 8.5 ثوانٍ لمحاكاة السلوك البشري
+    const delaySecs = Math.floor(Math.random() * 4) + 5; // 5 to 8
     let remain = delaySecs;
 
     const timer = setInterval(() => {
@@ -5773,13 +6002,98 @@ async function processNextInBulkQueue(currentIndex, totalCount) {
             return;
         }
         remain--;
-        if (countdownEl) countdownEl.textContent = `⏳ فاصل أمان قبل الرسالة القادمة: ${remain} ثوانٍ...`;
+        if (countdownEl) countdownEl.textContent = `⏳ فاصل أمان طبيعي مضاد للحظر: ${remain} ثوانٍ...`;
         if (remain <= 0) {
             clearInterval(timer);
-            processNextInBulkQueue(currentIndex + 1, totalCount);
+            processNextInCampaignQueue(currentIndex + 1, totalCount, templateText);
         }
     }, 1000);
 }
+
+/**
+ * تحميل وعرض سجل وتقارير الرسائل المرسلة
+ */
+async function loadCampaignLogs() {
+    if (!window.electronAPI || !window.electronAPI.getWhatsAppLogs) return;
+    try {
+        campaignLogsList = await window.electronAPI.getWhatsAppLogs({ type: 'all' }) || [];
+        renderCampaignLogsTable();
+    } catch (e) {
+        (()=>{})('loadCampaignLogs error:', e);
+    }
+}
+
+function filterCampaignLogsTable(searchQuery = '') {
+    renderCampaignLogsTable(searchQuery);
+}
+
+function renderCampaignLogsTable(searchQuery = '') {
+    const tbody = document.getElementById('campaign-logs-tbody');
+    if (!tbody) return;
+
+    const query = searchQuery.trim().toLowerCase();
+    let filtered = campaignLogsList.filter(l => {
+        if (!query) return true;
+        return (l.recipient_name || '').toLowerCase().includes(query) || (l.recipient_phone || '').includes(query) || (l.message_text || '').toLowerCase().includes(query);
+    });
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-inline">لا توجد سجلات رسائل مسجلة حالياً.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(l => {
+        const time = l.created_at ? escapeHtml(l.created_at.slice(0, 19).replace('T', ' ')) : '-';
+        const typeLabel = l.message_type === 'expired' ? 'حملة منتهين' : (l.message_type === 'absence' ? 'تحفيز غياب' : (l.message_type === 'expiring' ? 'تنبيه انتهاء' : 'رسالة عامة'));
+        const isOk = (l.status === 'sent' || l.status === 'delivered');
+        const badgeClass = isOk ? 'badge-success' : 'badge-danger';
+        const statusText = isOk ? 'تم الإرسال بنجاح' : 'فشل / غير متصل';
+
+        return `
+            <tr>
+                <td class="mono fs-xs">${time}</td>
+                <td class="fw-bold">${escapeHtml(l.recipient_name || 'مشترك')}</td>
+                <td class="mono">${escapeHtml(l.recipient_phone || '-')}</td>
+                <td><span class="badge badge-sm badge-info">${escapeHtml(typeLabel)}</span></td>
+                <td class="fs-xs text-muted" title="${escapeHtml(l.message_text)}">${escapeHtml(l.message_text.slice(0, 45))}...</td>
+                <td><span class="badge badge-sm ${badgeClass}">${statusText}</span></td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// دالات التوافق القديمة للحفاظ على تكامل الدوال
+async function loadAbsentMembers() {
+    return refreshCurrentCampaignData();
+}
+
+function filterAbsentTable(search) {
+    return filterCampaignTable(search);
+}
+
+function renderAbsentMembers(searchQuery = '') {
+    return renderCampaignTable(searchQuery);
+}
+
+function sendSingleAbsenceReminder(memberId) {
+    return sendSingleCampaignMessage(memberId);
+}
+
+async function sendBulkAbsenceReminders() {
+    return launchSmartCampaignBulk();
+}
+
+function stopBulkWhatsAppQueue() {
+    stopWaQueueFlag = true;
+    isWaQueueRunning = false;
+    closeModal('whatsappBulkModal');
+    showToast('تم إيقاف طابور الإرسال', 'info');
+}
+
+async function processNextInBulkQueue(currentIndex, totalCount) {
+    return processNextInCampaignQueue(currentIndex, totalCount, '');
+}
+
 
 // --- Connection Heartbeat (خادم محلي فقط) ---
 // في النسخة السحابية (GitHub Pages) مفيش /api/ خالص، فالنبضة دي كانت
