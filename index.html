@@ -3172,6 +3172,18 @@
                             <input type="checkbox" id="waset-notify-renewal" checked>
                         </label>
                         <label class="toggle-row">
+                            <span>إشعار حضور البصمة لولي الأمر (طوارئ وأمان للناشئين)</span>
+                            <input type="checkbox" id="waset-notify-guardian" checked>
+                        </label>
+                        <label class="toggle-row">
+                            <span>إشعار انصراف/مغادرة البصمة لولي الأمر (اطمئنان عند خروج الطفل من الصالة)</span>
+                            <input type="checkbox" id="waset-notify-guardian-checkout" checked>
+                        </label>
+                        <label class="toggle-row">
+                            <span>إشعار تجديد الاشتراك وتوريد الاشتراك</span>
+                            <input type="checkbox" id="waset-notify-renewal" checked>
+                        </label>
+                        <label class="toggle-row">
                             <span>رسالة ترحيب تلقائية لكل عميل جديد</span>
                             <input type="checkbox" id="waset-notify-welcome" checked>
                         </label>
@@ -3181,7 +3193,7 @@
                         </label>
                     </div>
 
-                    <div class="group-title"> قوالب الرسائل التلقائية:</div>
+                    <div class="group-title">📝 قوالب الرسائل التلقائية:</div>
                     
                     <div class="form-group">
                         <label class="hint">قالب رسالة حضور البصمة للمشترك ({NAME}، {TIME}، {DAYS_LEFT})</label>
@@ -3191,6 +3203,11 @@
                     <div class="form-group">
                         <label class="hint">قالب رسالة الحضور لولي الأمر ({NAME}، {TIME})</label>
                         <textarea class="form-control" id="waset-tpl-guardian" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="hint">قالب رسالة انصراف ومغادرة الصالة لولي الأمر ({NAME}، {TIME})</label>
+                        <textarea class="form-control" id="waset-tpl-guardian-checkout" rows="2"></textarea>
                     </div>
 
                     <div class="form-group">

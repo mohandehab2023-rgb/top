@@ -654,6 +654,102 @@ async function init() {
                             }
                         } else {
                             if (member.status === 'active') {
+                                const nowPunch = Date.now();
+                                const todayKey = todayStr();
+
+                                // خريطة متابعة الحضور والانصراف اليومي للمشتركين لمنع التكرار وحساب الخروج
+                                if (!window._memberPunchSessionMap) window._memberPunchSessionMap = new Map();
+                                let punchSession = window._memberPunchSessionMap.get(scannedId);
+
+                                if (!punchSession || punchSession.date !== todayKey) {
+                                    let restoredCheckin = null;
+                                    if (member.last_checkin) {
+                                        const lci = new Date(member.last_checkin);
+                                        if (!isNaN(lci) && localDateStr(lci) === todayKey) {
+                                            restoredCheckin = lci.getTime();
+                                        }
+                                    }
+                                    if (restoredCheckin) {
+                                        punchSession = { date: todayKey, checkInTime: restoredCheckin, checkOutTime: null, lastPunchTime: restoredCheckin };
+                                        window._memberPunchSessionMap.set(scannedId, punchSession);
+                                    } else {
+                                        punchSession = null;
+                                    }
+                                }
+
+                                // ── الحالة الأولى: المشترك حضر اليوم بالفعل ──
+                                if (punchSession && punchSession.date === todayKey) {
+                                    const diffMins = (nowPunch - punchSession.lastPunchTime) / (1000 * 60);
+
+                                    // ١. مرور في أقل من 30 دقيقة: فترة سماح وتفادي التكرار (بدون خصم حصص وبدون رسائل متكررة)
+                                    if (diffMins < 30) {
+                                        playSound('success');
+                                        liveState = 'ok';
+                                        if (liveStatus) {
+                                            liveStatus.innerText = 'فترة سماح (أقل من 30 دقيقة)';
+                                            liveStatus.style.backgroundColor = 'var(--info)';
+                                        }
+                                        if (liveMsg) {
+                                            liveMsg.innerText = 'تم تسجيل حركة المشترك ' + member.name + ' منذ ' + Math.max(1, Math.round(diffMins)) + ' دقيقة — تفادي التكرار';
+                                            liveMsg.style.color = '#f59e0b';
+                                        }
+                                        showToast('مرور آمن: تم تسجيل حركة للمشترك ' + member.name + ' منذ قليل (أقل من 30 دقيقة)', 'info');
+                                        if (window.electronAPI && window.electronAPI.unlockDoor && isZkConnected()) {
+                                            window.electronAPI.unlockDoor(5).catch(() => {});
+                                        }
+                                        showLivePopup(popup, 4000, liveState);
+                                        return;
+                                    }
+
+                                    // ٢. بعد 30 دقيقة فأكثر ولم ينصرف بعد: تسجيل الانصراف والخروج + إشعار ولي الأمر
+                                    if (!punchSession.checkOutTime) {
+                                        punchSession.checkOutTime = nowPunch;
+                                        punchSession.lastPunchTime = nowPunch;
+                                        playSound('success');
+                                        liveState = 'ok';
+                                        if (liveStatus) {
+                                            liveStatus.innerText = 'انصراف (مع السلامة 👋)';
+                                            liveStatus.style.backgroundColor = 'var(--primary)';
+                                        }
+                                        if (liveMsg) {
+                                            liveMsg.innerText = 'تم تسجيل انصراف المشترك بنجاح — مع السلامة يا ' + member.name + ' 👋';
+                                            liveMsg.style.color = 'var(--primary)';
+                                        }
+                                        showToast('تم تسجيل انصراف ومغادرة المشترك ' + member.name + ' بنجاح 👋', 'success');
+                                        if (window.electronAPI && window.electronAPI.unlockDoor && isZkConnected()) {
+                                            window.electronAPI.unlockDoor(5).catch(() => {});
+                                        }
+                                        triggerCheckoutWhatsApp(member);
+                                        showLivePopup(popup, 5000, liveState);
+                                        return;
+                                    }
+
+                                    // ٣. حضر وانصرف اليوم بالفعل
+                                    playSound('success');
+                                    liveState = 'ok';
+                                    if (liveStatus) {
+                                        liveStatus.innerText = 'مكتمل اليوم';
+                                        liveStatus.style.backgroundColor = 'var(--text-muted)';
+                                    }
+                                    if (liveMsg) {
+                                        liveMsg.innerText = 'تم تسجيل الحضور والانصراف اليوم بالفعل للمشترك ' + member.name;
+                                        liveMsg.style.color = 'var(--text-muted)';
+                                    }
+                                    if (window.electronAPI && window.electronAPI.unlockDoor && isZkConnected()) {
+                                        window.electronAPI.unlockDoor(5).catch(() => {});
+                                    }
+                                    showLivePopup(popup, 4000, liveState);
+                                    return;
+                                }
+
+                                // ── الحالة الثانية: أول بصمة في اليوم -> تسجيل الحضور (Check-in) ──
+                                window._memberPunchSessionMap.set(scannedId, {
+                                    date: todayKey,
+                                    checkInTime: nowPunch,
+                                    checkOutTime: null,
+                                    lastPunchTime: nowPunch
+                                });
+
                                 playSound('success');
                                 if (liveStatus) {
                                     liveStatus.innerText = 'ساري (ينتهي في ' + member.exp + ')';
@@ -675,27 +771,7 @@ async function init() {
                                         return;
                                     }
                                     
-                                    let inCooldown = false;
-                                    if (member.last_checkin) {
-                                        const lastCheckin = new Date(member.last_checkin);
-                                        if (!isNaN(lastCheckin)) {
-                                            const diffMins = (now - lastCheckin) / 1000 / 60;
-                                            if (diffMins < 120) {
-                                                inCooldown = true;
-                                            }
-                                        }
-                                    }
-                                    
-                                    if (inCooldown) {
-                                        showToast('مرور ناجح (فترة سماح) للمشترك ' + member.name, 'info');
-                                        await recordAttendance(scannedId);
-                                        loadDailyReports();
-                                        return;
-                                    }
-                                    
-                                    // الخصم بيحصل جوّا قاعدة البيانات في جملة واحدة. قبل كده كنا
-                                    // بنقرا الرصيد من الذاكرة ونكتب الناتج، فمسحتين بسرعة كانوا
-                                    // يقروا نفس الرقم ويكتبوا نفس الناتج — حصة بتضيع.
+                                    // الخصم بيحصل جوّا قاعدة البيانات في جملة واحدة.
                                     const res = await dbWrite(
                                         window.electronAPI.consumeSession(member.id, now.toISOString()),
                                         'خصم الحصة'
@@ -709,19 +785,16 @@ async function init() {
                                     member.sessions_balance = newBalance;   // نسخة الذاكرة تفضل مطابقة
                                     showToast('حضور ناجح: تم خصم حصة (المتبقي: ' + newBalance + ' حصة) للمشترك ' + member.name, 'success');
                                     
-                                    // Delete fingerprint from device if sessions are finished
                                     if (newBalance === 0) {
                                         if (isZkConnected()) {
-                                            // إيقاف على الجهاز بدل الحذف: البصمة بتفضل مسجّلة،
-                                            // ولما يجدّد بترجع تشتغل من غير إعادة تسجيل
                                             window.electronAPI.setZkUserEnabled(scannedId, false).catch(e => (()=>{})(e));
-                                            // كان النص يقول "12 حصة" دائماً حتى لباقة الـ 16
                                             const pkgTotal = String(member.pkg).includes('16') ? 16 : 12;
-                                            showToast('استنفد المشترك ' + pkgTotal + ' حصة، وتم إيقاف دخوله على الجهاز (البصمة محفوظة)', 'info');
+                                            showToast('استنفد المشترك ' + pkgTotal + ' حصة، وتم إيقاف دخوله (البصمة محفوظة على الجهاز)', 'info');
                                         }
                                     }
                                     
                                     await recordAttendance(scannedId);
+                                    triggerAttendanceWhatsApp(member);
                                     await refreshMembersFromDb();
                                     renderMembers();
                                     loadDailyReports();
@@ -731,6 +804,7 @@ async function init() {
                                 await recordAttendance(scannedId);
                                 triggerAttendanceWhatsApp(member);
 
+                            }
                             } else if (member.status === 'frozen') {
                                 playSound('error');
                                 liveState = 'warn';
@@ -5233,6 +5307,7 @@ async function openStoreSalesModal() {
 let waConfig = {
     notifyAttendance: true,
     notifyGuardian: true,
+    notifyGuardianCheckout: true,
     notifyRenewal: true,
     notifyWelcome: true,
     notifyStore: true,
@@ -5240,6 +5315,7 @@ let waConfig = {
     absenceDaysThreshold: 2,
     tplAttendance: "أهلاً بك يا {NAME} في TOP FITNESS! 💪\nتم تسجيل حضورك بنجاح اليوم الساعة {TIME}.\nمتبقي في باقتك {DAYS_LEFT} يوماً. تمرين موفق ووحش! 🔥",
     tplGuardian: "إشعار صالة TOP FITNESS 📢:\nتم تسجيل حضور ابنكم ({NAME}) اليوم الساعة {TIME}.\nنتمنى له تمريناً ممتعاً وآمناً. 🛡️",
+    tplGuardianCheckout: "إشعار صالة TOP FITNESS 📢:\nتم تسجيل مغادرة وانصراف ابنكم ({NAME}) اليوم الساعة {TIME} بسلام. 👋\nنتمنى له يوماً سعيداً ونلقاكم في التمرين القادم! 🌟",
     tplAbsence: "وحشتنا في TOP FITNESS يا {NAME}! 🏋️🔥\nلاحظنا غيابك منذ {ABSENCE_DAYS} أيام.. صحتك ولياقتك تهمنا، مستنينك النهاردة تكمل فورمتك وتمرينك بقوة!",
     tplStore: "إيصال مشتريات من متجر TOP FITNESS 🛍️:\nعزيزي {NAME}، شكراً لتعاملك معنا!\nالأصناف: {ITEMS}\nالإجمالي: {TOTAL} ج.م\nتاريخ العملية: {DATE}",
     tplRenewal: "أهلاً {NAME}، تم تجديد اشتراكك بنجاح في TOP FITNESS! 🌟\nالباقة: {PACKAGE}\nالمبلغ المدفوع: {PAID} ج.م\nتاريخ الانتهاء الجديد: {EXP_DATE}",
@@ -5264,12 +5340,14 @@ async function loadWhatsAppConfig() {
 function renderWhatsAppConfigUI() {
     if (document.getElementById('waset-notify-attendance')) document.getElementById('waset-notify-attendance').checked = !!waConfig.notifyAttendance;
     if (document.getElementById('waset-notify-guardian')) document.getElementById('waset-notify-guardian').checked = !!waConfig.notifyGuardian;
+    if (document.getElementById('waset-notify-guardian-checkout')) document.getElementById('waset-notify-guardian-checkout').checked = waConfig.notifyGuardianCheckout !== false;
     if (document.getElementById('waset-notify-renewal')) document.getElementById('waset-notify-renewal').checked = !!waConfig.notifyRenewal;
     if (document.getElementById('waset-notify-welcome')) document.getElementById('waset-notify-welcome').checked = !!waConfig.notifyWelcome;
     if (document.getElementById('waset-tpl-welcome')) document.getElementById('waset-tpl-welcome').value = waConfig.tplWelcome || '';
     if (document.getElementById('waset-notify-store')) document.getElementById('waset-notify-store').checked = !!waConfig.notifyStore;
     if (document.getElementById('waset-tpl-attendance')) document.getElementById('waset-tpl-attendance').value = waConfig.tplAttendance;
     if (document.getElementById('waset-tpl-guardian')) document.getElementById('waset-tpl-guardian').value = waConfig.tplGuardian;
+    if (document.getElementById('waset-tpl-guardian-checkout')) document.getElementById('waset-tpl-guardian-checkout').value = waConfig.tplGuardianCheckout || "إشعار صالة TOP FITNESS 📢:\nتم تسجيل مغادرة وانصراف ابنكم ({NAME}) اليوم الساعة {TIME} بسلام. 👋\nنتمنى له يوماً سعيداً ونلقاكم في التمرين القادم! 🌟";
     if (document.getElementById('waset-tpl-absence')) document.getElementById('waset-tpl-absence').value = waConfig.tplAbsence;
 }
 
@@ -5354,12 +5432,14 @@ async function saveWhatsAppSettings(event) {
     if (event) event.preventDefault();
     waConfig.notifyAttendance = document.getElementById('waset-notify-attendance').checked;
     waConfig.notifyGuardian = document.getElementById('waset-notify-guardian').checked;
+    if (document.getElementById('waset-notify-guardian-checkout')) waConfig.notifyGuardianCheckout = document.getElementById('waset-notify-guardian-checkout').checked;
     waConfig.notifyRenewal = document.getElementById('waset-notify-renewal').checked;
     if (document.getElementById('waset-notify-welcome')) waConfig.notifyWelcome = document.getElementById('waset-notify-welcome').checked;
     if (document.getElementById('waset-tpl-welcome')) waConfig.tplWelcome = document.getElementById('waset-tpl-welcome').value;
     waConfig.notifyStore = document.getElementById('waset-notify-store').checked;
     waConfig.tplAttendance = document.getElementById('waset-tpl-attendance').value;
     waConfig.tplGuardian = document.getElementById('waset-tpl-guardian').value;
+    if (document.getElementById('waset-tpl-guardian-checkout')) waConfig.tplGuardianCheckout = document.getElementById('waset-tpl-guardian-checkout').value;
     waConfig.tplAbsence = document.getElementById('waset-tpl-absence').value;
 
     if (window.electronAPI && window.electronAPI.saveConfig) {
@@ -5400,6 +5480,21 @@ function triggerAttendanceWhatsApp(member) {
         waAutoSend(member.guardian_phone, member.name + ' (ولي الأمر)', 'guardian', gmsg);
     }
 }
+
+function triggerCheckoutWhatsApp(member) {
+    if (!member || !waConfig) return;
+    const timeStr = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+
+    // Send to Guardian if enabled and guardian_phone is set
+    if (waConfig.notifyGuardianCheckout !== false && member.guardian_phone) {
+        let gmsg = (waConfig.tplGuardianCheckout || "إشعار صالة TOP FITNESS 📢:\nتم تسجيل مغادرة وانصراف ابنكم ({NAME}) اليوم الساعة {TIME} بسلام. 👋\nنتمنى له يوماً سعيداً ونلقاكم في التمرين القادم! 🌟")
+            .replace(/{NAME}/g, member.name)
+            .replace(/{TIME}/g, timeStr);
+
+        waAutoSend(member.guardian_phone, member.name + ' (ولي الأمر)', 'guardian', gmsg);
+    }
+}
+
 
 // ==========================================================================
 // WORKOUT & DIET PLANS MODULE LOGIC
