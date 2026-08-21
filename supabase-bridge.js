@@ -388,7 +388,7 @@ window.__TF_CLOUD__ = true;
                         unit_price: Number(it.unitPrice || 0),
                         total_price: Number(it.totalPrice || 0)
                     }));
-                    await sb.from('store_sale_items').insert(saleItems).catch(() => {});
+                    try { await sb.from('store_sale_items').insert(saleItems); } catch(e) {}
                 }
 
                 return { success: true, saleId };
