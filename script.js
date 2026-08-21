@@ -804,7 +804,6 @@ async function init() {
                                 await recordAttendance(scannedId);
                                 triggerAttendanceWhatsApp(member);
 
-                            }
                             } else if (member.status === 'frozen') {
                                 playSound('error');
                                 liveState = 'warn';
@@ -2716,13 +2715,33 @@ function switchSection(secId, el) {
     const targetSec = document.getElementById(secId);
     if (targetSec) targetSec.classList.add('active');
 
-    document.querySelectorAll('.nav-link').forEach(nav => nav.classList.remove('active'));
-    // بعض الاستدعاءات تأتي من كروت لوحة القيادة بلا زر، فنطابق رابط القائمة بالقسم
-    const navEl = el || [...document.querySelectorAll('.nav-link')]
-        .find(a => (a.getAttribute('onclick') || '').includes(`'${secId}'`));
-    if (navEl) navEl.classList.add('active');
+    // تحديد الزر الرئيسي المطابق في القائمة الجانبية المكونة من 9 أقسام
+    let parentNavId = 'nav-' + secId;
+    if (['daily-reports', 'debtors', 'external-revenues', 'invitations'].includes(secId)) {
+        parentNavId = 'nav-reports';
+    } else if (['trainers', 'employees', 'trainer-attendance', 'employee-attendance'].includes(secId)) {
+        parentNavId = 'nav-trainers';
+    } else if (['settings', 'users', 'activity', 'trash'].includes(secId)) {
+        parentNavId = 'nav-settings';
+    } else if (secId === 'absence-bot') {
+        parentNavId = 'nav-absence';
+    }
 
-    // Show top bar search ONLY in members section
+    document.querySelectorAll('.nav-link').forEach(nav => nav.classList.remove('active'));
+    const parentNavEl = document.getElementById(parentNavId) || el;
+    if (parentNavEl) parentNavEl.classList.add('active');
+
+    // تحديث التبويب النشط في الأشرطة الفرعية (Sub-pills)
+    document.querySelectorAll('.sub-pill').forEach(pill => {
+        const onclickAttr = pill.getAttribute('onclick') || '';
+        if (onclickAttr.includes("'" + secId + "'")) {
+            pill.classList.add('active');
+        } else if (onclickAttr.includes('switchSection')) {
+            pill.classList.remove('active');
+        }
+    });
+
+    // إظهار حقل البحث العلوي فقط في قسم المشتركين
     const topSearch = document.getElementById('top-search-group') || document.querySelector('.search-input-group');
     if (topSearch) {
         topSearch.style.display = (secId === 'members') ? 'flex' : 'none';
@@ -2745,6 +2764,7 @@ function switchSection(secId, el) {
     if (secId === 'debtors') loadDebtors();
     if (secId === 'activity') loadActivity();
     if (secId === 'trash') loadTrash();
+    if (secId === 'settings') { /* Settings view loaded */ }
 }
 
 function renderEmployees() {
