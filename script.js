@@ -194,6 +194,12 @@ function parseLocalDate(s) {
     return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
 }
 
+// بداية النهاردة بالتوقيت المحلي — الطرف التاني في أي مقارنة يوم
+function startOfToday() {
+    const n = new Date();
+    return new Date(n.getFullYear(), n.getMonth(), n.getDate());
+}
+
 function canEnterNow(m) {
     if (!m) return { allowed: false, reason: 'غير مسجل' };
     if (m.status === 'frozen') return { allowed: false, reason: 'الاشتراك مجمد' };
@@ -208,6 +214,8 @@ function canEnterNow(m) {
     // مقارنة باليوم المحلي: الاشتراك اللي بينتهي النهاردة لسه ساري
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    // بنطبّع اليوم بإيدنا مش بـ parseLocalDate: الدالة دي بتتستخرج لوحدها
+    // في الاختبارات وبتتقارن بقرار الجهاز، فلازم تفضل مكتفية بنفسها
     const e = new Date(m.exp);
     if (isNaN(e)) return { allowed: false, reason: 'تاريخ انتهاء غير صالح' };
     const expDay = new Date(e.getFullYear(), e.getMonth(), e.getDate());
@@ -415,7 +423,9 @@ function getExpiringDays() {
 // كل فحوص m.status === 'active' في تسجيل البصمة والتجديد والتجميد
 function isExpiringSoon(m, today = todayStr(), days = getExpiringDays()) {
     if (!m || m.status === 'frozen' || !m.exp) return false;
-    const diffDays = Math.ceil((new Date(m.exp) - new Date(today)) / MS_PER_DAY);
+    const expDay = parseLocalDate(m.exp), todayDay = parseLocalDate(today);
+    if (!expDay || !todayDay) return false;
+    const diffDays = Math.round((expDay - todayDay) / MS_PER_DAY);
     return diffDays >= 0 && diffDays <= days;
 }
 
@@ -526,11 +536,20 @@ async function waAutoSend(phone, name, type, message) {
 async function init() {
     if (window.electronAPI) {
         try {
-            users = await window.electronAPI.getUsers().catch(() => []) || [];
-            members = await window.electronAPI.getMembers().catch(() => []) || [];
-            packages = await window.electronAPI.getPackages().catch(() => []) || [];
-            trainers = await window.electronAPI.getTrainers().catch(() => []) || [];
-            employees = await window.electronAPI.getEmployees().catch(() => []) || [];
+            // على التوازي: النداءات دي مستقلة عن بعض، وكانت بتتنفذ ورا بعض
+            // يعني 5 رحلات للسحابة متتالية بدل رحلة واحدة بعرض أكبر
+            const [u, m, p, t, e] = await Promise.all([
+                window.electronAPI.getUsers().catch(() => []),
+                window.electronAPI.getMembers().catch(() => []),
+                window.electronAPI.getPackages().catch(() => []),
+                window.electronAPI.getTrainers().catch(() => []),
+                window.electronAPI.getEmployees().catch(() => [])
+            ]);
+            users = u || [];
+            members = m || [];
+            packages = p || [];
+            trainers = t || [];
+            employees = e || [];
 
             populateLoginUsersSelect();
 
@@ -693,10 +712,12 @@ async function init() {
                                     // Delete fingerprint from device if sessions are finished
                                     if (newBalance === 0) {
                                         if (isZkConnected()) {
-                                            window.electronAPI.deleteZkUser(scannedId).catch(e => (()=>{})(e));
+                                            // إيقاف على الجهاز بدل الحذف: البصمة بتفضل مسجّلة،
+                                            // ولما يجدّد بترجع تشتغل من غير إعادة تسجيل
+                                            window.electronAPI.setZkUserEnabled(scannedId, false).catch(e => (()=>{})(e));
                                             // كان النص يقول "12 حصة" دائماً حتى لباقة الـ 16
                                             const pkgTotal = String(member.pkg).includes('16') ? 16 : 12;
-                                            showToast('استنفد المشترك ' + pkgTotal + ' حصة، وتم مسح بصمته من الجهاز أوتوماتيكياً!', 'info');
+                                            showToast('استنفد المشترك ' + pkgTotal + ' حصة، وتم إيقاف دخوله على الجهاز (البصمة محفوظة)', 'info');
                                         }
                                     }
                                     
@@ -729,7 +750,7 @@ async function init() {
                                     liveStatus.style.backgroundColor = 'var(--danger)';
                                 }
                                 if (liveMsg) {
-                                    liveMsg.innerText = 'الاشتراك منتهي! (تم مسح البصمة)';
+                                    liveMsg.innerText = 'الاشتراك منتهي — الباب لم يُفتح (البصمة محفوظة)';
                                     liveMsg.style.color = 'var(--danger)';
                                 }
                             }
@@ -1183,7 +1204,16 @@ function loadDashboardStats() {
                 const elRenewalsText = document.getElementById('today-renewals-text');
                 const elStoreText = document.getElementById('today-store-text');
                 if (elRenewalsText) elRenewalsText.innerText = summary.counts.subs || 0;
-                if (elStoreText) elStoreText.innerText = (summary.income.store || 0).toLocaleString() + ' ج.م';
+                if (elStoreText) elStoreText.innerText = (summary.income.store || 0).toLocaleString();
+
+                // تحديث عدد الجدد: عدد المشتركين الفريدين في معاملات اليوم
+                // (في السحابة مفيش joinDate، فبنحسبها من عدد المعاملات الفريدة)
+                if (summary.rows && summary.rows.subs && elNewMembersText) {
+                    const uniqueMembers = new Set(summary.rows.subs.map(t => t.member_id));
+                    // الجدد = المشتركين اللي عندهم معاملة واحدة بس (أول اشتراك)
+                    // لكن كتقريب عملي: نعرض عدد المعاملات كـ "نشاط اليوم"
+                    elNewMembersText.innerText = uniqueMembers.size;
+                }
             }).catch(()=>{});
         } else {
             // Fallback
@@ -1508,7 +1538,7 @@ async function saveEditedMember() {
     Object.assign(m, updated);
 
     // If manually edited to an old date, it might be expired
-    const expDate = new Date(m.exp);
+    const expDate = parseLocalDate(m.exp);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (expDate < today) {
@@ -1743,9 +1773,9 @@ async function confirmRenew() {
     }
     // If active, extend current expiration date
     else if (effectiveStatus(m) === 'active') {
-        const today = new Date();
-        const exp = new Date(m.exp);
-        if (exp > today) {
+        const today = startOfToday();
+        const exp = parseLocalDate(m.exp);
+        if (exp && exp > today) {
             extraDays += Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
         }
     }
@@ -1810,9 +1840,9 @@ async function toggleFreezeMember(id, fromModal = false) {
 
     if (m.status === 'active') {
         if (await customConfirm(`هل تريد تجميد اشتراك المشترك (${m.name}) مؤقتاً؟`)) {
-            const today = new Date();
-            const exp = new Date(m.exp);
-            const diffDays = Math.ceil((exp - today) / MS_PER_DAY);
+            const today = startOfToday();
+            const exp = parseLocalDate(m.exp);
+            const diffDays = exp ? Math.round((exp - today) / MS_PER_DAY) : 0;
             const payload = { ...m, status: 'frozen', frozenDays: diffDays > 0 ? diffDays : 0 };
             if (window.electronAPI) {
                 const ok = await dbWrite(window.electronAPI.updateMember(payload, { reason: 'freeze' }), 'بيانات المشترك');
@@ -2945,7 +2975,7 @@ async function loadFinancialReport(mode) {
     if (netEl) netEl.style.color = r.net >= 0 ? 'var(--success)' : 'var(--danger)';
 
     // جدول الاشتراكات والمصروفات (نفس جداول القسم)
-    const tbody = document.getElementById('report-tbody');
+    const tbody = document.getElementById('reports-table-body');
     if (tbody) {
         const all = [
             ...r.rows.subs.map(x => ({ ...x, kind: 'اشتراك', label: x.pkg || 'تجديد' })),
@@ -2963,7 +2993,7 @@ async function loadFinancialReport(mode) {
             : '<tr><td colspan="5" class="empty-inline">لا توجد إيرادات في هذه الفترة</td></tr>';
     }
 
-    const expBody = document.getElementById('report-exp-tbody');
+    const expBody = document.getElementById('expenses-table-body');
     if (expBody) {
         expBody.innerHTML = r.rows.expenses.length ? r.rows.expenses.map(x => `
             <tr>
@@ -2971,8 +3001,9 @@ async function loadFinancialReport(mode) {
                 <td>${escapeHtml(x.description || '')}</td>
                 <td class="fw-black text-danger">${money(x.amount)}</td>
                 <td>${escapeHtml(x.username || '')}</td>
+                <td class="action-buttons"></td>
             </tr>`).join('')
-            : '<tr><td colspan="4" class="empty-inline">لا توجد مصروفات في هذه الفترة</td></tr>';
+            : '<tr><td colspan="5" class="empty-inline">لا توجد مصروفات في هذه الفترة</td></tr>';
     }
 
     showToast(`تقرير ${r.label}: دخل ${money(r.income.total)} · مصروف ${money(r.expenses.total)} · صافي ${money(r.net)}`,

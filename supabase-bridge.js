@@ -338,23 +338,43 @@ window.__TF_CLOUD__ = true;
                     console.error('store_sales insert error:', saleErr);
                 }
 
-                // 2. Decrement stock for each sold item in store_products
-                if (Array.isArray(items)) {
-                    for (const item of items) {
-                        if (item.productId && item.quantity) {
-                            try {
-                                const { data: prod } = await sb.from('store_products').select('stock').eq('id', item.productId).single();
-                                if (prod && prod.stock !== undefined) {
-                                    const currentStock = parseInt(prod.stock, 10) || 0;
-                                    const soldQty = parseInt(item.quantity, 10) || 0;
-                                    const newStock = Math.max(0, currentStock - soldQty);
-                                    await sb.from('store_products').update({ stock: newStock }).eq('id', item.productId);
-                                }
-                            } catch (e) {
-                                console.warn('stock update error for product:', item.productId, e);
+                // 2. خصم المخزون — نفس ضمانات نسخة الديسكتوب
+                if (Array.isArray(items) && items.length) {
+                    const wanted = items.filter(i => i.productId && Number(i.quantity) > 0);
+                    const ids = [...new Set(wanted.map(i => i.productId))];
+
+                    // قراءة واحدة لكل الأصناف بدل قراءة لكل صنف
+                    const { data: prods } = await sb.from('store_products')
+                        .select('id, name, stock').in('id', ids);
+                    const stockOf = new Map((prods || []).map(p => [p.id, p]));
+
+                    // كل صنف بيتخصم بتحديث مشروط بقيمته القديمة. لو حد تاني
+                    // باع نفس الصنف في نفس اللحظة، الشرط بيفشل فنعيد القراءة
+                    // والمحاولة بدل ما نكتب فوق تحديثه.
+                    const decrement = async (item) => {
+                        const qty = parseInt(item.quantity, 10) || 0;
+                        for (let attempt = 0; attempt < 4; attempt++) {
+                            let row = attempt === 0 ? stockOf.get(item.productId) : null;
+                            if (!row) {
+                                const { data } = await sb.from('store_products')
+                                    .select('id, name, stock').eq('id', item.productId).single();
+                                row = data;
                             }
+                            if (!row) return;                       // صنف اتمسح
+                            const have = parseInt(row.stock, 10) || 0;
+                            const next = Math.max(0, have - qty);
+                            const { data: updated } = await sb.from('store_products')
+                                .update({ stock: next })
+                                .eq('id', item.productId)
+                                .eq('stock', row.stock)             // ما نكتبش فوق تحديث غيرنا
+                                .select('id');
+                            if (updated && updated.length) return;  // نجح
                         }
-                    }
+                        console.warn('تعذّر خصم مخزون الصنف بعد عدة محاولات:', item.productId);
+                    };
+
+                    // التحديثات على التوازي بدل ورا بعض
+                    await Promise.all(wanted.map(decrement));
                 }
 
                 // 3. Insert items into store_sale_items if table exists
@@ -505,6 +525,33 @@ window.__TF_CLOUD__ = true;
         onZkLog: () => {},
         onWaStatus: () => {},
 
+        // تحديث حيّ: لما أي جهاز تاني يعدّل بيانات، الواجهة هنا تعرف وتحدّث
+        // نفسها. من غير الدالة دي كان الـ Proxy بيرجّع [] فالكولباك ما
+        // بيتسجّلش أصلاً، والموقع بيفضل عارض بيانات قديمة لحد ريفريش يدوي.
+        onSyncUpdate: (callback) => {
+            if (typeof callback !== 'function') return;
+            if (syncChannel) return;   // اشتراك واحد يكفي
+            const tables = ['members', 'transactions', 'expenses', 'packages',
+                            'store_sales', 'attendance'];
+            syncChannel = sb.channel('web-sync-updates');
+            tables.forEach(t => {
+                syncChannel.on('postgres_changes',
+                    { event: '*', schema: 'public', table: t },
+                    () => {
+                        // تجميع: عدة تعديلات ورا بعض تعمل تحديث واحد
+                        clearTimeout(syncDebounce);
+                        syncDebounce = setTimeout(() => { try { callback(); } catch (e) {} }, 400);
+                    });
+            });
+            syncChannel.subscribe();
+        },
+
+        // على الديسكتوب دي بتتنادى عشان يبعت الواتساب (هو اللي متصل بيه).
+        // في المتصفح مفيش واتساب متصل — الإرسال بيتم بوضع الرسالة في
+        // whatsapp_queue والديسكتوب بياخدها. فلو نفّذنا الكولباك هنا كمان
+        // كانت الرسالة هتتبعت مرتين. فدي بتتسجّل ومش بتتنادى، بقصد.
+        onRemoteWhatsapp: () => {},
+
         // ═══════════════════════════════════════════════════════════════
         //  ACTIVITY LOG
         // ═══════════════════════════════════════════════════════════════
@@ -654,8 +701,12 @@ window.__TF_CLOUD__ = true;
                 from = to = d;
                 label = 'يوم ' + d;
             }
-            // الحد الأعلى شامل اليوم كله: بنضيف وقت نهاية اليوم
-            const lo = from, hi = to + ' 23:59:59';
+            // تحويل التواريخ المحلية إلى UTC لمطابقة التخزين في Supabase
+            // مثال: اليوم 21 أغسطس بتوقيت مصر (UTC+3) يبدأ من 20 أغسطس 21:00 UTC
+            const localStart = new Date(from + 'T00:00:00');
+            const localEnd   = new Date(to   + 'T23:59:59');
+            const lo = localStart.toISOString();
+            const hi = localEnd.toISOString();
 
             const pull = async (table, col) => {
                 const { data, error } = await sb.from(table).select('*').gte(col, lo).lte(col, hi);
@@ -714,7 +765,14 @@ window.__TF_CLOUD__ = true;
             if (!data) return [];
             const buckets = {};
             data.forEach(a => {
-                const d = (a.timestamp || '').split('T')[0].split(' ')[0];
+                // تحويل التوقيت من UTC إلى التوقيت المحلي قبل التجميع اليومي
+                const raw = a.timestamp || '';
+                let d;
+                if (raw.includes('T') || raw.includes('Z')) {
+                    d = new Date(raw).toLocaleDateString('en-CA'); // YYYY-MM-DD local
+                } else {
+                    d = raw.split(' ')[0];
+                }
                 if (d) buckets[d] = (buckets[d] || 0) + 1;
             });
             return Object.keys(buckets).sort().reverse().slice(0, days)
@@ -798,6 +856,10 @@ window.__TF_CLOUD__ = true;
             });
         },
     };
+
+    // حالة اشتراك التحديث الحيّ
+    let syncChannel = null;
+    let syncDebounce = null;
 
     // ─── 5. Proxy ───────────────────────────────────────────────────
     window.electronAPI = new Proxy(api, {
